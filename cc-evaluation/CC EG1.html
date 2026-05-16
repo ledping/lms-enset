@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Évaluation - Électronique Générale - Chapitre 1: Résistances</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5a2c 0%, #2a7d3e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a5a2c 0%, #2a7d3e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        
+        .header p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .course-info {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+        
+        .course-info p {
+            margin: 5px 0;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-section h2 {
+            color: #2a7d3e;
+            margin-bottom: 20px;
+            font-size: 22px;
+            border-bottom: 2px solid #4caf50;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus, input[type="email"]:focus {
+            outline: none;
+            border-color: #4caf50;
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .radio-option:hover {
+            background: #f1f8e9;
+            border-color: #4caf50;
+        }
+        
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #1a5a2c 0%, #2a7d3e 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: block;
+            width: 100%;
+            margin-top: 30px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(26, 90, 44, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .quiz-section {
+            display: none;
+        }
+        
+        .question {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f1f8e9;
+            border-radius: 10px;
+            border-left: 4px solid #1a5a2c;
+        }
+        
+        .question h3 {
+            color: #2a7d3e;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option-label {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option-label:hover {
+            background: white;
+            border-color: #1a5a2c;
+        }
+        
+        .option-label input {
+            margin-right: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1a5a2c 0%, #2a7d3e 100%);
+            transition: width 0.3s;
+        }
+        
+        .chapter-info {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .chapter-info h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        
+        .formula {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #1a5a2c;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+        
+        .calculation-question {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .color-code-example {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: #fff3e0;
+            border-radius: 8px;
+        }
+        
+        .color-band {
+            width: 20px;
+            height: 50px;
+            margin: 0 5px;
+            border-radius: 3px;
+        }
+        
+        .color-explanation {
+            margin-left: 15px;
+        }
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f1f8e9;
+        }
+        
+        .resistance-image {
+            max-width: 200px;
+            margin: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px;
+            background: white;
+        }
+        
+        .section-title {
+            color: #1a5a2c;
+            font-size: 20px;
+            margin: 25px 0 15px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #4caf50;
+        }
+        
+        .important-note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .evaluation-note {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ÉLECTRONIQUE GÉNÉRALE - ÉVALUATION</h1>
+            <p><strong>Chapitre 1 : Composants de Base - Résistances</strong></p>
+            <p>Génie Informatique - Semestre 2 - Électronique 1</p>
+            
+            <div class="course-info">
+                <p><strong>Enseignant :</strong></p>
+                <p>Dr OBONO BIYOBO Arnaud</p>
+                <p style="font-size: 12px;">Chargé de Cours - Électronique et Automatique</p>
+                <p style="margin-top: 10px;"><strong>Unité d'Enseignement :</strong> Électronique 1 (G113)</p>
+                <p style="font-size: 12px;">Année académique : 2018/2019 - Semestre 2</p>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div id="studentInfo" class="form-section">
+                <div class="chapter-info">
+                    <h3>📘 Chapitre 1 : Résistances - Partie Généralités</h3>
+                    <p><strong>Thèmes évalués :</strong> Définition et unités, Facteurs influençant la résistance, Résistivité et température, Types de résistances, Caractéristiques, Séries normalisées (E6, E12, E24), Code des couleurs</p>
+                    <p><strong>Objectif :</strong> Vérifier la compréhension des concepts fondamentaux sur les résistances</p>
+                </div>
+
+                <h2>Informations de l'Étudiant(e)</h2>
+                
+                <div class="form-group">
+                    <label for="nom">Nom complet *</label>
+                    <input type="text" id="nom" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="matricule">Matricule et Option *</label>
+                    <input type="text" id="matricule" required placeholder="Ex: 18G1234 - GINFO1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email">
+                </div>
+                
+                <div class="evaluation-note">
+                    <p><strong>Note importante :</strong> La note finale est calculée avec les coefficients suivants :</p>
+                    <p>Quiz (3) + CC écrit et Simulation (4) + Habillement (2) = Total / 9</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Style vestimentaire *</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="habillement" value="20" required>
+                            <span><strong>20 points :</strong> Tenue responsable - bien coiffée, bien chaussée, corps bien couvert ou polo département</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="habillement" value="10">
+                            <span><strong>10 points :</strong> Tenue jeune</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="habillement" value="2">
+                            <span><strong>2 points :</strong> Tenue non conforme</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>CC écrit et Simulation - Électronique Générale *</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="cc" value="20" required>
+                            <span><strong>20 points :</strong> Excellent travail, simulation complète et rapport détaillé sur les résistances</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="cc" value="18">
+                            <span><strong>18 points :</strong> Bon travail, simulation correcte et rapport satisfaisant</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="cc" value="2">
+                            <span><strong>2 points :</strong> Travail insuffisant, simulation absente ou incorrecte</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="startEvaluation()">Commencer le Quiz sur les Résistances</button>
+            </div>
+            
+            <div id="quizSection" class="quiz-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                
+                <div id="questionsContainer"></div>
+                
+                <button class="btn" onclick="submitEvaluation()">Soumettre l'Évaluation</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsBase = [
+            {
+                question: "Quelle est la définition fondamentale d'une résistance en électronique?",
+                options: [
+                    "Un composant qui amplifie les signaux électriques",
+                    "Un composant passif qui s'oppose à la circulation des électrons",
+                    "Un composant qui génère de l'énergie électrique",
+                    "Un composant qui stocke l'énergie électrique"
+                ],
+                correct: 1,
+                explanation: "La résistance est un composant passif qui s'oppose au passage du courant électrique et transforme l'énergie électrique en énergie thermique par effet Joule."
+            },
+            {
+                question: "Quelle est l'unité de mesure de la résistance?",
+                options: [
+                    "Volt (V)",
+                    "Ampère (A)",
+                    "Ohm (Ω)",
+                    "Watt (W)"
+                ],
+                correct: 2,
+                explanation: "L'unité de mesure de la résistance est l'ohm, symbolisé par la lettre grecque Ω (Oméga)."
+            },
+            {
+                question: "Quel est le multiple couramment utilisé pour exprimer 1 000 ohms?",
+                options: [
+                    "1 milliohm",
+                    "1 kilohm",
+                    "1 mégohm",
+                    "1 gigohm"
+                ],
+                correct: 1,
+                explanation: "1 kilohm (kΩ) = 1 000 ohms. C'est l'un des multiples les plus utilisés en électronique."
+            },
+            {
+                question: "Quels sont les quatre facteurs qui influencent la résistance d'un conducteur?",
+                options: [
+                    "Longueur, température, couleur, matériau",
+                    "Section, longueur, matériau, température",
+                    "Diamètre, poids, couleur, conductivité",
+                    "Tension, courant, puissance, température"
+                ],
+                correct: 1,
+                explanation: "La résistance d'un conducteur dépend de: 1) La nature du matériau, 2) La longueur, 3) L'aire de la section, 4) La température."
+            },
+            {
+                question: "Quelle formule exprime la résistance d'un conducteur en fonction de ses dimensions?",
+                options: [
+                    "R = V/I",
+                    "R = P/I²",
+                    "R = ρ × (L/S)",
+                    "R = α × ΔT"
+                ],
+                correct: 2,
+                explanation: "R = ρ × (L/S) où ρ est la résistivité, L la longueur et S l'aire de la section transversale."
+            },
+            {
+                question: "Qu'est-ce que la résistivité (ρ) d'un matériau?",
+                options: [
+                    "La capacité d'un matériau à conduire la chaleur",
+                    "La résistance d'un fil de 1m de longueur et 1m² de section",
+                    "La variation de résistance avec la température",
+                    "La puissance maximale qu'un matériau peut dissiper"
+                ],
+                correct: 1,
+                explanation: "La résistivité est la résistance d'un fil de 1m de longueur et de 1m² de section, à une température donnée."
+            },
+            {
+                question: "Comment varie la résistance d'un conducteur en cuivre lorsque la température augmente?",
+                options: [
+                    "Elle diminue",
+                    "Elle reste constante",
+                    "Elle augmente",
+                    "Elle devient infinie"
+                ],
+                correct: 2,
+                explanation: "Le cuivre a un coefficient de température positif (α = 3,9×10⁻³/°C), donc sa résistance augmente avec la température."
+            },
+            {
+                question: "Parmi ces matériaux, lequel a la plus faible résistivité à température ambiante?",
+                options: [
+                    "Argent (Ag)",
+                    "Cuivre (Cu)",
+                    "Aluminium (Al)",
+                    "Carbone (C)"
+                ],
+                correct: 0,
+                explanation: "L'argent a la résistivité la plus faible (1,6×10⁻⁸ Ω.m), suivi du cuivre (1,7×10⁻⁸ Ω.m)."
+            },
+            {
+                question: "Quel type de résistance est constitué d'un mélange de carbone, silice et bakélite agglomérés à chaud?",
+                options: [
+                    "Résistance à couche de carbone",
+                    "Résistance agglomérée",
+                    "Résistance à feuille métallique",
+                    "Résistance bobinée"
+                ],
+                correct: 1,
+                explanation: "Les résistances agglomérées sont constituées d'un mélange de carbone, matière isolante et liant, agglomérés à chaud."
+            },
+            {
+                question: "Quelle est la caractéristique principale des résistances bobinées?",
+                options: [
+                    "Précision élevée et faible inductance",
+                    "Faible puissance et haute fréquence",
+                    "Inductance importante, utilisation basse fréquence",
+                    "Coefficient de température négatif"
+                ],
+                correct: 2,
+                explanation: "Les résistances bobinées ont une inductance importante due à leur construction en fil bobiné, donc elles sont utilisées principalement en basse fréquence."
+            },
+            {
+                question: "Que représente la tolérance d'une résistance?",
+                options: [
+                    "La puissance maximale qu'elle peut dissiper",
+                    "L'écart maximal entre la valeur nominale et réelle",
+                    "La variation avec la température",
+                    "La tension maximale applicable"
+                ],
+                correct: 1,
+                explanation: "La tolérance (en %) indique l'écart maximal permis entre la valeur nominale indiquée et la valeur réelle de la résistance."
+            },
+            {
+                question: "Combien de valeurs comprend la série E12 dans une décade?",
+                options: [
+                    "3 valeurs",
+                    "6 valeurs",
+                    "12 valeurs",
+                    "24 valeurs"
+                ],
+                correct: 2,
+                explanation: "La série E12 comprend 12 valeurs par décade (entre 1 et 10, 10 et 100, etc.) avec une tolérance de ±10%."
+            },
+            {
+                question: "Quelle est la tolérance typique des résistances de la série E24?",
+                options: [
+                    "±20%",
+                    "±10%",
+                    "±5%",
+                    "±1%"
+                ],
+                correct: 2,
+                explanation: "La série E24 a une tolérance de ±5% et comprend 24 valeurs par décade."
+            },
+            {
+                question: "Quelle phrase mnémotechnique permet de retenir le code des couleurs?",
+                options: [
+                    "Violet Indigo Bleu Vert Jaune Orange Rouge",
+                    "Ne Manger Rien Ou Je Vous Brûle Votre Grande Barbe",
+                    "Richard Of York Gave Battle In Vain",
+                    "Tout Homme Bon Veut Grandir"
+                ],
+                correct: 1,
+                explanation: "La phrase 'Ne Manger Rien Ou Je Vous Brûle Votre Grande Barbe' correspond aux couleurs: Noir(0), Marron(1), Rouge(2), Orange(3), Jaune(4), Vert(5), Bleu(6), Violet(7), Gris(8), Blanc(9)."
+            },
+            {
+                type: "color_code",
+                question: "Une résistance a les anneaux de couleur: Marron - Noir - Rouge - Or. Quelle est sa valeur et tolérance?",
+                options: [
+                    "100 Ω ±5%",
+                    "1 kΩ ±5%",
+                    "10 kΩ ±5%",
+                    "100 Ω ±10%"
+                ],
+                correct: 1,
+                explanation: "Marron(1) - Noir(0) = 10, Rouge(×100) = 10×100 = 1000Ω = 1kΩ, Or(±5%) → 1kΩ ±5%"
+            },
+            {
+                type: "color_code",
+                question: "Une résistance de précision à 5 anneaux: Vert - Bleu - Noir - Marron - Rouge. Quelle est sa valeur?",
+                options: [
+                    "56 Ω ±2%",
+                    "560 Ω ±2%",
+                    "5,6 kΩ ±2%",
+                    "56 kΩ ±2%"
+                ],
+                correct: 1,
+                explanation: "Vert(5) - Bleu(6) - Noir(0) = 560, Marron(×10) = 560×10 = 5600Ω = 5,6kΩ, Rouge(±2%) → 5,6kΩ ±2%"
+            },
+            {
+                question: "Que représente le coefficient de température d'une résistance?",
+                options: [
+                    "La variation de résistance avec l'humidité",
+                    "La sensibilité de la résistance aux variations de température",
+                    "La température maximale d'utilisation",
+                    "La puissance dissipée à température ambiante"
+                ],
+                correct: 1,
+                explanation: "Le coefficient de température (en ppm/°C) indique comment la valeur de la résistance varie avec la température."
+            },
+            {
+                question: "Quelle est la différence entre une CTN et une CTP?",
+                options: [
+                    "La CTN a un coefficient positif, la CTP un coefficient négatif",
+                    "La CTN diminue avec la température, la CTP augmente",
+                    "La CTN est pour haute puissance, la CTP pour basse puissance",
+                    "La CTN est en carbone, la CTP est métallique"
+                ],
+                correct: 1,
+                explanation: "CTN (Coefficient de Température Négatif): résistance diminue quand température augmente. CTP (Coefficient de Température Positif): résistance augmente quand température augmente."
+            },
+            {
+                question: "Quelle est la caractéristique principale d'une photorésistance (LDR)?",
+                options: [
+                    "Sa résistance augmente avec la lumière",
+                    "Sa résistance diminue avec la lumière",
+                    "Elle génère de la tension sous lumière",
+                    "Elle maintient une résistance constante"
+                ],
+                correct: 1,
+                explanation: "Une photorésistance (LDR) voit sa résistance diminuer quand l'intensité lumineuse augmente (peut varier de plusieurs MΩ à quelques centaines d'Ω)."
+            },
+            {
+                question: "Quelle est l'utilité principale d'une varistance (VDR)?",
+                options: [
+                    "Réguler la température",
+                    "Protéger contre les surtensions",
+                    "Mesurer l'intensité lumineuse",
+                    "Ajuster précisément une résistance"
+                ],
+                correct: 1,
+                explanation: "Une varistance (VDR) protège les circuits contre les surtensions: sa résistance chute brusquement quand la tension dépasse un seuil, permettant d'écouler un courant important."
+            }
+        ];
+
+        let questions = [];
+        let studentData = {};
+        let answersCount = 0;
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function prepareQuestions() {
+            questions = questionsBase.map(q => {
+                const shuffledOptions = [];
+                const indices = [0, 1, 2, 3];
+                const shuffledIndices = shuffleArray(indices);
+                
+                shuffledIndices.forEach(oldIndex => {
+                    shuffledOptions.push(q.options[oldIndex]);
+                });
+                
+                const newCorrectIndex = shuffledIndices.indexOf(q.correct);
+                
+                return {
+                    question: q.question,
+                    options: shuffledOptions,
+                    correct: newCorrectIndex,
+                    type: q.type || "theory",
+                    explanation: q.explanation || ""
+                };
+            });
+        }
+
+        function getEvaluationHistory() {
+            const history = localStorage.getItem('evaluationHistory_electronique_ch1');
+            return history ? JSON.parse(history) : [];
+        }
+
+        function saveEvaluation(data) {
+            const history = getEvaluationHistory();
+            const evaluationNumber = history.length + 1;
+            history.push({
+                numero: evaluationNumber,
+                chapitre: "Chapitre 1 - Résistances",
+                date: new Date().toLocaleDateString('fr-FR'),
+                heure: new Date().toLocaleTimeString('fr-FR'),
+                noteTotale: data.noteTotale,
+                quizNote: data.quizNote,
+                noteHabillement: data.noteHabillement,
+                noteCC: data.noteCC,
+                score: data.score,
+                totalQuestions: data.totalQuestions,
+                matricule: data.matricule,
+                nom: data.nom
+            });
+            localStorage.setItem('evaluationHistory_electronique_ch1', JSON.stringify(history));
+        }
+
+        function startEvaluation() {
+            const nom = document.getElementById('nom').value.trim();
+            const matricule = document.getElementById('matricule').value.trim();
+            const habillement = document.querySelector('input[name="habillement"]:checked');
+            const cc = document.querySelector('input[name="cc"]:checked');
+            
+            if (!nom || !matricule || !habillement || !cc) {
+                alert('Veuillez remplir tous les champs obligatoires !');
+                return;
+            }
+            
+            studentData = {
+                nom: nom,
+                matricule: matricule,
+                email: document.getElementById('email').value.trim(),
+                habillement: parseInt(habillement.value),
+                cc: parseInt(cc.value)
+            };
+            
+            prepareQuestions();
+            
+            document.getElementById('studentInfo').style.display = 'none';
+            document.getElementById('quizSection').style.display = 'block';
+            
+            generateQuestions();
+            answersCount = 0;
+        }
+
+        function generateQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                
+                let questionClass = 'question';
+                if (q.type === 'color_code') {
+                    questionClass += ' calculation-question';
+                }
+                
+                questionDiv.className = questionClass;
+                questionDiv.innerHTML = `
+                    <h3>Question ${index + 1} : ${q.question}</h3>
+                    <div class="options">
+                        ${q.options.map((opt, i) => `
+                            <label class="option-label">
+                                <input type="radio" name="q${index}" value="${i}" onchange="trackAnswer()">
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function trackAnswer() {
+            answersCount++;
+            const progress = (answersCount / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function submitEvaluation() {
+            if (!confirm('Êtes-vous sûr(e) de vouloir soumettre votre évaluation ?')) {
+                return;
+            }
+            
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected && parseInt(selected.value) === q.correct) {
+                    score++;
+                }
+            });
+            
+            const quizNote = (score / questions.length) * 20;
+            // Coefficients : Quiz (3), CC (4), Habillement (2)
+            const noteTotale = ((quizNote * 3) + (studentData.cc * 4) + (studentData.habillement * 2)) / 9;
+            
+            const evaluationData = {
+                ...studentData,
+                totalQuestions: questions.length,
+                score: score,
+                quizNote: quizNote.toFixed(2),
+                noteHabillement: studentData.habillement,
+                noteCC: studentData.cc,
+                noteTotale: noteTotale.toFixed(2)
+            };
+            
+            saveEvaluation(evaluationData);
+            generatePDF(evaluationData);
+        }
+
+        function generatePDF(data) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.setFillColor(26, 90, 44);
+            doc.rect(0, 0, 210, 50, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(18);
+            doc.text('RAPPORT D\'ÉVALUATION', 105, 12, { align: 'center' });
+            
+            doc.setFontSize(11);
+            doc.text('Électronique Générale - Chapitre 1 : Résistances', 105, 22, { align: 'center' });
+            doc.text('Génie Informatique - Semestre 2', 105, 29, { align: 'center' });
+            doc.setFontSize(10);
+            doc.text('Enseignant : Dr OBONO BIYOBO Arnaud', 105, 37, { align: 'center' });
+            doc.text('ENSET de Douala', 105, 44, { align: 'center' });
+            
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(11);
+            
+            let y = 65;
+            
+            doc.setFont(undefined, 'bold');
+            doc.text('INFORMATIONS DE L\'ÉTUDIANT(E)', 20, y);
+            y += 10;
+            
+            doc.setFont(undefined, 'normal');
+            doc.text(`Nom : ${data.nom}`, 20, y);
+            y += 7;
+            doc.text(`Matricule : ${data.matricule}`, 20, y);
+            y += 7;
+            if (data.email) {
+                doc.text(`Email : ${data.email}`, 20, y);
+                y += 7;
+            }
+            
+            y += 5;
+            doc.setFont(undefined, 'bold');
+            doc.text('DÉTAILS DE L\'ÉVALUATION', 20, y);
+            y += 10;
+            
+            doc.setFont(undefined, 'normal');
+            doc.text(`Matière : Électronique Générale (G113)`, 20, y);
+            y += 7;
+            doc.text(`Chapitre : Résistances - Partie Généralités`, 20, y);
+            y += 7;
+            doc.text(`Date : ${new Date().toLocaleDateString('fr-FR')}`, 20, y);
+            y += 7;
+            doc.text(`Heure : ${new Date().toLocaleTimeString('fr-FR')}`, 20, y);
+            y += 7;
+            doc.text(`Questions répondues : ${data.totalQuestions}`, 20, y);
+            y += 7;
+            doc.text(`Bonnes réponses : ${data.score}`, 20, y);
+            y += 10;
+            
+            doc.setFont(undefined, 'bold');
+            doc.text('NOTATION DÉTAILLÉE', 20, y);
+            y += 10;
+            
+            doc.setFont(undefined, 'normal');
+            doc.text(`Note Quiz (sur 20) : ${data.quizNote} (coefficient 3)`, 20, y);
+            y += 7;
+            doc.text(`Note Habillement (sur 20) : ${data.noteHabillement} (coefficient 2)`, 20, y);
+            y += 7;
+            doc.text(`Note CC écrit et Simulation (sur 20) : ${data.noteCC} (coefficient 4)`, 20, y);
+            y += 12;
+            
+            doc.setFont(undefined, 'bold');
+            doc.text('CALCUL DE LA NOTE FINALE', 20, y);
+            y += 10;
+            
+            doc.setFont(undefined, 'normal');
+            doc.text(`Formule : Note = (Quiz×3 + CC×4 + Habillement×2) / 9`, 20, y);
+            y += 7;
+            doc.text(`Calcul : (${data.quizNote}×3 + ${data.noteCC}×4 + ${data.noteHabillement}×2) / 9`, 20, y);
+            y += 7;
+            doc.text(`= (${(data.quizNote * 3).toFixed(2)} + ${(data.noteCC * 4).toFixed(2)} + ${(data.noteHabillement * 2).toFixed(2)}) / 9`, 20, y);
+            y += 7;
+            doc.text(`= ${((data.quizNote * 3) + (data.noteCC * 4) + (data.noteHabillement * 2)).toFixed(2)} / 9`, 20, y);
+            y += 10;
+            
+            doc.setFillColor(26, 90, 44);
+            doc.rect(15, y, 180, 22, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(20);
+            doc.setFont(undefined, 'bold');
+            doc.text(`NOTE FINALE : ${data.noteTotale} / 20`, 105, y + 14, { align: 'center' });
+            
+            y += 32;
+            
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.text('APPRÉCIATION', 20, y);
+            y += 8;
+            
+            doc.setFont(undefined, 'normal');
+            let appreciation = '';
+            const noteValue = parseFloat(data.noteTotale);
+            if (noteValue >= 16) appreciation = 'Très bien - Excellente maîtrise des concepts sur les résistances';
+            else if (noteValue >= 14) appreciation = 'Bien - Bonne compréhension des caractéristiques des résistances';
+            else if (noteValue >= 12) appreciation = 'Assez bien - Connaissances satisfaisantes sur les résistances';
+            else if (noteValue >= 10) appreciation = 'Passable - Révision conseillée sur certains points';
+            else appreciation = 'Insuffisant - Révision nécessaire des concepts fondamentaux';
+            
+            doc.text(appreciation, 20, y);
+            y += 15;
+            
+            doc.setFont(undefined, 'bold');
+            doc.text('CONSEILS POUR LA SUITE', 20, y);
+            y += 8;
+            
+            doc.setFont(undefined, 'normal');
+            const conseils = noteValue >= 10 ? 
+                "Continuez à vous exercer sur les associations de résistances et préparez-vous pour le chapitre sur les condensateurs." :
+                "Revoyez les points suivants: code des couleurs, séries normalisées, formule R=ρL/S, et caractéristiques des différents types de résistances.";
+            
+            doc.text(conseils, 20, y);
+            y += 12;
+            
+            const history = getEvaluationHistory();
+            if (history.length > 0) {
+                doc.addPage();
+                y = 20;
+                
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(14);
+                doc.text('HISTORIQUE DES ÉVALUATIONS', 105, y, { align: 'center' });
+                y += 8;
+                
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                doc.text(`Étudiant(e) : ${data.nom}`, 20, y);
+                y += 7;
+                doc.text(`Chapitre : Résistances (Généralités)`, 20, y);
+                y += 7;
+                doc.text(`Nombre total d'évaluations : ${history.length}`, 20, y);
+                y += 10;
+                
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'bold');
+                doc.text('N°', 15, y);
+                doc.text('Date', 25, y);
+                doc.text('Heure', 55, y);
+                doc.text('Note Quiz', 80, y);
+                doc.text('Note Hab.', 110, y);
+                doc.text('Note CC', 140, y);
+                doc.text('Note Finale', 170, y);
+                y += 2;
+                doc.line(15, y, 195, y);
+                y += 5;
+                
+                doc.setFont(undefined, 'normal');
+                history.forEach((evaluation, index) => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                        
+                        doc.setFont(undefined, 'bold');
+                        doc.text('N°', 15, y);
+                        doc.text('Date', 25, y);
+                        doc.text('Heure', 55, y);
+                        doc.text('Note Quiz', 80, y);
+                        doc.text('Note Hab.', 110, y);
+                        doc.text('Note CC', 140, y);
+                        doc.text('Note Finale', 170, y);
+                        y += 2;
+                        doc.line(15, y, 195, y);
+                        y += 5;
+                        doc.setFont(undefined, 'normal');
+                    }
+                    
+                    doc.text(evaluation.numero.toString(), 15, y);
+                    doc.text(evaluation.date, 25, y);
+                    doc.text(evaluation.heure, 55, y);
+                    doc.text(evaluation.quizNote, 80, y);
+                    doc.text(evaluation.noteHabillement.toString(), 110, y);
+                    doc.text(evaluation.noteCC.toString(), 140, y);
+                    
+                    if (index === history.length - 1) {
+                        doc.setFont(undefined, 'bold');
+                        doc.setTextColor(26, 90, 44);
+                    }
+                    doc.text(evaluation.noteTotale, 170, y);
+                    doc.setFont(undefined, 'normal');
+                    doc.setTextColor(0, 0, 0);
+                    y += 6;
+                });
+                
+                if (history.length > 1) {
+                    y += 10;
+                    doc.setFont(undefined, 'bold');
+                    doc.text('STATISTIQUES', 20, y);
+                    y += 8;
+                    doc.setFont(undefined, 'normal');
+                    
+                    const notes = history.map(h => parseFloat(h.noteTotale));
+                    const moyenne = (notes.reduce((a, b) => a + b, 0) / notes.length).toFixed(2);
+                    const meilleure = Math.max(...notes).toFixed(2);
+                    const plusBasse = Math.min(...notes).toFixed(2);
+                    
+                    doc.text(`Moyenne générale : ${moyenne} / 20`, 20, y);
+                    y += 7;
+                    doc.text(`Meilleure note : ${meilleure} / 20`, 20, y);
+                    y += 7;
+                    doc.text(`Note la plus basse : ${plusBasse} / 20`, 20, y);
+                }
+            }
+            
+            const finalY = doc.internal.pageSize.height - 15;
+            doc.setDrawColor(26, 90, 44);
+            doc.line(20, finalY - 5, 190, finalY - 5);
+            
+            doc.setTextColor(100, 100, 100);
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'italic');
+            doc.text('Enseignant : Dr OBONO BIYOBO Arnaud - Électronique Générale G113', 105, finalY, { align: 'center' });
+            doc.text('École Normale Supérieure d\'Enseignement Technique (ENSET) de Douala', 105, finalY + 5, { align: 'center' });
+            
+            doc.save(`Evaluation_Electronique_Ch1_${data.matricule}_${Date.now()}.pdf`);
+            
+            alert(`Évaluation terminée !\n\nScore Quiz : ${data.score}/${data.totalQuestions}\nNote Quiz : ${data.quizNote} / 20\nNote Habillement : ${data.noteHabillement} / 20\nNote CC : ${data.noteCC} / 20\nNote Finale : ${data.noteTotale} / 20\n\n${appreciation}\n\nLe rapport PDF avec l'historique complet a été téléchargé.`);
+        }
+    </script>
+</body>
+</html>

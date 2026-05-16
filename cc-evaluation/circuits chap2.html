@@ -1,0 +1,3140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours d'Électrotechnique - Lois d'Analyse des Circuits</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        /* Variables de couleurs pédagogiques */
+        :root {
+            --primary-blue: #1a2a6c;
+            --secondary-blue: #2a5298;
+            --accent-blue: #3a6fd8;
+            --light-blue: #e8f0ff;
+            --success-green: #27ae60;
+            --warning-orange: #f39c12;
+            --danger-red: #e74c3c;
+            --concept-yellow: #fff9c4;
+            --important-pink: #ffebee;
+            --highlight-orange: #ff9800;
+            --dark-gray: #333;
+            --medium-gray: #666;
+            --light-gray: #f5f5f5;
+        }
+        
+        /* Styles généraux */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--dark-gray);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* En-tête */
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+        
+        .header-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header h2 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        
+        .university-info {
+            background: rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
+            max-width: 800px;
+        }
+        
+        .university-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .copyright {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            color: var(--medium-gray);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab:hover {
+            background: var(--light-blue);
+            color: var(--secondary-blue);
+        }
+        
+        .tab.active {
+            background: var(--light-blue);
+            border-bottom: 3px solid var(--secondary-blue);
+            color: var(--secondary-blue);
+        }
+        
+        /* Sections de contenu */
+        .content-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary-blue);
+            font-size: 1.8rem;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--highlight-orange);
+        }
+        
+        .subsection-title {
+            color: var(--primary-blue);
+            margin: 30px 0 20px 0;
+            font-size: 1.4rem;
+            padding-left: 15px;
+            border-left: 4px solid var(--highlight-orange);
+        }
+        
+        .subsubsection-title {
+            color: var(--secondary-blue);
+            margin: 20px 0 10px 0;
+            font-size: 1.2rem;
+        }
+        
+        /* Mise en évidence des concepts importants */
+        .concept {
+            background: var(--concept-yellow);
+            border-left: 4px solid var(--highlight-orange);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .concept h4 {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .concept h4::before {
+            content: "💡";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .important {
+            background: var(--important-pink);
+            border-left: 4px solid var(--danger-red);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .important h4 {
+            color: var(--danger-red);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .important h4::before {
+            content: "⚠️";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .definition {
+            background: #e8f5e9;
+            border-left: 4px solid var(--success-green);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .definition h4 {
+            color: var(--success-green);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .definition h4::before {
+            content: "📘";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .formula {
+            background: #e3f2fd;
+            border-left: 4px solid var(--accent-blue);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        
+        .formula h4 {
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .formula h4::before {
+            content: "∑";
+            margin-right: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .formula-content {
+            font-size: 1.3em;
+            margin: 10px 0;
+        }
+        
+        /* Outils interactifs */
+        .tool-container {
+            background: var(--light-blue);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid var(--secondary-blue);
+            box-shadow: 0 5px 15px rgba(42, 82, 152, 0.1);
+        }
+        
+        .tool-title {
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .tool-title::before {
+            content: "🛠️";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .tool-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        
+        .tool-controls label {
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        
+        /* Figures et schémas */
+        .figure-container {
+            text-align: center;
+            margin: 25px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid #ddd;
+        }
+        
+        .figure {
+            display: inline-block;
+            margin: 10px;
+            vertical-align: top;
+        }
+        
+        .circuit-diagram {
+            position: relative;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            min-height: 200px;
+            margin: 20px auto;
+        }
+        
+        .resistance {
+            display: inline-block;
+            width: 60px;
+            height: 20px;
+            background: #f0d9b5;
+            border: 1px solid #d4a574;
+            position: relative;
+            margin: 0 10px;
+        }
+        
+        .resistance::before, .resistance::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 10px;
+            height: 2px;
+            background: #333;
+            transform: translateY(-50%);
+        }
+        
+        .resistance::before {
+            left: -10px;
+        }
+        
+        .resistance::after {
+            right: -10px;
+        }
+        
+        .voltage-source {
+            display: inline-block;
+            width: 40px;
+            height: 60px;
+            position: relative;
+            margin: 0 10px;
+        }
+        
+        .voltage-source::before {
+            content: "";
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #333;
+            border-radius: 50%;
+            top: 10px;
+        }
+        
+        .wire {
+            display: inline-block;
+            height: 2px;
+            background: #333;
+            vertical-align: middle;
+        }
+        
+        .node {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #333;
+            border-radius: 50%;
+            margin: 0 10px;
+            vertical-align: middle;
+        }
+        
+        .current-arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 6px 0 6px 12px;
+            border-color: transparent transparent transparent #e74c3c;
+        }
+        
+        .figure-caption {
+            font-style: italic;
+            margin-top: 10px;
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+        }
+        
+        /* Graphiques */
+        .graph-container {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .graph-axis {
+            position: absolute;
+            background: #333;
+        }
+        
+        .graph-axis-x {
+            width: 100%;
+            height: 2px;
+            bottom: 50px;
+            left: 0;
+        }
+        
+        .graph-axis-y {
+            width: 2px;
+            height: 100%;
+            left: 50px;
+            top: 0;
+        }
+        
+        .graph-line {
+            position: absolute;
+            background: var(--secondary-blue);
+            height: 2px;
+            transform-origin: 0 0;
+        }
+        
+        /* Tableaux */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: var(--primary-blue);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:nth-child(even) {
+            background: var(--light-blue);
+        }
+        
+        tr:hover {
+            background: #e3f2fd;
+        }
+        
+        /* Exercices */
+        .exercise {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--secondary-blue);
+        }
+        
+        .exercise-title {
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .exercise-title::before {
+            content: "📝";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .solution {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border-left: 3px solid var(--success-green);
+            display: none;
+        }
+        
+        .solution-title {
+            color: var(--success-green);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .btn-show-solution {
+            background: var(--secondary-blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-show-solution:hover {
+            background: var(--primary-blue);
+            transform: translateY(-2px);
+        }
+        
+        /* Outil calculatrice de circuit */
+        .circuit-simulator {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px solid #ddd;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .circuit-type-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .circuit-type-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .circuit-type-btn:hover {
+            background: var(--light-blue);
+            border-color: var(--secondary-blue);
+        }
+        
+        .circuit-type-btn.active {
+            background: var(--secondary-blue);
+            color: white;
+            border-color: var(--secondary-blue);
+        }
+        
+        .circuit-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .input-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        
+        .input-group input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .circuit-visual {
+            width: 100%;
+            height: 200px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .results-box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid var(--secondary-blue);
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .result-value {
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .result-details {
+            color: var(--medium-gray);
+            font-size: 1rem;
+            font-weight: normal;
+        }
+        
+        /* Section d'évaluation */
+        .evaluation-form {
+            background: var(--light-blue);
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border: 2px solid var(--secondary-blue);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        
+        input[type="text"], input[type="email"], input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input[type="text"]:focus, input[type="email"]:focus, input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .radio-option:hover {
+            background: white;
+            border-color: var(--secondary-blue);
+        }
+        
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            width: 100%;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(26, 42, 108, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(26, 42, 108, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-secondary {
+            background: var(--medium-gray);
+            margin-top: 10px;
+        }
+        
+        .btn-small {
+            width: auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+        }
+        
+        .quiz-section {
+            display: none;
+        }
+        
+        .question {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-blue);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .question h3 {
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option-label {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option-label:hover {
+            background: var(--light-blue);
+            border-color: var(--primary-blue);
+        }
+        
+        .option-label input {
+            margin-right: 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            transition: width 0.3s;
+        }
+        
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--secondary-blue);
+            z-index: 1000;
+            display: none;
+            border: 2px solid var(--secondary-blue);
+        }
+        
+        .timer.warning {
+            background: var(--danger-red);
+            color: white;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* Utilitaires */
+        .note {
+            background: #fff9e6;
+            border-left: 4px solid var(--warning-orange);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .warning-box {
+            background: #ffebee;
+            border-left: 4px solid var(--danger-red);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        
+        .mnemonic {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px dashed var(--secondary-blue);
+            margin: 20px 0;
+            font-style: italic;
+        }
+        
+        .code-example {
+            font-family: 'Courier New', monospace;
+            background: var(--light-gray);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid var(--secondary-blue);
+            overflow-x: auto;
+        }
+        
+        .success-message {
+            background: #e8f5e9;
+            color: var(--success-green);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: center;
+            display: none;
+            border: 1px solid var(--success-green);
+        }
+        
+        .error-message {
+            background: #ffebee;
+            color: var(--danger-red);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: center;
+            display: none;
+            border: 1px solid var(--danger-red);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .circuit-inputs {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                text-align: center;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .content-section {
+                padding: 20px;
+            }
+            
+            .circuit-type-selector {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h2 {
+                font-size: 1.4rem;
+            }
+            
+            .university-info {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>Cours d'Électrotechnique</h1>
+                <h2>Lois d'Étude et d'Analyse des Circuits Électriques</h2>
+                <div class="university-info">
+                    <h3>Université de Douala - École Normale Supérieure d'Enseignement Technique (ENSET)</h3>
+                    <p>Département de Génie Informatique</p>
+                    <p>Enseignant : Dr OBONO.B.A - Chargé de Cours</p>
+                    <p>Année académique 2025/2026</p>
+                    <div class="copyright">
+                        © Ce support de cours est destiné à un usage pédagogique exclusif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="nav-tabs">
+            <div class="tab active" data-target="loi-ohm">Loi d'Ohm</div>
+            <div class="tab" data-target="kirchhoff-tensions">Loi des Tensions</div>
+            <div class="tab" data-target="kirchhoff-courants">Loi des Courants</div>
+            <div class="tab" data-target="pouillet">Loi de Pouillet</div>
+            <div class="tab" data-target="diviseurs">Diviseurs</div>
+            <div class="tab" data-target="associations">Associations</div>
+            <div class="tab" data-target="simulateur">Simulateur</div>
+            <div class="tab" data-target="evaluation">Évaluation</div>
+        </div>
+        
+        <!-- Section Loi d'Ohm -->
+        <div id="loi-ohm" class="content-section active">
+            <h2 class="section-title">Chapitre II : Lois d'Étude et d'Analyse des Circuits Électriques</h2>
+            
+            <div class="subsection-title">I- Étude en Continu</div>
+            <div class="subsubsection-title">I-1 Loi d'Ohm</div>
+            
+            <div class="definition">
+                <h4>Définition</h4>
+                <p>La loi d'Ohm établit que la différence de potentiel (tension) aux bornes d'une résistance est proportionnelle à l'intensité du courant qui la traverse. Cette relation fondamentale s'exprime mathématiquement par :</p>
+            </div>
+            
+            <div class="formula">
+                <h4>Formule de la Loi d'Ohm</h4>
+                <div class="formula-content">U = R × I</div>
+                <p>Où :<br>
+                U = Tension en volts (V)<br>
+                R = Résistance en ohms (Ω)<br>
+                I = Intensité en ampères (A)</p>
+            </div>
+            
+            <div class="concept">
+                <h4>Concept Clé : Conductance</h4>
+                <p>L'inverse de la résistance est la conductance, notée G. La loi d'Ohm peut donc également s'écrire :</p>
+                <div class="formula-content">I = G × U</div>
+                <p>Avec G = 1/R (en Siemens, S)</p>
+            </div>
+            
+            <div class="subsection-title">Représentation Graphique</div>
+            
+            <div class="figure-container">
+                <div class="graph-container" id="ohm-graph-container">
+                    <!-- Le graphique sera généré par JavaScript -->
+                </div>
+                <div class="figure-caption">Figure 2.1 : Courbe tension-courant pour deux valeurs ohmiques différentes</div>
+            </div>
+            
+            <p>La relation U = R×I correspond à l'équation d'une droite passant par l'origine. La pente de cette droite est déterminée par la valeur de la résistance R :</p>
+            
+            <div class="formula">
+                <h4>Équation de la droite</h4>
+                <div class="formula-content">U = R × I + 0</div>
+                <p>Cette équation linéaire montre que :</p>
+                <ul>
+                    <li>Plus la résistance R est grande, plus la pente de la droite est forte</li>
+                    <li>Pour un courant I₁ fixe, plus R est grande, plus U est grande</li>
+                    <li>La droite passe toujours par l'origine (0,0)</li>
+                </ul>
+            </div>
+            
+            <div class="figure-container">
+                <div class="graph-container" id="conductance-graph-container">
+                    <!-- Le graphique sera généré par JavaScript -->
+                </div>
+                <div class="figure-caption">Figure 2.2 : Courbe courant-tension pour deux conductances différentes</div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-title">Exercice 1 : Application de la loi d'Ohm</div>
+                <p>Calculer la tension qui doit être appliquée aux fils du fer à souder ci-dessous pour qu'un courant de 1,5A passe dans le fer, si sa résistance interne vaut 80Ω.</p>
+                
+                <div class="figure-container">
+                    <div class="circuit-diagram" style="width: 300px; margin: 0 auto;">
+                        <div style="position: relative; height: 100px;">
+                            <div style="position: absolute; left: 50px; top: 40px; width: 100px;" class="resistance">80Ω</div>
+                            <div style="position: absolute; left: 160px; top: 40px; width: 60px;" class="wire"></div>
+                            <div style="position: absolute; left: 220px; top: 30px;" class="voltage-source"></div>
+                            <div style="position: absolute; left: 220px; top: 35px; font-size: 12px;">U = ?</div>
+                            <div style="position: absolute; left: 160px; top: 60px; font-size: 12px;">I = 1,5A</div>
+                        </div>
+                    </div>
+                    <div class="figure-caption">Figure 2.3 : Fer à souder</div>
+                </div>
+                
+                <button class="btn-show-solution" onclick="showSolution('solution-ohm1')">Voir la solution</button>
+                <div id="solution-ohm1" class="solution">
+                    <div class="solution-title">Solution :</div>
+                    <p>Selon la loi d'Ohm : U = R × I</p>
+                    <p>Donc : U = 80Ω × 1,5A = 120V</p>
+                    <p>Il faut appliquer une tension de 120V aux bornes du fer à souder.</p>
+                </div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-title">Exercice 2 : Calcul du courant</div>
+                <p>Quelle est l'intensité du courant électrique qui traverse la résistance de 2Ω ci-dessous, si la tension à ses bornes est de 16V?</p>
+                
+                <div class="figure-container">
+                    <div class="circuit-diagram" style="width: 200px; margin: 0 auto;">
+                        <div style="position: relative; height: 80px;">
+                            <div style="position: absolute; left: 70px; top: 30px; width: 60px;" class="resistance">2Ω</div>
+                            <div style="position: absolute; left: 70px; top: 55px; font-size: 12px;">U = 16V</div>
+                        </div>
+                    </div>
+                    <div class="figure-caption">Figure 2.4 : Résistance simple</div>
+                </div>
+                
+                <button class="btn-show-solution" onclick="showSolution('solution-ohm2')">Voir la solution</button>
+                <div id="solution-ohm2" class="solution">
+                    <div class="solution-title">Solution :</div>
+                    <p>Selon la loi d'Ohm : I = U / R</p>
+                    <p>Donc : I = 16V / 2Ω = 8A</p>
+                    <p>L'intensité du courant qui traverse la résistance est de 8A.</p>
+                </div>
+            </div>
+            
+            <div class="tool-container">
+                <h3 class="tool-title">Calculateur de la Loi d'Ohm</h3>
+                
+                <div class="circuit-inputs">
+                    <div class="input-group">
+                        <label for="ohm-voltage">Tension (V) :</label>
+                        <input type="number" id="ohm-voltage" placeholder="Entrez la tension">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="ohm-current">Courant (A) :</label>
+                        <input type="number" id="ohm-current" placeholder="Entrez le courant">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="ohm-resistance">Résistance (Ω) :</label>
+                        <input type="number" id="ohm-resistance" placeholder="Entrez la résistance">
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-small" onclick="calculateOhm()">Calculer</button>
+                    <button class="btn btn-small btn-secondary" onclick="resetOhm()">Réinitialiser</button>
+                </div>
+                
+                <div class="results-box">
+                    <div id="ohm-result" class="result-value">Résultat : -</div>
+                    <div id="ohm-details" class="result-details">Entrez deux valeurs pour calculer la troisième</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section Loi des Tensions de Kirchhoff -->
+        <div id="kirchhoff-tensions" class="content-section">
+            <h2 class="section-title">Loi des Tensions de Kirchhoff (Loi des Mailles)</h2>
+            
+            <div class="definition">
+                <h4>Énoncé</h4>
+                <p>La somme algébrique des différences de potentiel (tensions) le long d'un circuit fermé (ou maille) est nulle.</p>
+            </div>
+            
+            <div class="formula">
+                <h4>Formulation Mathématique</h4>
+                <div class="formula-content">∑U = 0</div>
+                <p>Dans une maille fermée, la somme des tensions est égale à zéro.</p>
+            </div>
+            
+            <div class="important">
+                <h4>Convention de signe</h4>
+                <p>Il est essentiel de respecter les signes des tensions :</p>
+                <ul>
+                    <li>Les tensions rencontrées dans le sens de parcours de la maille sont positives (+)</li>
+                    <li>Les tensions rencontrées dans le sens opposé sont négatives (-)</li>
+                </ul>
+            </div>
+            
+            <div class="figure-container">
+                <div class="circuit-diagram" id="kirchhoff-voltage-diagram" style="height: 250px;">
+                    <!-- Le circuit sera généré par JavaScript -->
+                </div>
+                <div class="figure-caption">Figure 2.5 : Circuit illustrant la loi des mailles</div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-title">Exercice d'application</div>
+                <p>Considérons le circuit ci-dessus avec :</p>
+                <ul>
+                    <li>Vsource = 24V</li>
+                    <li>R1 = 4Ω, R2 = 6Ω, R3 = 8Ω</li>
+                    <li>I = 2A (courant dans le circuit)</li>
+                </ul>
+                <p>Déterminer V1, V2 et V3 (tensions aux bornes de chaque résistance).</p>
+                
+                <button class="btn-show-solution" onclick="showSolution('solution-kirchhoff-v')">Voir la solution</button>
+                <div id="solution-kirchhoff-v" class="solution">
+                    <div class="solution-title">Solution :</div>
+                    <p>1. Calcul des tensions individuelles (loi d'Ohm) :</p>
+                    <p>V1 = R1 × I = 4Ω × 2A = 8V</p>
+                    <p>V2 = R2 × I = 6Ω × 2A = 12V</p>
+                    <p>V3 = R3 × I = 8Ω × 2A = 16V</p>
+                    <br>
+                    <p>2. Vérification avec la loi des mailles :</p>
+                    <p>∑U = Vsource - V1 - V2 - V3 = 24V - 8V - 12V - 16V = 0V ✓</p>
+                    <p>La somme est bien nulle, ce qui vérifie la loi de Kirchhoff.</p>
+                </div>
+            </div>
+            
+            <div class="tool-container">
+                <h3 class="tool-title">Simulateur de Loi des Mailles</h3>
+                
+                <div class="circuit-inputs">
+                    <div class="input-group">
+                        <label for="mesh-voltage">Tension source (V) :</label>
+                        <input type="number" id="mesh-voltage" value="24" min="1" max="100">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="mesh-current">Courant (A) :</label>
+                        <input type="number" id="mesh-current" value="2" min="0.1" max="10" step="0.1">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="mesh-r1">R1 (Ω) :</label>
+                        <input type="number" id="mesh-r1" value="4" min="1" max="100">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="mesh-r2">R2 (Ω) :</label>
+                        <input type="number" id="mesh-r2" value="6" min="1" max="100">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="mesh-r3">R3 (Ω) :</label>
+                        <input type="number" id="mesh-r3" value="8" min="1" max="100">
+                    </div>
+                </div>
+                
+                <button class="btn btn-small" onclick="calculateMesh()">Calculer et Vérifier</button>
+                
+                <div class="results-box">
+                    <div id="mesh-result" class="result-value">∑U = 0V</div>
+                    <div id="mesh-details" class="result-details">V1 = 8V, V2 = 12V, V3 = 16V</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section Loi des Courants de Kirchhoff -->
+        <div id="kirchhoff-courants" class="content-section">
+            <h2 class="section-title">Loi des Courants de Kirchhoff (Loi des Nœuds)</h2>
+            
+            <div class="definition">
+                <h4>Énoncé</h4>
+                <p>La somme algébrique des courants qui arrivent à un nœud est égale à la somme des courants qui en partent. Autrement dit, la somme totale des courants en un nœud est nulle.</p>
+            </div>
+            
+            <div class="formula">
+                <h4>Formulation Mathématique</h4>
+                <div class="formula-content">∑I<sub>entrants</sub> = ∑I<sub>sortants</sub></div>
+                <p>ou</p>
+                <div class="formula-content">∑I = 0</div>
+                <p>(en convention : courants entrants positifs, sortants négatifs)</p>
+            </div>
+            
+            <div class="concept">
+                <h4>Concept Clé : Nœud électrique</h4>
+                <p>Un nœud est un point de connexion entre trois ou plusieurs éléments de circuit. C'est à ces points que s'applique la loi des nœuds.</p>
+            </div>
+            
+            <div class="figure-container">
+                <div class="circuit-diagram" id="kirchhoff-current-diagram" style="height: 300px;">
+                    <!-- Le circuit sera généré par JavaScript -->
+                </div>
+                <div class="figure-caption">Figure 2.6 : Circuit illustrant la loi des nœuds</div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-title">Exercice d'application</div>
+                <p>Considérons le circuit ci-dessus. Vérifier que la somme des courants arrivant au nœud A est égale à la somme des courants sortant.</p>
+                <p>Données : I1 = 5A, I2 = 3A, I3 = 2A, I4 = 4A, I5 = 4A</p>
+                
+                <button class="btn-show-solution" onclick="showSolution('solution-kirchhoff-i')">Voir la solution</button>
+                <div id="solution-kirchhoff-i" class="solution">
+                    <div class="solution-title">Solution :</div>
+                    <p>Au nœud A, selon la loi des nœuds :</p>
+                    <p>∑I<sub>entrants</sub> = ∑I<sub>sortants</sub></p>
+                    <p>Courants entrants : I1 = 5A, I2 = 3A</p>
+                    <p>Courants sortants : I3 = 2A, I4 = 4A, I5 = 4A</p>
+                    <br>
+                    <p>Calcul :</p>
+                    <p>∑I<sub>entrants</sub> = 5A + 3A = 8A</p>
+                    <p>∑I<sub>sortants</sub> = 2A + 4A + 4A = 10A</p>
+                    <p>Il y a une incohérence ! Réexaminons le circuit...</p>
+                    <br>
+                    <p>En réalité, I5 devrait être 2A pour que :</p>
+                    <p>∑I<sub>sortants</sub> = 2A + 4A + 2A = 8A = ∑I<sub>entrants</sub> ✓</p>
+                </div>
+            </div>
+            
+            <div class="tool-container">
+                <h3 class="tool-title">Vérificateur de Loi des Nœuds</h3>
+                
+                <div class="circuit-inputs">
+                    <div class="input-group">
+                        <label for="node-i1">I1 (A) :</label>
+                        <input type="number" id="node-i1" value="5" min="0" max="20">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="node-i2">I2 (A) :</label>
+                        <input type="number" id="node-i2" value="3" min="0" max="20">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="node-i3">I3 (A) :</label>
+                        <input type="number" id="node-i3" value="2" min="0" max="20">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="node-i4">I4 (A) :</label>
+                        <input type="number" id="node-i4" value="4" min="0" max="20">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="node-i5">I5 (A) :</label>
+                        <input type="number" id="node-i5" value="2" min="0" max="20">
+                    </div>
+                </div>
+                
+                <button class="btn btn-small" onclick="verifyNodeLaw()">Vérifier</button>
+                
+                <div class="results-box">
+                    <div id="node-result" class="result-value">∑I = 0A</div>
+                    <div id="node-details" class="result-details">∑entrants = 8A, ∑sortants = 8A</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section Loi de Pouillet -->
+        <div id="pouillet" class="content-section">
+            <h2 class="section-title">Loi de Pouillet</h2>
+            
+            <div class="definition">
+                <h4>Énoncé</h4>
+                <p>L'intensité dans un circuit série en maille simple composé de générateurs, de récepteurs et de conducteurs ohmiques est déterminée par le rapport de la somme algébrique des forces électromotrices à la somme des résistances du circuit.</p>
+            </div>
+            
+            <div class="formula">
+                <h4>Formulation Mathématique</h4>
+                <div class="formula-content">I = (∑E) / (∑R)</div>
+                <p>Où :<br>
+                I = Intensité du courant (A)<br>
+                ∑E = Somme algébrique des forces électromotrices (V)<br>
+                ∑R = Somme des résistances du circuit (Ω)</p>
+            </div>
+            
+            <div class="important">
+                <h4>Convention de signe pour ∑E</h4>
+                <p>Les f.é.m. sont comptées positivement si elles tendent à faire circuler le courant dans le sens choisi pour le parcours de la maille, négativement dans le cas contraire.</p>
+            </div>
+            
+            <div class="figure-container">
+                <div class="circuit-diagram" id="pouillet-diagram" style="height: 200px;">
+                    <!-- Le circuit sera généré par JavaScript -->
+                </div>
+                <div class="figure-caption">Figure 2.7 : Circuit série illustrant la loi de Pouillet</div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-title">Exercice d'application</div>
+                <p>Considérons le circuit ci-dessus avec :</p>
+                <ul>
+                    <li>E1 = 12V, E2 = 6V</li>
+                    <li>R1 = 4Ω, R2 = 2Ω, R3 = 3Ω</li>
+                </ul>
+                <p>Calculer l'intensité du courant I qui traverse le circuit.</p>
+                
+                <button class="btn-show-solution" onclick="showSolution('solution-pouillet')">Voir la solution</button>
+                <div id="solution-pouillet" class="solution">
+                    <div class="solution-title">Solution :</div>
+                    <p>D'après la loi de Pouillet :</p>
+                    <p>I = (∑E) / (∑R)</p>
+                    <p>∑E = E1 - E2 = 12V - 6V = 6V (E2 est opposé à E1)</p>
+                    <p>∑R = R1 + R2 + R3 = 4Ω + 2Ω + 3Ω = 9Ω</p>
+                    <p>Donc : I = 6V / 9Ω = 0,67A</p>
+                    <p>L'intensité du courant est d'environ 0,67 ampères.</p>
+                </div>
+            </div>
+            
+            <div class="tool-container">
+                <h3 class="tool-title">Calculateur de Loi de Pouillet</h3>
+                
+                <div class="circuit-inputs">
+                    <div class="input-group">
+                        <label for="pouillet-e1">E1 (V) :</label>
+                        <input type="number" id="pouillet-e1" value="12" min="0" max="100">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="pouillet-e2">E2 (V) :</label>
+                        <input type="number" id="pouillet-e2" value="6" min="0" max="100">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="pouillet-r1">R1 (Ω) :</label>
+                        <input type="number" id="pouillet-r1" value="4" min="0" max="100">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="pouillet-r2">R2 (Ω) :</label>
+                        <input type="number" id="pouillet-r2" value="2" min="0" max="100">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="pouillet-r3">R3 (Ω) :</label>
+                        <input type="number" id="pouillet-r3" value="3" min="0" max="100">
+                    </div>
+                </div>
+                
+                <button class="btn btn-small" onclick="calculatePouillet()">Calculer I</button>
+                
+                <div class="results-box">
+                    <div id="pouillet-result" class="result-value">I = 0,67A</div>
+                    <div id="pouillet-details" class="result-details">∑E = 6V, ∑R = 9Ω</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section Diviseurs -->
+        <div id="diviseurs" class="content-section">
+            <h2 class="section-title">Diviseurs de Tension et de Courant</h2>
+            
+            <div class="subsection-title">I-5 Règle du Diviseur de Tension</div>
+            
+            <div class="definition">
+                <h4>Énoncé</h4>
+                <p>Dans un montage série, la tension aux bornes d'une résistance quelconque est égale au produit de la valeur de cette résistance par la tension totale, divisé par la résistance totale du circuit.</p>
+            </div>
+            
+            <div class="formula">
+                <h4>Formulation Mathématique</h4>
+                <div class="formula-content">U<sub>R<sub>i</sub></sub> = (R<sub>i</sub> × U<sub>totale</sub>) / R<sub>totale</sub></div>
+            </div>
+            
+            <div class="figure-container">
+                <div class="circuit-diagram" id="voltage-divider-diagram" style="height: 150px;">
+                    <!-- Le circuit sera généré par JavaScript -->
+                </div>
+                <div class="figure-caption">Figure 2.8 : Diviseur de tension</div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-title">Exercice d'application</div>
+                <p>Pour le circuit ci-dessus avec U = 24V, R1 = 8Ω, R2 = 4Ω, calculer la tension aux bornes de R2.</p>
+                
+                <button class="btn-show-solution" onclick="showSolution('solution-divider-v')">Voir la solution</button>
+                <div id="solution-divider-v" class="solution">
+                    <div class="solution-title">Solution :</div>
+                    <p>Selon la règle du diviseur de tension :</p>
+                    <p>U<sub>R2</sub> = (R2 × U) / (R1 + R2)</p>
+                    <p>U<sub>R2</sub> = (4Ω × 24V) / (8Ω + 4Ω) = 96V / 12Ω = 8V</p>
+                    <p>La tension aux bornes de R2 est de 8V.</p>
+                </div>
+            </div>
+            
+            <div class="subsection-title">I-6 Règle du Diviseur de Courant</div>
+            
+            <div class="definition">
+                <h4>Énoncé</h4>
+                <p>Dans un montage parallèle, le courant dans une branche quelconque est égal au produit de la résistance totale des branches parallèles et du courant d'entrée, divisé par la résistance de la branche considérée.</p>
+            </div>
+            
+            <div class="formula">
+                <h4>Formulation Mathématique</h4>
+                <div class="formula-content">I<sub>R<sub>i</sub></sub> = (R<sub>total-parallèle</sub> × I<sub>total</sub>) / R<sub>i</sub></div>
+                <p>Pour deux résistances en parallèle :</p>
+                <div class="formula-content">I<sub>1</sub> = (R<sub>2</sub> × I) / (R<sub>1</sub> + R<sub>2</sub>)</div>
+            </div>
+            
+            <div class="figure-container">
+                <div class="circuit-diagram" id="current-divider-diagram" style="height: 200px;">
+                    <!-- Le circuit sera généré par JavaScript -->
+                </div>
+                <div class="figure-caption">Figure 2.9 : Diviseur de courant</div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-title">Exercice d'application</div>
+                <p>Pour le circuit ci-dessus avec I = 9A, R1 = 12Ω, R2 = 6Ω, calculer le courant I1 traversant R1.</p>
+                
+                <button class="btn-show-solution" onclick="showSolution('solution-divider-i')">Voir la solution</button>
+                <div id="solution-divider-i" class="solution">
+                    <div class="solution-title">Solution :</div>
+                    <p>Selon la règle du diviseur de courant pour deux résistances :</p>
+                    <p>I<sub>1</sub> = (R<sub>2</sub> × I) / (R<sub>1</sub> + R<sub>2</sub>)</p>
+                    <p>I<sub>1</sub> = (6Ω × 9A) / (12Ω + 6Ω) = 54A / 18Ω = 3A</p>
+                    <p>Le courant traversant R1 est de 3A.</p>
+                </div>
+            </div>
+            
+            <div class="tool-container">
+                <h3 class="tool-title">Calculateur de Diviseurs</h3>
+                
+                <div class="circuit-type-selector">
+                    <button class="circuit-type-btn active" onclick="showDividerTool('voltage')">Diviseur de Tension</button>
+                    <button class="circuit-type-btn" onclick="showDividerTool('current')">Diviseur de Courant</button>
+                </div>
+                
+                <div id="voltage-divider-tool" class="divider-tool">
+                    <div class="circuit-inputs">
+                        <div class="input-group">
+                            <label for="divider-v-total">Tension totale (V) :</label>
+                            <input type="number" id="divider-v-total" value="24" min="1" max="100">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="divider-v-r1">R1 (Ω) :</label>
+                            <input type="number" id="divider-v-r1" value="8" min="1" max="100">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="divider-v-r2">R2 (Ω) :</label>
+                            <input type="number" id="divider-v-r2" value="4" min="1" max="100">
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-small" onclick="calculateVoltageDivider()">Calculer</button>
+                    
+                    <div class="results-box">
+                        <div id="voltage-divider-result" class="result-value">U1 = 16V, U2 = 8V</div>
+                        <div id="voltage-divider-details" class="result-details">Rtotale = 12Ω</div>
+                    </div>
+                </div>
+                
+                <div id="current-divider-tool" class="divider-tool" style="display: none;">
+                    <div class="circuit-inputs">
+                        <div class="input-group">
+                            <label for="divider-i-total">Courant total (A) :</label>
+                            <input type="number" id="divider-i-total" value="9" min="1" max="100">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="divider-i-r1">R1 (Ω) :</label>
+                            <input type="number" id="divider-i-r1" value="12" min="1" max="100">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="divider-i-r2">R2 (Ω) :</label>
+                            <input type="number" id="divider-i-r2" value="6" min="1" max="100">
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-small" onclick="calculateCurrentDivider()">Calculer</button>
+                    
+                    <div class="results-box">
+                        <div id="current-divider-result" class="result-value">I1 = 3A, I2 = 6A</div>
+                        <div id="current-divider-details" class="result-details">Rparallèle = 4Ω</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section Associations -->
+        <div id="associations" class="content-section">
+            <h2 class="section-title">Association des Résistances</h2>
+            
+            <div class="subsection-title">I-7-1 Association Série</div>
+            
+            <div class="definition">
+                <h4>Énoncé</h4>
+                <p>La résistance totale d'un montage série de N résistances est égale à la somme des valeurs ohmiques de ces résistances.</p>
+            </div>
+            
+            <div class="formula">
+                <h4>Formulation Mathématique</h4>
+                <div class="formula-content">R<sub>total</sub> = R<sub>1</sub> + R<sub>2</sub> + ... + R<sub>N</sub></div>
+            </div>
+            
+            <div class="concept">
+                <h4>Caractéristiques du montage série</h4>
+                <ul>
+                    <li>Même courant traverse toutes les résistances</li>
+                    <li>Tension totale = somme des tensions partielles</li>
+                    <li>Résistance totale toujours supérieure à chaque résistance individuelle</li>
+                </ul>
+            </div>
+            
+            <div class="figure-container">
+                <div class="circuit-diagram" id="series-circuit-diagram" style="height: 100px;">
+                    <!-- Le circuit sera généré par JavaScript -->
+                </div>
+                <div class="figure-caption">Figure 2.10 : Association série de résistances</div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-title">Exercice d'application</div>
+                <p>Pour le circuit ci-dessus avec R1 = 10Ω, R2 = 20Ω, R3 = 30Ω, calculer la résistance équivalente.</p>
+                
+                <button class="btn-show-solution" onclick="showSolution('solution-series')">Voir la solution</button>
+                <div id="solution-series" class="solution">
+                    <div class="solution-title">Solution :</div>
+                    <p>En série : R<sub>total</sub> = R<sub>1</sub> + R<sub>2</sub> + R<sub>3</sub></p>
+                    <p>R<sub>total</sub> = 10Ω + 20Ω + 30Ω = 60Ω</p>
+                    <p>La résistance équivalente est de 60Ω.</p>
+                </div>
+            </div>
+            
+            <div class="subsection-title">I-7-2 Association Parallèle</div>
+            
+            <div class="definition">
+                <h4>Énoncé</h4>
+                <p>La résistance totale d'un circuit parallèle de N résistances est égale à l'inverse de la somme des inverses des résistances individuelles.</p>
+            </div>
+            
+            <div class="formula">
+                <h4>Formulation Mathématique</h4>
+                <div class="formula-content">1/R<sub>total</sub> = 1/R<sub>1</sub> + 1/R<sub>2</sub> + ... + 1/R<sub>N</sub></div>
+                <p>Pour deux résistances en parallèle :</p>
+                <div class="formula-content">R<sub>total</sub> = (R<sub>1</sub> × R<sub>2</sub>) / (R<sub>1</sub> + R<sub>2</sub>)</div>
+            </div>
+            
+            <div class="concept">
+                <h4>Caractéristiques du montage parallèle</h4>
+                <ul>
+                    <li>Même tension aux bornes de toutes les résistances</li>
+                    <li>Courant total = somme des courants dans chaque branche</li>
+                    <li>Résistance totale toujours inférieure à la plus petite résistance individuelle</li>
+                </ul>
+            </div>
+            
+            <div class="figure-container">
+                <div class="circuit-diagram" id="parallel-circuit-diagram" style="height: 150px;">
+                    <!-- Le circuit sera généré par JavaScript -->
+                </div>
+                <div class="figure-caption">Figure 2.11 : Association parallèle de résistances</div>
+            </div>
+            
+            <div class="exercise">
+                <div class="exercise-title">Exercice d'application</div>
+                <p>Pour le circuit ci-dessus avec R1 = 12Ω, R2 = 6Ω, R3 = 4Ω, calculer la résistance équivalente.</p>
+                
+                <button class="btn-show-solution" onclick="showSolution('solution-parallel')">Voir la solution</button>
+                <div id="solution-parallel" class="solution">
+                    <div class="solution-title">Solution :</div>
+                    <p>En parallèle : 1/R<sub>total</sub> = 1/R<sub>1</sub> + 1/R<sub>2</sub> + 1/R<sub>3</sub></p>
+                    <p>1/R<sub>total</sub> = 1/12 + 1/6 + 1/4 = 1/12 + 2/12 + 3/12 = 6/12 = 1/2</p>
+                    <p>Donc : R<sub>total</sub> = 2Ω</p>
+                    <p>La résistance équivalente est de 2Ω.</p>
+                </div>
+            </div>
+            
+            <div class="tool-container">
+                <h3 class="tool-title">Calculateur d'Associations de Résistances</h3>
+                
+                <div class="circuit-type-selector">
+                    <button class="circuit-type-btn active" onclick="showResistorTool('series')">Association Série</button>
+                    <button class="circuit-type-btn" onclick="showResistorTool('parallel')">Association Parallèle</button>
+                    <button class="circuit-type-btn" onclick="showResistorTool('mixed')">Association Mixte</button>
+                </div>
+                
+                <div id="series-resistor-tool" class="resistor-tool">
+                    <div class="circuit-inputs">
+                        <div class="input-group">
+                            <label for="series-r1">R1 (Ω) :</label>
+                            <input type="number" id="series-r1" value="10" min="1" max="1000">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="series-r2">R2 (Ω) :</label>
+                            <input type="number" id="series-r2" value="20" min="1" max="1000">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="series-r3">R3 (Ω) :</label>
+                            <input type="number" id="series-r3" value="30" min="1" max="1000">
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-small" onclick="calculateSeriesResistance()">Calculer Réquivalente</button>
+                    
+                    <div class="results-box">
+                        <div id="series-result" class="result-value">Réquivalente = 60Ω</div>
+                        <div id="series-details" class="result-details">Rtotal = R1 + R2 + R3</div>
+                    </div>
+                </div>
+                
+                <div id="parallel-resistor-tool" class="resistor-tool" style="display: none;">
+                    <div class="circuit-inputs">
+                        <div class="input-group">
+                            <label for="parallel-r1">R1 (Ω) :</label>
+                            <input type="number" id="parallel-r1" value="12" min="1" max="1000">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="parallel-r2">R2 (Ω) :</label>
+                            <input type="number" id="parallel-r2" value="6" min="1" max="1000">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="parallel-r3">R3 (Ω) :</label>
+                            <input type="number" id="parallel-r3" value="4" min="1" max="1000">
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-small" onclick="calculateParallelResistance()">Calculer Réquivalente</button>
+                    
+                    <div class="results-box">
+                        <div id="parallel-result" class="result-value">Réquivalente = 2Ω</div>
+                        <div id="parallel-details" class="result-details">1/Rtotal = 1/R1 + 1/R2 + 1/R3</div>
+                    </div>
+                </div>
+                
+                <div id="mixed-resistor-tool" class="resistor-tool" style="display: none;">
+                    <div class="circuit-inputs">
+                        <div class="input-group">
+                            <label for="mixed-r1">R1 (Ω) :</label>
+                            <input type="number" id="mixed-r1" value="10" min="1" max="1000">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="mixed-r2">R2 (Ω) :</label>
+                            <input type="number" id="mixed-r2" value="20" min="1" max="1000">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="mixed-r3">R3 (Ω) :</label>
+                            <input type="number" id="mixed-r3" value="30" min="1" max="1000">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="mixed-r4">R4 (Ω) :</label>
+                            <input type="number" id="mixed-r4" value="40" min="1" max="1000">
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 15px 0;">
+                        <label>Configuration :</label>
+                        <select id="mixed-config" onchange="updateMixedCircuit()">
+                            <option value="series-parallel">(R1 série (R2 // R3)) série R4</option>
+                            <option value="parallel-series">(R1 // R2) série (R3 // R4)</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-small" onclick="calculateMixedResistance()">Calculer Réquivalente</button>
+                    
+                    <div class="results-box">
+                        <div id="mixed-result" class="result-value">Réquivalente = -</div>
+                        <div id="mixed-details" class="result-details">Sélectionnez une configuration</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section Simulateur -->
+        <div id="simulateur" class="content-section">
+            <h2 class="section-title">Simulateur de Circuits Électriques</h2>
+            
+            <div class="definition">
+                <h4>Outil d'Apprentissage Intégré</h4>
+                <p>Ce simulateur vous permet d'expérimenter avec les différentes lois et concepts étudiés dans ce cours. Créez des circuits, modifiez les valeurs, et observez les résultats en temps réel.</p>
+            </div>
+            
+            <div class="tool-container">
+                <h3 class="tool-title">Simulateur de Circuit Série-Parallèle</h3>
+                
+                <div class="circuit-type-selector">
+                    <button class="circuit-type-btn active" onclick="selectCircuitType('simple')">Circuit Simple</button>
+                    <button class="circuit-type-btn" onclick="selectCircuitType('series')">Circuit Série</button>
+                    <button class="circuit-type-btn" onclick="selectCircuitType('parallel')">Circuit Parallèle</button>
+                    <button class="circuit-type-btn" onclick="selectCircuitType('complex')">Circuit Complexe</button>
+                </div>
+                
+                <div class="circuit-visual" id="circuit-simulator-visual">
+                    <!-- Le circuit sera dessiné ici par JavaScript -->
+                </div>
+                
+                <div class="circuit-inputs" id="simulator-inputs">
+                    <!-- Les champs de saisie seront générés dynamiquement -->
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-small" onclick="simulateCircuit()">Simuler le Circuit</button>
+                    <button class="btn btn-small btn-secondary" onclick="resetSimulator()">Réinitialiser</button>
+                </div>
+                
+                <div class="results-box" style="margin-top: 20px;">
+                    <div id="simulator-result" class="result-value">Résultats : -</div>
+                    <div id="simulator-details" class="result-details">Sélectionnez un type de circuit et entrez les valeurs</div>
+                </div>
+            </div>
+            
+            <div class="concept">
+                <h4>Concepts Vérifiés par le Simulateur</h4>
+                <ul>
+                    <li><strong>Loi d'Ohm</strong> : Relation entre tension, courant et résistance</li>
+                    <li><strong>Loi des mailles</strong> : Somme des tensions dans une boucle fermée</li>
+                    <li><strong>Loi des nœuds</strong> : Conservation du courant aux nœuds</li>
+                    <li><strong>Diviseurs</strong> : Répartition de tension et courant</li>
+                    <li><strong>Associations</strong> : Résistance équivalente des montages série/parallèle</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Section Évaluation -->
+        <div id="evaluation" class="content-section">
+            <h2 class="section-title">Évaluation - Lois des Circuits Électriques</h2>
+            
+            <div class="evaluation-form">
+                <div id="studentInfo">
+                    <h3>Informations de l'Étudiant(e)</h3>
+                    
+                    <div class="form-group">
+                        <label for="eval-nom">Nom complet *</label>
+                        <input type="text" id="eval-nom" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eval-matricule">Matricule et Option *</label>
+                        <input type="text" id="eval-matricule" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eval-email">Email</label>
+                        <input type="email" id="eval-email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Style vestimentaire *</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="eval-habillement" value="20" required>
+                                <span><strong>20 points :</strong> Tenue responsable - bien coiffée, bien chaussée, corps bien couvert</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-habillement" value="10">
+                                <span><strong>10 points :</strong> Tenue jeune</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-habillement" value="2">
+                                <span><strong>2 points :</strong> Tenue non conforme</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Participation en classe *</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="eval-participation" value="20" required>
+                                <span><strong>20 points :</strong> Participation active et pertinente</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-participation" value="18">
+                                <span><strong>18 points :</strong> Participation occasionnelle</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-participation" value="2">
+                                <span><strong>2 points :</strong> Peu participatif</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Comportement en classe *</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="eval-comportement" value="20" required>
+                                <span><strong>20 points :</strong> Comportement exemplaire et respectueux</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-comportement" value="18">
+                                <span><strong>18 points :</strong> Comportement correct avec quelques écarts</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-comportement" value="2">
+                                <span><strong>2 points :</strong> Comportement perturbateur</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" onclick="startEvalQuiz()">Commencer l'Évaluation</button>
+                </div>
+                
+                <div id="quizSection" class="quiz-section">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    
+                    <div id="questionsContainer"></div>
+                    
+                    <button class="btn" id="submitBtn" onclick="submitEvalQuiz()">Soumettre l'Évaluation</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="timer" class="timer">15:00</div>
+    
+    <div class="success-message" id="successMessage"></div>
+    <div class="error-message" id="errorMessage"></div>
+
+    <script>
+        // Données du cours
+        const courseData = {
+            title: "Lois d'Étude et d'Analyse des Circuits Électriques",
+            instructor: "Dr OBONO.B.A",
+            university: "Université de Douala - ENSET",
+            department: "Département de Génie Informatique",
+            year: "2025/2026"
+        };
+        
+        // Questions d'évaluation (20 questions)
+        const evalQuestions = [
+            {
+                question: "Quelle est la formule de la loi d'Ohm ?",
+                options: [
+                    "U = R / I",
+                    "U = R × I",
+                    "I = U × R",
+                    "R = I / U"
+                ],
+                correct: 1
+            },
+            {
+                question: "Que représente la conductance G ?",
+                options: [
+                    "L'inverse de la résistance",
+                    "Le produit de la résistance par la tension",
+                    "Le rapport tension/courant",
+                    "La résistance au carré"
+                ],
+                correct: 0
+            },
+            {
+                question: "Selon la loi des mailles de Kirchhoff, que vaut la somme des tensions dans une boucle fermée ?",
+                options: [
+                    "Égale à la tension de la source",
+                    "Toujours positive",
+                    "Nulle",
+                    "Égale au produit des résistances"
+                ],
+                correct: 2
+            },
+            {
+                question: "Dans un circuit série, que peut-on dire du courant ?",
+                options: [
+                    "Il est différent dans chaque résistance",
+                    "Il est divisé entre les résistances",
+                    "Il est le même partout",
+                    "Il est nul dans certaines branches"
+                ],
+                correct: 2
+            },
+            {
+                question: "Quelle est la formule de la loi de Pouillet ?",
+                options: [
+                    "I = ∑R / ∑E",
+                    "I = ∑E × ∑R",
+                    "I = ∑E / ∑R",
+                    "I = ∑E - ∑R"
+                ],
+                correct: 2
+            },
+            {
+                question: "Dans un diviseur de tension avec deux résistances R1 et R2 en série, la tension aux bornes de R2 est :",
+                options: [
+                    "U × R1 / (R1 + R2)",
+                    "U × R2 / (R1 + R2)",
+                    "U × (R1 + R2) / R2",
+                    "U / (R1 + R2)"
+                ],
+                correct: 1
+            },
+            {
+                question: "Pour deux résistances R1 et R2 en parallèle, quelle est la formule de la résistance équivalente ?",
+                options: [
+                    "R1 + R2",
+                    "(R1 × R2) / (R1 + R2)",
+                    "1/(R1 + R2)",
+                    "R1 × R2"
+                ],
+                correct: 1
+            },
+            {
+                question: "Dans un circuit parallèle, que peut-on dire de la tension ?",
+                options: [
+                    "Elle est différente aux bornes de chaque résistance",
+                    "Elle est divisée entre les résistances",
+                    "Elle est la même aux bornes de toutes les résistances",
+                    "Elle est nulle dans certaines branches"
+                ],
+                correct: 2
+            },
+            {
+                question: "Si une résistance de 10Ω est traversée par un courant de 2A, quelle est la tension à ses bornes ?",
+                options: [
+                    "5V",
+                    "20V",
+                    "0,2V",
+                    "12V"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quelle est la résistance équivalente de trois résistances de 10Ω, 20Ω et 30Ω en série ?",
+                options: [
+                    "60Ω",
+                    "5,45Ω",
+                    "15Ω",
+                    "30Ω"
+                ],
+                correct: 0
+            },
+            {
+                question: "Dans la loi des nœuds, que vaut la somme des courants entrants ?",
+                options: [
+                    "Toujours positive",
+                    "Égale à la somme des courants sortants",
+                    "Toujours nulle",
+                    "Égale au produit des tensions"
+                ],
+                correct: 1
+            },
+            {
+                question: "Pour un diviseur de courant avec deux résistances R1 et R2 en parallèle, le courant dans R1 est :",
+                options: [
+                    "I × R2 / (R1 + R2)",
+                    "I × R1 / (R1 + R2)",
+                    "I × (R1 + R2) / R1",
+                    "I / (R1 + R2)"
+                ],
+                correct: 0
+            },
+            {
+                question: "Quelle est la conductance d'une résistance de 5Ω ?",
+                options: [
+                    "5S",
+                    "0,2S",
+                    "0,5S",
+                    "2S"
+                ],
+                correct: 1
+            },
+            {
+                question: "Dans un circuit série, si on ajoute une résistance, que se passe-t-il pour la résistance équivalente ?",
+                options: [
+                    "Elle diminue",
+                    "Elle augmente",
+                    "Elle reste la même",
+                    "Elle devient nulle"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quelle est la résistance équivalente de deux résistances de 6Ω et 12Ω en parallèle ?",
+                options: [
+                    "18Ω",
+                    "4Ω",
+                    "9Ω",
+                    "72Ω"
+                ],
+                correct: 1
+            },
+            {
+                question: "Si la tension aux bornes d'une résistance de 8Ω est de 24V, quel est le courant qui la traverse ?",
+                options: [
+                    "3A",
+                    "0,33A",
+                    "192A",
+                    "16A"
+                ],
+                correct: 0
+            },
+            {
+                question: "Dans un circuit avec deux générateurs de 12V et 6V en série et opposés, quelle est la f.é.m. totale ?",
+                options: [
+                    "18V",
+                    "6V",
+                    "12V",
+                    "2V"
+                ],
+                correct: 1
+            },
+            {
+                question: "Pour vérifier la loi des mailles, on doit :",
+                options: [
+                    "Additionner toutes les tensions en tenant compte des signes",
+                    "Multiplier toutes les tensions",
+                    "Prendre seulement les tensions positives",
+                    "Diviser les tensions par les courants"
+                ],
+                correct: 0
+            },
+            {
+                question: "Quelle est la caractéristique principale d'un nœud électrique ?",
+                options: [
+                    "Point où se rencontrent deux éléments",
+                    "Point où la tension est nulle",
+                    "Point où se rencontrent trois éléments ou plus",
+                    "Point où le courant est maximum"
+                ],
+                correct: 2
+            },
+            {
+                question: "Si dans un circuit parallèle, une résistance est retirée, que se passe-t-il pour la résistance équivalente ?",
+                options: [
+                    "Elle diminue",
+                    "Elle augmente",
+                    "Elle reste la même",
+                    "Elle devient infinie"
+                ],
+                correct: 1
+            }
+        ];
+        
+        // Variables globales
+        let currentCircuitType = 'simple';
+        let currentQuestions = [];
+        let timerInterval;
+        let timeLeft = 900; // 15 minutes
+        let evalStudentData = {};
+        
+        // Initialisation de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialiser la navigation par onglets
+            initTabs();
+            
+            // Initialiser les graphiques de la loi d'Ohm
+            initOhmGraphs();
+            
+            // Initialiser les diagrammes de circuit
+            initCircuitDiagrams();
+            
+            // Initialiser le simulateur
+            initSimulator();
+            
+            // Configurer les outils par défaut
+            calculateOhm();
+            calculateMesh();
+            verifyNodeLaw();
+            calculatePouillet();
+            calculateVoltageDivider();
+            calculateCurrentDivider();
+            calculateSeriesResistance();
+            calculateParallelResistance();
+        });
+        
+        // Initialisation des onglets
+        function initTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            const sections = document.querySelectorAll('.content-section');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const target = this.dataset.target;
+                    
+                    // Mettre à jour les onglets actifs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Afficher la section cible
+                    sections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === target) {
+                            section.classList.add('active');
+                            
+                            // Redessiner les graphiques si nécessaire
+                            if (target === 'loi-ohm') {
+                                initOhmGraphs();
+                            } else if (target === 'simulateur') {
+                                updateSimulatorCircuit();
+                            }
+                        }
+                    });
+                });
+            });
+        }
+        
+        // Initialiser les graphiques de la loi d'Ohm
+        function initOhmGraphs() {
+            // Graphique tension-courant (Figure 2.1)
+            const ohmContainer = document.getElementById('ohm-graph-container');
+            ohmContainer.innerHTML = '';
+            
+            // Créer l'axe X (courant)
+            const axisX = document.createElement('div');
+            axisX.className = 'graph-axis graph-axis-x';
+            ohmContainer.appendChild(axisX);
+            
+            // Créer l'axe Y (tension)
+            const axisY = document.createElement('div');
+            axisY.className = 'graph-axis graph-axis-y';
+            ohmContainer.appendChild(axisY);
+            
+            // Ajouter des étiquettes
+            const labels = ['I (A)', 'U (V)'];
+            for (let i = 0; i < labels.length; i++) {
+                const label = document.createElement('div');
+                label.textContent = labels[i];
+                label.style.position = 'absolute';
+                label.style.fontSize = '12px';
+                label.style.fontWeight = 'bold';
+                if (i === 0) {
+                    label.style.bottom = '30px';
+                    label.style.right = '10px';
+                } else {
+                    label.style.top = '10px';
+                    label.style.left = '30px';
+                }
+                ohmContainer.appendChild(label);
+            }
+            
+            // Dessiner les droites pour deux résistances différentes
+            const resistances = [5, 10]; // en ohms
+            const colors = ['#e74c3c', '#3498db'];
+            
+            for (let i = 0; i < resistances.length; i++) {
+                const R = resistances[i];
+                const line = document.createElement('div');
+                line.className = 'graph-line';
+                line.style.backgroundColor = colors[i];
+                line.style.width = '200px';
+                line.style.left = '50px';
+                line.style.bottom = '50px';
+                
+                // Calculer l'angle en fonction de la résistance
+                // Pour R=5Ω : U = 5I, à I=4A => U=20V
+                // Pour R=10Ω : U = 10I, à I=4A => U=40V
+                const angle = Math.atan(R/5) * (180/Math.PI);
+                line.style.transform = `rotate(${angle}deg)`;
+                
+                ohmContainer.appendChild(line);
+                
+                // Ajouter une légende
+                const legend = document.createElement('div');
+                legend.textContent = `R = ${R}Ω`;
+                legend.style.position = 'absolute';
+                legend.style.fontSize = '12px';
+                legend.style.color = colors[i];
+                legend.style.fontWeight = 'bold';
+                legend.style.left = `${60 + i * 80}px`;
+                legend.style.bottom = '20px';
+                ohmContainer.appendChild(legend);
+            }
+            
+            // Graphique courant-tension (Figure 2.2)
+            const conductanceContainer = document.getElementById('conductance-graph-container');
+            conductanceContainer.innerHTML = '';
+            
+            // Créer l'axe X (tension)
+            const axisX2 = document.createElement('div');
+            axisX2.className = 'graph-axis graph-axis-x';
+            conductanceContainer.appendChild(axisX2);
+            
+            // Créer l'axe Y (courant)
+            const axisY2 = document.createElement('div');
+            axisY2.className = 'graph-axis graph-axis-y';
+            conductanceContainer.appendChild(axisY2);
+            
+            // Ajouter des étiquettes
+            const labels2 = ['U (V)', 'I (A)'];
+            for (let i = 0; i < labels2.length; i++) {
+                const label = document.createElement('div');
+                label.textContent = labels2[i];
+                label.style.position = 'absolute';
+                label.style.fontSize = '12px';
+                label.style.fontWeight = 'bold';
+                if (i === 0) {
+                    label.style.bottom = '30px';
+                    label.style.right = '10px';
+                } else {
+                    label.style.top = '10px';
+                    label.style.left = '30px';
+                }
+                conductanceContainer.appendChild(label);
+            }
+            
+            // Dessiner les droites pour deux conductances différentes
+            const conductances = [0.2, 0.1]; // en Siemens (1/R avec R=5 et 10)
+            const colors2 = ['#2ecc71', '#f39c12'];
+            
+            for (let i = 0; i < conductances.length; i++) {
+                const G = conductances[i];
+                const line = document.createElement('div');
+                line.className = 'graph-line';
+                line.style.backgroundColor = colors2[i];
+                line.style.width = '200px';
+                line.style.left = '50px';
+                line.style.bottom = '50px';
+                
+                // Calculer l'angle en fonction de la conductance
+                // Pour G=0,2S : I = 0,2U, à U=40V => I=8A
+                const angle = Math.atan(G*20) * (180/Math.PI);
+                line.style.transform = `rotate(${angle}deg)`;
+                
+                conductanceContainer.appendChild(line);
+                
+                // Ajouter une légende
+                const legend = document.createElement('div');
+                legend.textContent = `G = ${G}S (R=${1/G}Ω)`;
+                legend.style.position = 'absolute';
+                legend.style.fontSize = '12px';
+                legend.style.color = colors2[i];
+                legend.style.fontWeight = 'bold';
+                legend.style.left = `${60 + i * 120}px`;
+                legend.style.bottom = '20px';
+                conductanceContainer.appendChild(legend);
+            }
+        }
+        
+        // Initialiser les diagrammes de circuit
+        function initCircuitDiagrams() {
+            // Diagramme loi des mailles (Figure 2.5)
+            const meshDiagram = document.getElementById('kirchhoff-voltage-diagram');
+            meshDiagram.innerHTML = '';
+            
+            const meshSVG = `
+                <svg width="100%" height="100%" viewBox="0 0 400 250">
+                    <!-- Circuit principal -->
+                    <rect x="50" y="100" width="300" height="50" fill="none" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Source de tension -->
+                    <circle cx="100" cy="125" r="20" fill="none" stroke="#333" stroke-width="2"/>
+                    <text x="100" y="130" text-anchor="middle" font-size="14">24V</text>
+                    
+                    <!-- Résistances -->
+                    <rect x="150" y="110" width="20" height="30" fill="#f0d9b5" stroke="#d4a574" stroke-width="1"/>
+                    <text x="160" y="130" text-anchor="middle" font-size="12">R1</text>
+                    <text x="160" y="145" text-anchor="middle" font-size="10">4Ω</text>
+                    
+                    <rect x="200" y="110" width="20" height="30" fill="#f0d9b5" stroke="#d4a574" stroke-width="1"/>
+                    <text x="210" y="130" text-anchor="middle" font-size="12">R2</text>
+                    <text x="210" y="145" text-anchor="middle" font-size="10">6Ω</text>
+                    
+                    <rect x="250" y="110" width="20" height="30" fill="#f0d9b5" stroke="#d4a574" stroke-width="1"/>
+                    <text x="260" y="130" text-anchor="middle" font-size="12">R3</text>
+                    <text x="260" y="145" text-anchor="middle" font-size="10">8Ω</text>
+                    
+                    <!-- Courant -->
+                    <polygon points="80,125 90,120 90,130" fill="#e74c3c"/>
+                    <text x="85" y="115" text-anchor="middle" font-size="12" fill="#e74c3c">I=2A</text>
+                    
+                    <!-- Tensions -->
+                    <text x="160" y="95" text-anchor="middle" font-size="12" fill="#2ecc71">V1</text>
+                    <text x="210" y="95" text-anchor="middle" font-size="12" fill="#2ecc71">V2</text>
+                    <text x="260" y="95" text-anchor="middle" font-size="12" fill="#2ecc71">V3</text>
+                    
+                    <!-- Sens de parcours -->
+                    <polygon points="350,125 340,120 340,130" fill="#3498db"/>
+                    <text x="345" y="115" text-anchor="middle" font-size="12" fill="#3498db">Sens</text>
+                </svg>
+            `;
+            meshDiagram.innerHTML = meshSVG;
+            
+            // Diagramme loi des nœuds (Figure 2.6)
+            const nodeDiagram = document.getElementById('kirchhoff-current-diagram');
+            nodeDiagram.innerHTML = '';
+            
+            const nodeSVG = `
+                <svg width="100%" height="100%" viewBox="0 0 400 300">
+                    <!-- Nœud A -->
+                    <circle cx="200" cy="150" r="8" fill="#333"/>
+                    <text x="200" y="170" text-anchor="middle" font-size="14" font-weight="bold">Nœud A</text>
+                    
+                    <!-- Branches -->
+                    <line x1="100" y1="150" x2="192" y2="150" stroke="#333" stroke-width="2"/>
+                    <line x1="200" y1="100" x2="200" y2="142" stroke="#333" stroke-width="2"/>
+                    <line x1="200" y1="158" x2="200" y2="200" stroke="#333" stroke-width="2"/>
+                    <line x1="200" y1="150" x2="300" y2="150" stroke="#333" stroke-width="2"/>
+                    <line x1="200" y1="150" x2="250" y2="100" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Courants entrants -->
+                    <polygon points="120,150 110,145 110,155" fill="#e74c3c"/>
+                    <text x="115" y="140" text-anchor="middle" font-size="12" fill="#e74c3c">I1=5A</text>
+                    
+                    <polygon points="200,120 195,110 205,110" fill="#e74c3c"/>
+                    <text x="180" y="115" text-anchor="middle" font-size="12" fill="#e74c3c">I2=3A</text>
+                    
+                    <!-- Courants sortants -->
+                    <polygon points="280,150 290,145 290,155" fill="#3498db"/>
+                    <text x="285" y="140" text-anchor="middle" font-size="12" fill="#3498db">I3=2A</text>
+                    
+                    <polygon points="200,180 195,190 205,190" fill="#3498db"/>
+                    <text x="180" y="185" text-anchor="middle" font-size="12" fill="#3498db">I4=4A</text>
+                    
+                    <polygon points="240,120 250,115 250,125" fill="#3498db"/>
+                    <text x="245" y="110" text-anchor="middle" font-size="12" fill="#3498db">I5=2A</text>
+                </svg>
+            `;
+            nodeDiagram.innerHTML = nodeSVG;
+            
+            // Diagramme loi de Pouillet (Figure 2.7)
+            const pouilletDiagram = document.getElementById('pouillet-diagram');
+            pouilletDiagram.innerHTML = '';
+            
+            const pouilletSVG = `
+                <svg width="100%" height="100%" viewBox="0 0 400 200">
+                    <!-- Circuit -->
+                    <rect x="50" y="80" width="300" height="40" fill="none" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Sources -->
+                    <circle cx="100" cy="100" r="20" fill="none" stroke="#333" stroke-width="2"/>
+                    <text x="100" y="105" text-anchor="middle" font-size="14">E1=12V</text>
+                    <text x="100" y="120" text-anchor="middle" font-size="10" fill="#e74c3c">+</text>
+                    
+                    <circle cx="200" cy="100" r="20" fill="none" stroke="#333" stroke-width="2"/>
+                    <text x="200" y="105" text-anchor="middle" font-size="14">E2=6V</text>
+                    <text x="200" y="120" text-anchor="middle" font-size="10" fill="#3498db">-</text>
+                    
+                    <!-- Résistances -->
+                    <rect x="250" y="85" width="20" height="30" fill="#f0d9b5" stroke="#d4a574" stroke-width="1"/>
+                    <text x="260" y="105" text-anchor="middle" font-size="12">R1</text>
+                    <text x="260" y="120" text-anchor="middle" font-size="10">4Ω</text>
+                    
+                    <rect x="300" y="85" width="20" height="30" fill="#f0d9b5" stroke="#d4a574" stroke-width="1"/>
+                    <text x="310" y="105" text-anchor="middle" font-size="12">R2</text>
+                    <text x="310" y="120" text-anchor="middle" font-size="10">2Ω</text>
+                    
+                    <!-- Courant -->
+                    <polygon points="80,100 90,95 90,105" fill="#e74c3c"/>
+                    <text x="85" y="90" text-anchor="middle" font-size="12" fill="#e74c3c">I=?</text>
+                </svg>
+            `;
+            pouilletDiagram.innerHTML = pouilletSVG;
+        }
+        
+        // Fonctions pour les outils interactifs
+        
+        // Calculateur de la loi d'Ohm
+        function calculateOhm() {
+            const voltage = parseFloat(document.getElementById('ohm-voltage').value);
+            const current = parseFloat(document.getElementById('ohm-current').value);
+            const resistance = parseFloat(document.getElementById('ohm-resistance').value);
+            
+            let result = '';
+            let details = '';
+            
+            if (!isNaN(voltage) && !isNaN(current)) {
+                // Calculer R
+                const R = voltage / current;
+                result = `R = ${R.toFixed(2)}Ω`;
+                details = `Formule : R = U / I = ${voltage}V / ${current}A`;
+                document.getElementById('ohm-resistance').value = R.toFixed(2);
+            } else if (!isNaN(voltage) && !isNaN(resistance)) {
+                // Calculer I
+                const I = voltage / resistance;
+                result = `I = ${I.toFixed(2)}A`;
+                details = `Formule : I = U / R = ${voltage}V / ${resistance}Ω`;
+                document.getElementById('ohm-current').value = I.toFixed(2);
+            } else if (!isNaN(current) && !isNaN(resistance)) {
+                // Calculer U
+                const U = current * resistance;
+                result = `U = ${U.toFixed(2)}V`;
+                details = `Formule : U = R × I = ${resistance}Ω × ${current}A`;
+                document.getElementById('ohm-voltage').value = U.toFixed(2);
+            } else {
+                result = 'Entrez au moins deux valeurs';
+                details = 'U = R × I, I = U / R, R = U / I';
+            }
+            
+            document.getElementById('ohm-result').textContent = result;
+            document.getElementById('ohm-details').textContent = details;
+        }
+        
+        function resetOhm() {
+            document.getElementById('ohm-voltage').value = '';
+            document.getElementById('ohm-current').value = '';
+            document.getElementById('ohm-resistance').value = '';
+            document.getElementById('ohm-result').textContent = 'Résultat : -';
+            document.getElementById('ohm-details').textContent = 'Entrez deux valeurs pour calculer la troisième';
+        }
+        
+        // Calculateur de loi des mailles
+        function calculateMesh() {
+            const voltage = parseFloat(document.getElementById('mesh-voltage').value);
+            const current = parseFloat(document.getElementById('mesh-current').value);
+            const r1 = parseFloat(document.getElementById('mesh-r1').value);
+            const r2 = parseFloat(document.getElementById('mesh-r2').value);
+            const r3 = parseFloat(document.getElementById('mesh-r3').value);
+            
+            const v1 = r1 * current;
+            const v2 = r2 * current;
+            const v3 = r3 * current;
+            const sum = voltage - v1 - v2 - v3;
+            
+            document.getElementById('mesh-result').textContent = `∑U = ${sum.toFixed(2)}V`;
+            document.getElementById('mesh-details').textContent = `V1 = ${v1.toFixed(2)}V, V2 = ${v2.toFixed(2)}V, V3 = ${v3.toFixed(2)}V`;
+            
+            if (Math.abs(sum) < 0.01) {
+                showSuccessMessage('Loi des mailles vérifiée ! ∑U = 0');
+            } else {
+                showErrorMessage(`Loi des mailles non respectée ! ∑U = ${sum.toFixed(2)}V ≠ 0`);
+            }
+        }
+        
+        // Vérificateur de loi des nœuds
+        function verifyNodeLaw() {
+            const i1 = parseFloat(document.getElementById('node-i1').value);
+            const i2 = parseFloat(document.getElementById('node-i2').value);
+            const i3 = parseFloat(document.getElementById('node-i3').value);
+            const i4 = parseFloat(document.getElementById('node-i4').value);
+            const i5 = parseFloat(document.getElementById('node-i5').value);
+            
+            const sumIn = i1 + i2;
+            const sumOut = i3 + i4 + i5;
+            const sum = sumIn - sumOut;
+            
+            document.getElementById('node-result').textContent = `∑I = ${sum.toFixed(2)}A`;
+            document.getElementById('node-details').textContent = `∑entrants = ${sumIn}A, ∑sortants = ${sumOut}A`;
+            
+            if (Math.abs(sum) < 0.01) {
+                showSuccessMessage('Loi des nœuds vérifiée ! ∑I = 0');
+            } else {
+                showErrorMessage(`Loi des nœuds non respectée ! ∑I = ${sum.toFixed(2)}A ≠ 0`);
+            }
+        }
+        
+        // Calculateur de loi de Pouillet
+        function calculatePouillet() {
+            const e1 = parseFloat(document.getElementById('pouillet-e1').value);
+            const e2 = parseFloat(document.getElementById('pouillet-e2').value);
+            const r1 = parseFloat(document.getElementById('pouillet-r1').value);
+            const r2 = parseFloat(document.getElementById('pouillet-r2').value);
+            const r3 = parseFloat(document.getElementById('pouillet-r3').value);
+            
+            // E2 est opposé à E1 (basé sur le circuit)
+            const sumE = e1 - e2;
+            const sumR = r1 + r2 + r3;
+            const current = sumE / sumR;
+            
+            document.getElementById('pouillet-result').textContent = `I = ${current.toFixed(2)}A`;
+            document.getElementById('pouillet-details').textContent = `∑E = ${sumE}V, ∑R = ${sumR}Ω`;
+        }
+        
+        // Gestion des diviseurs
+        function showDividerTool(type) {
+            // Mettre à jour les boutons
+            document.querySelectorAll('.circuit-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Afficher le bon outil
+            document.getElementById('voltage-divider-tool').style.display = type === 'voltage' ? 'block' : 'none';
+            document.getElementById('current-divider-tool').style.display = type === 'current' ? 'block' : 'none';
+        }
+        
+        function calculateVoltageDivider() {
+            const total = parseFloat(document.getElementById('divider-v-total').value);
+            const r1 = parseFloat(document.getElementById('divider-v-r1').value);
+            const r2 = parseFloat(document.getElementById('divider-v-r2').value);
+            
+            const u1 = (r1 * total) / (r1 + r2);
+            const u2 = (r2 * total) / (r1 + r2);
+            
+            document.getElementById('voltage-divider-result').textContent = `U1 = ${u1.toFixed(2)}V, U2 = ${u2.toFixed(2)}V`;
+            document.getElementById('voltage-divider-details').textContent = `Rtotale = ${(r1 + r2).toFixed(2)}Ω`;
+        }
+        
+        function calculateCurrentDivider() {
+            const total = parseFloat(document.getElementById('divider-i-total').value);
+            const r1 = parseFloat(document.getElementById('divider-i-r1').value);
+            const r2 = parseFloat(document.getElementById('divider-i-r2').value);
+            
+            const i1 = (r2 * total) / (r1 + r2);
+            const i2 = (r1 * total) / (r1 + r2);
+            const rParallel = (r1 * r2) / (r1 + r2);
+            
+            document.getElementById('current-divider-result').textContent = `I1 = ${i1.toFixed(2)}A, I2 = ${i2.toFixed(2)}A`;
+            document.getElementById('current-divider-details').textContent = `Rparallèle = ${rParallel.toFixed(2)}Ω`;
+        }
+        
+        // Gestion des associations de résistances
+        function showResistorTool(type) {
+            // Mettre à jour les boutons
+            document.querySelectorAll('.circuit-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Afficher le bon outil
+            document.getElementById('series-resistor-tool').style.display = type === 'series' ? 'block' : 'none';
+            document.getElementById('parallel-resistor-tool').style.display = type === 'parallel' ? 'block' : 'none';
+            document.getElementById('mixed-resistor-tool').style.display = type === 'mixed' ? 'block' : 'none';
+        }
+        
+        function calculateSeriesResistance() {
+            const r1 = parseFloat(document.getElementById('series-r1').value);
+            const r2 = parseFloat(document.getElementById('series-r2').value);
+            const r3 = parseFloat(document.getElementById('series-r3').value);
+            
+            const total = r1 + r2 + r3;
+            
+            document.getElementById('series-result').textContent = `Réquivalente = ${total}Ω`;
+            document.getElementById('series-details').textContent = `Rtotal = R1 + R2 + R3 = ${r1} + ${r2} + ${r3}`;
+        }
+        
+        function calculateParallelResistance() {
+            const r1 = parseFloat(document.getElementById('parallel-r1').value);
+            const r2 = parseFloat(document.getElementById('parallel-r2').value);
+            const r3 = parseFloat(document.getElementById('parallel-r3').value);
+            
+            const total = 1 / (1/r1 + 1/r2 + 1/r3);
+            
+            document.getElementById('parallel-result').textContent = `Réquivalente = ${total.toFixed(2)}Ω`;
+            document.getElementById('parallel-details').textContent = `1/Rtotal = 1/R1 + 1/R2 + 1/R3 = 1/${r1} + 1/${r2} + 1/${r3}`;
+        }
+        
+        function updateMixedCircuit() {
+            // Met à jour la visualisation du circuit mixte
+            const config = document.getElementById('mixed-config').value;
+            // Pourrait être étendu pour montrer un schéma
+        }
+        
+        function calculateMixedResistance() {
+            const r1 = parseFloat(document.getElementById('mixed-r1').value);
+            const r2 = parseFloat(document.getElementById('mixed-r2').value);
+            const r3 = parseFloat(document.getElementById('mixed-r3').value);
+            const r4 = parseFloat(document.getElementById('mixed-r4').value);
+            const config = document.getElementById('mixed-config').value;
+            
+            let total = 0;
+            let details = '';
+            
+            if (config === 'series-parallel') {
+                // (R1 série (R2 // R3)) série R4
+                const rParallel = (r2 * r3) / (r2 + r3);
+                total = r1 + rParallel + r4;
+                details = `Rtotal = R1 + (R2//R3) + R4 = ${r1} + (${r2}×${r3})/(${r2}+${r3}) + ${r4}`;
+            } else if (config === 'parallel-series') {
+                // (R1 // R2) série (R3 // R4)
+                const rParallel1 = (r1 * r2) / (r1 + r2);
+                const rParallel2 = (r3 * r4) / (r3 + r4);
+                total = rParallel1 + rParallel2;
+                details = `Rtotal = (R1//R2) + (R3//R4) = (${r1}×${r2})/(${r1}+${r2}) + (${r3}×${r4})/(${r3}+${r4})`;
+            }
+            
+            document.getElementById('mixed-result').textContent = `Réquivalente = ${total.toFixed(2)}Ω`;
+            document.getElementById('mixed-details').textContent = details;
+        }
+        
+        // Simulateur de circuit
+        function initSimulator() {
+            updateSimulatorCircuit();
+        }
+        
+        function selectCircuitType(type) {
+            // Mettre à jour les boutons
+            document.querySelectorAll('.circuit-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            currentCircuitType = type;
+            updateSimulatorCircuit();
+        }
+        
+        function updateSimulatorCircuit() {
+            const visual = document.getElementById('circuit-simulator-visual');
+            const inputs = document.getElementById('simulator-inputs');
+            
+            visual.innerHTML = '';
+            inputs.innerHTML = '';
+            
+            let circuitHTML = '';
+            let inputsHTML = '';
+            
+            switch(currentCircuitType) {
+                case 'simple':
+                    circuitHTML = `
+                        <div style="position: relative; height: 100%; width: 100%;">
+                            <div style="position: absolute; left: 30%; top: 40%; width: 40%; height: 20px; background: #f0d9b5; border: 1px solid #d4a574;"></div>
+                            <div style="position: absolute; left: 20%; top: 40%; width: 10%; height: 2px; background: #333;"></div>
+                            <div style="position: absolute; left: 70%; top: 40%; width: 10%; height: 2px; background: #333;"></div>
+                            <div style="position: absolute; left: 45%; top: 35%; font-size: 14px; font-weight: bold;">R</div>
+                            <div style="position: absolute; left: 15%; top: 30%; font-size: 12px;">Source</div>
+                        </div>
+                    `;
+                    inputsHTML = `
+                        <div class="input-group">
+                            <label for="sim-v">Tension source (V) :</label>
+                            <input type="number" id="sim-v" value="12" min="1" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label for="sim-r">Résistance (Ω) :</label>
+                            <input type="number" id="sim-r" value="4" min="1" max="100">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'series':
+                    circuitHTML = `
+                        <div style="position: relative; height: 100%; width: 100%;">
+                            <div style="position: absolute; left: 20%; top: 40%; width: 15%; height: 20px; background: #f0d9b5; border: 1px solid #d4a574;"></div>
+                            <div style="position: absolute; left: 40%; top: 40%; width: 15%; height: 20px; background: #f0d9b5; border: 1px solid #d4a574;"></div>
+                            <div style="position: absolute; left: 60%; top: 40%; width: 15%; height: 20px; background: #f0d9b5; border: 1px solid #d4a574;"></div>
+                            <div style="position: absolute; left: 10%; top: 40%; width: 10%; height: 2px; background: #333;"></div>
+                            <div style="position: absolute; left: 75%; top: 40%; width: 15%; height: 2px; background: #333;"></div>
+                            <div style="position: absolute; left: 27%; top: 35%; font-size: 12px;">R1</div>
+                            <div style="position: absolute; left: 47%; top: 35%; font-size: 12px;">R2</div>
+                            <div style="position: absolute; left: 67%; top: 35%; font-size: 12px;">R3</div>
+                        </div>
+                    `;
+                    inputsHTML = `
+                        <div class="input-group">
+                            <label for="sim-v">Tension source (V) :</label>
+                            <input type="number" id="sim-v" value="24" min="1" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label for="sim-r1">R1 (Ω) :</label>
+                            <input type="number" id="sim-r1" value="4" min="1" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label for="sim-r2">R2 (Ω) :</label>
+                            <input type="number" id="sim-r2" value="6" min="1" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label for="sim-r3">R3 (Ω) :</label>
+                            <input type="number" id="sim-r3" value="8" min="1" max="100">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'parallel':
+                    circuitHTML = `
+                        <div style="position: relative; height: 100%; width: 100%;">
+                            <div style="position: absolute; left: 40%; top: 20%; width: 20%; height: 20px; background: #f0d9b5; border: 1px solid #d4a574;"></div>
+                            <div style="position: absolute; left: 40%; top: 50%; width: 20%; height: 20px; background: #f0d9b5; border: 1px solid #d4a574;"></div>
+                            <div style="position: absolute; left: 40%; top: 80%; width: 20%; height: 20px; background: #f0d9b5; border: 1px solid #d4a574;"></div>
+                            <div style="position: absolute; left: 20%; top: 40%; width: 20%; height: 2px; background: #333;"></div>
+                            <div style="position: absolute; left: 60%; top: 40%; width: 20%; height: 2px; background: #333;"></div>
+                            <div style="position: absolute; left: 30%; top: 15%; width: 40%; height: 2px; background: #333;"></div>
+                            <div style="position: absolute; left: 30%; top: 85%; width: 40%; height: 2px; background: #333;"></div>
+                            <div style="position: absolute; left: 50%; top: 25%; font-size: 12px;">R1</div>
+                            <div style="position: absolute; left: 50%; top: 55%; font-size: 12px;">R2</div>
+                            <div style="position: absolute; left: 50%; top: 85%; font-size: 12px;">R3</div>
+                        </div>
+                    `;
+                    inputsHTML = `
+                        <div class="input-group">
+                            <label for="sim-v">Tension source (V) :</label>
+                            <input type="number" id="sim-v" value="12" min="1" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label for="sim-r1">R1 (Ω) :</label>
+                            <input type="number" id="sim-r1" value="12" min="1" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label for="sim-r2">R2 (Ω) :</label>
+                            <input type="number" id="sim-r2" value="6" min="1" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label for="sim-r3">R3 (Ω) :</label>
+                            <input type="number" id="sim-r3" value="4" min="1" max="100">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'complex':
+                    circuitHTML = `
+                        <div style="position: relative; height: 100%; width: 100%;">
+                            <!-- Circuit mixte série-parallèle -->
+                            <div style="position: absolute; left: 30%; top: 30%; width: 15%; height: 20px; background: #f0d9b5; border: 1px solid #d4a574;"></div>
+                            <div style="position: absolute; left: 50%; top: 20%; width: 15%; height: 20px; background: #f0d9b5; border: 1px solid #d4a574;"></div>
+                            <div style="position: absolute; left: 50%; top: 40%; width: 15%; height: 20px; background: #f0d9b5; border: 1px solid #d4a574;"></div>
+                            <div style="position: absolute; left: 70%; top: 30%; width: 15%; height: 20px; background: #f0d9b5; border: 1px solid #d4a574;"></div>
+                            <div style="position: absolute; left: 20%; top: 30%; width: 10%; height: 2px; background: #333;"></div>
+                            <div style="position: absolute; left: 45%; top: 30%; width: 5%; height: 2px; background: #333;"></div>
+                            <div style="position: absolute; left: 65%; top: 30%; width: 5%; height: 2px; background: #333;"></div>
+                            <div style="position: absolute; left: 85%; top: 30%; width: 5%; height: 2px; background: #333;"></div>
+                            <div style="position: absolute; left: 50%; top: 25%; width: 2px; height: 15px; background: #333;"></div>
+                            <div style="position: absolute; left: 50%; top: 45%; width: 2px; height: 15px; background: #333;"></div>
+                            <div style="position: absolute; left: 35%; top: 25%; font-size: 11px;">R1</div>
+                            <div style="position: absolute; left: 57%; top: 15%; font-size: 11px;">R2</div>
+                            <div style="position: absolute; left: 57%; top: 45%; font-size: 11px;">R3</div>
+                            <div style="position: absolute; left: 77%; top: 25%; font-size: 11px;">R4</div>
+                        </div>
+                    `;
+                    inputsHTML = `
+                        <div class="input-group">
+                            <label for="sim-v">Tension source (V) :</label>
+                            <input type="number" id="sim-v" value="24" min="1" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label for="sim-r1">R1 (Ω) :</label>
+                            <input type="number" id="sim-r1" value="10" min="1" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label for="sim-r2">R2 (Ω) :</label>
+                            <input type="number" id="sim-r2" value="20" min="1" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label for="sim-r3">R3 (Ω) :</label>
+                            <input type="number" id="sim-r3" value="30" min="1" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label for="sim-r4">R4 (Ω) :</label>
+                            <input type="number" id="sim-r4" value="40" min="1" max="100">
+                        </div>
+                    `;
+                    break;
+            }
+            
+            visual.innerHTML = circuitHTML;
+            inputs.innerHTML = inputsHTML;
+        }
+        
+        function simulateCircuit() {
+            let result = '';
+            let details = '';
+            
+            switch(currentCircuitType) {
+                case 'simple':
+                    const v = parseFloat(document.getElementById('sim-v').value);
+                    const r = parseFloat(document.getElementById('sim-r').value);
+                    const i = v / r;
+                    result = `I = ${i.toFixed(2)}A`;
+                    details = `Loi d'Ohm : I = U / R = ${v}V / ${r}Ω`;
+                    break;
+                    
+                case 'series':
+                    const vSeries = parseFloat(document.getElementById('sim-v').value);
+                    const r1 = parseFloat(document.getElementById('sim-r1').value);
+                    const r2 = parseFloat(document.getElementById('sim-r2').value);
+                    const r3 = parseFloat(document.getElementById('sim-r3').value);
+                    const rTotalSeries = r1 + r2 + r3;
+                    const iSeries = vSeries / rTotalSeries;
+                    const v1 = r1 * iSeries;
+                    const v2 = r2 * iSeries;
+                    const v3 = r3 * iSeries;
+                    result = `I = ${iSeries.toFixed(2)}A, Rtotal = ${rTotalSeries}Ω`;
+                    details = `V1 = ${v1.toFixed(2)}V, V2 = ${v2.toFixed(2)}V, V3 = ${v3.toFixed(2)}V`;
+                    break;
+                    
+                case 'parallel':
+                    const vParallel = parseFloat(document.getElementById('sim-v').value);
+                    const r1p = parseFloat(document.getElementById('sim-r1').value);
+                    const r2p = parseFloat(document.getElementById('sim-r2').value);
+                    const r3p = parseFloat(document.getElementById('sim-r3').value);
+                    const rTotalParallel = 1 / (1/r1p + 1/r2p + 1/r3p);
+                    const i1 = vParallel / r1p;
+                    const i2 = vParallel / r2p;
+                    const i3 = vParallel / r3p;
+                    const iTotal = i1 + i2 + i3;
+                    result = `Itotal = ${iTotal.toFixed(2)}A, Rtotal = ${rTotalParallel.toFixed(2)}Ω`;
+                    details = `I1 = ${i1.toFixed(2)}A, I2 = ${i2.toFixed(2)}A, I3 = ${i3.toFixed(2)}A`;
+                    break;
+                    
+                case 'complex':
+                    const vComplex = parseFloat(document.getElementById('sim-v').value);
+                    const rc1 = parseFloat(document.getElementById('sim-r1').value);
+                    const rc2 = parseFloat(document.getElementById('sim-r2').value);
+                    const rc3 = parseFloat(document.getElementById('sim-r3').value);
+                    const rc4 = parseFloat(document.getElementById('sim-r4').value);
+                    
+                    // (R2 // R3) puis série avec R1 et R4
+                    const rParallelComplex = (rc2 * rc3) / (rc2 + rc3);
+                    const rTotalComplex = rc1 + rParallelComplex + rc4;
+                    const iComplex = vComplex / rTotalComplex;
+                    const vR1 = rc1 * iComplex;
+                    const vR4 = rc4 * iComplex;
+                    const vParallelComplex = vComplex - vR1 - vR4;
+                    const iR2 = vParallelComplex / rc2;
+                    const iR3 = vParallelComplex / rc3;
+                    
+                    result = `I = ${iComplex.toFixed(2)}A, Rtotal = ${rTotalComplex.toFixed(2)}Ω`;
+                    details = `V1 = ${vR1.toFixed(2)}V, V4 = ${vR4.toFixed(2)}V, I2 = ${iR2.toFixed(2)}A, I3 = ${iR3.toFixed(2)}A`;
+                    break;
+            }
+            
+            document.getElementById('simulator-result').textContent = result;
+            document.getElementById('simulator-details').textContent = details;
+            
+            showSuccessMessage('Simulation terminée avec succès !');
+        }
+        
+        function resetSimulator() {
+            updateSimulatorCircuit();
+            document.getElementById('simulator-result').textContent = 'Résultats : -';
+            document.getElementById('simulator-details').textContent = 'Sélectionnez un type de circuit et entrez les valeurs';
+        }
+        
+        // Fonctions utilitaires
+        function showSolution(id) {
+            const solution = document.getElementById(id);
+            if (solution.style.display === 'block') {
+                solution.style.display = 'none';
+                event.target.textContent = 'Voir la solution';
+            } else {
+                solution.style.display = 'block';
+                event.target.textContent = 'Masquer la solution';
+            }
+        }
+        
+        function showSuccessMessage(message) {
+            const successMsg = document.getElementById('successMessage');
+            successMsg.textContent = message;
+            successMsg.style.display = 'block';
+            
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+        }
+        
+        function showErrorMessage(message) {
+            const errorMsg = document.getElementById('errorMessage');
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            
+            setTimeout(() => {
+                errorMsg.style.display = 'none';
+            }, 3000);
+        }
+        
+        // ÉVALUATION FUNCTIONS
+        
+        function startEvalQuiz() {
+            const nom = document.getElementById('eval-nom').value.trim();
+            const matricule = document.getElementById('eval-matricule').value.trim();
+            const habillement = document.querySelector('input[name="eval-habillement"]:checked');
+            const participation = document.querySelector('input[name="eval-participation"]:checked');
+            const comportement = document.querySelector('input[name="eval-comportement"]:checked');
+            
+            if (!nom || !matricule || !habillement || !participation || !comportement) {
+                showErrorMessage('Veuillez remplir tous les champs obligatoires !');
+                return;
+            }
+            
+            evalStudentData = {
+                nom: nom,
+                matricule: matricule,
+                email: document.getElementById('eval-email').value.trim(),
+                habillement: parseInt(habillement.value),
+                participation: parseInt(participation.value),
+                comportement: parseInt(comportement.value)
+            };
+            
+            // Préparer les questions
+            currentQuestions = [...evalQuestions];
+            
+            // Afficher la section quiz
+            document.getElementById('studentInfo').style.display = 'none';
+            document.getElementById('quizSection').style.display = 'block';
+            document.getElementById('timer').style.display = 'block';
+            
+            // Générer les questions
+            generateEvalQuestions();
+            
+            // Démarrer le timer
+            timeLeft = 900; // 15 minutes
+            startEvalTimer();
+        }
+        
+        function generateEvalQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            currentQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                
+                const optionsHTML = q.options.map((opt, i) => `
+                    <label class="option-label">
+                        <input type="radio" name="q${index}" value="${i}">
+                        <span>${opt}</span>
+                    </label>
+                `).join('');
+                
+                questionDiv.innerHTML = `
+                    <h3>Question ${index + 1} : ${q.question}</h3>
+                    <div class="options">
+                        ${optionsHTML}
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+            
+            // Mettre à jour la barre de progression
+            updateProgressBar(0);
+        }
+        
+        function updateProgressBar(progress) {
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+        
+        function startEvalTimer() {
+            clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                const timerElement = document.getElementById('timer');
+                
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 120) {
+                    timerElement.classList.add('warning');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitEvalQuiz(true);
+                }
+            }, 1000);
+        }
+        
+        function submitEvalQuiz(autoSubmit = false) {
+            clearInterval(timerInterval);
+            
+            if (!autoSubmit) {
+                if (!confirm('Êtes-vous sûr(e) de vouloir soumettre votre évaluation ?')) {
+                    startEvalTimer();
+                    return;
+                }
+            }
+            
+            // Calculer le score
+            let score = 0;
+            currentQuestions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected && parseInt(selected.value) === q.correct) {
+                    score++;
+                }
+            });
+            
+            // Calculer les notes
+            const quizNote = (score / currentQuestions.length) * 20;
+            const noteTotale = ((quizNote * 3) + (evalStudentData.participation * 4) + (evalStudentData.habillement * 2) + (evalStudentData.comportement * 2)) / 11;
+            
+            // Préparer les données pour le PDF
+            const evaluationData = {
+                ...evalStudentData,
+                questionsRepondues: currentQuestions.length,
+                bonnesReponses: score,
+                quizNote: quizNote.toFixed(2),
+                noteHabillement: evalStudentData.habillement,
+                noteParticipation: evalStudentData.participation,
+                noteComportement: evalStudentData.comportement,
+                noteTotale: noteTotale.toFixed(2),
+                tempsUtilise: `${Math.floor((900 - timeLeft) / 60)} min ${(900 - timeLeft) % 60} sec`
+            };
+            
+            // Générer le PDF
+            generateEvalPDF(evaluationData);
+        }
+        
+        function generateEvalPDF(data) {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // En-tête
+                doc.setFillColor(26, 42, 108);
+                doc.rect(0, 0, 210, 40, 'F');
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(16);
+                doc.text('ÉVALUATION - LOIS DES CIRCUITS ÉLECTRIQUES', 105, 15, { align: 'center' });
+                
+                doc.setFontSize(11);
+                doc.text('Rapport d\'évaluation', 105, 25, { align: 'center' });
+                doc.text('ENSET de Douala - 2025/2026', 105, 32, { align: 'center' });
+                
+                // Informations étudiant
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text('INFORMATIONS ÉTUDIANT', 20, 50);
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(10);
+                
+                doc.text(`Nom : ${data.nom}`, 20, 60);
+                doc.text(`Matricule : ${data.matricule}`, 20, 66);
+                if (data.email) {
+                    doc.text(`Email : ${data.email}`, 20, 72);
+                }
+                
+                // Détails évaluation
+                doc.setFont(undefined, 'bold');
+                doc.text('DÉTAILS DE L\'ÉVALUATION', 20, 85);
+                doc.setFont(undefined, 'normal');
+                
+                doc.text(`Date : ${new Date().toLocaleDateString('fr-FR')}`, 20, 95);
+                doc.text(`Heure : ${new Date().toLocaleTimeString('fr-FR')}`, 20, 101);
+                doc.text(`Temps utilisé : ${data.tempsUtilise}`, 20, 107);
+                doc.text(`Questions : ${data.questionsRepondues} / 20`, 20, 113);
+                doc.text(`Bonnes réponses : ${data.bonnesReponses} / 20`, 20, 119);
+                
+                // Notes détaillées
+                doc.setFont(undefined, 'bold');
+                doc.text('NOTES DÉTAILLÉES', 20, 135);
+                doc.setFont(undefined, 'normal');
+                
+                doc.text(`Quiz : ${data.quizNote} / 20`, 20, 145);
+                doc.text(`Style vestimentaire : ${data.noteHabillement} / 20`, 20, 151);
+                doc.text(`Participation : ${data.noteParticipation} / 20`, 20, 157);
+                doc.text(`Comportement : ${data.noteComportement} / 20`, 20, 163);
+                
+                // Note finale
+                doc.setFillColor(26, 42, 108);
+                doc.rect(15, 170, 180, 15, 'F');
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(14);
+                doc.setFont(undefined, 'bold');
+                doc.text(`NOTE FINALE : ${data.noteTotale} / 20`, 105, 180, { align: 'center' });
+                
+                // Appréciation
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text('APPRÉCIATION', 20, 200);
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(10);
+                
+                let appreciation = '';
+                const note = parseFloat(data.noteTotale);
+                if (note >= 16) appreciation = 'Excellent - Maîtrise parfaite des lois des circuits';
+                else if (note >= 14) appreciation = 'Très bien - Bonne compréhension des concepts';
+                else if (note >= 12) appreciation = 'Bien - Connaissances satisfaisantes';
+                else if (note >= 10) appreciation = 'Satisfaisant - Connaissances de base acquises';
+                else appreciation = 'À renforcer - Révision nécessaire sur les lois des circuits';
+                
+                doc.text(appreciation, 20, 210, { maxWidth: 170 });
+                
+                // Pied de page
+                doc.setDrawColor(26, 42, 108);
+                doc.line(20, 280, 190, 280);
+                
+                doc.setTextColor(100, 100, 100);
+                doc.setFontSize(8);
+                doc.setFont(undefined, 'italic');
+                doc.text('Enseignant : Dr OBONO.B.A', 105, 285, { align: 'center' });
+                doc.text('Chargé de Cours - Génie Informatique', 105, 290, { align: 'center' });
+                
+                // Sauvegarder le PDF
+                const fileName = `Evaluation_Circuits_${data.matricule}_${Date.now()}.pdf`;
+                doc.save(fileName);
+                
+                // Afficher l'alerte de réussite
+                alert(`✅ Évaluation terminée avec succès !\n\nNote finale : ${data.noteTotale} / 20\n${appreciation}\n\nVotre rapport PDF a été téléchargé.`);
+                
+            } catch (error) {
+                console.error('Erreur lors de la génération du PDF:', error);
+                
+                // Fallback
+                const note = parseFloat(data.noteTotale);
+                let appreciation = '';
+                if (note >= 16) appreciation = 'Excellent - Maîtrise parfaite des lois des circuits';
+                else if (note >= 14) appreciation = 'Très bien - Bonne compréhension des concepts';
+                else if (note >= 12) appreciation = 'Bien - Connaissances satisfaisantes';
+                else if (note >= 10) appreciation = 'Satisfaisant - Connaissances de base acquises';
+                else appreciation = 'À renforcer - Révision nécessaire sur les lois des circuits';
+                
+                alert(`Évaluation terminée !\n\nNote finale : ${data.noteTotale} / 20\n${appreciation}\n\nErreur PDF: Le rapport n'a pas pu être généré.`);
+            }
+        }
+    </script>
+</body>
+</html>

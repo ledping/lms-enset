@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours d'Électronique Générale - Les Cartes Arduino & Microcontrôleurs</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js">
+    </script>
+    <style>
+        :root {
+            --primary-blue: #1a2a6c;
+            --secondary-blue: #2a5298;
+            --accent-blue: #3a6fd8;
+            --light-blue: #e8f0ff;
+            --success-green: #27ae60;
+            --warning-orange: #f39c12;
+            --danger-red: #e74c3c;
+            --concept-yellow: #fff9c4;
+            --important-pink: #ffebee;
+            --highlight-orange: #ff9800;
+            --dark-gray: #333;
+            --medium-gray: #666;
+            --light-gray: #f5f5f5;
+            --arduino-teal: #00979d;
+            --nano-purple: #6c3483;
+            --mega-red: #c0392b;
+            --attiny-green: #1e8449;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--dark-gray);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+
+        .header-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h2 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .instructor-info {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .instructor-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            color: var(--medium-gray);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab:hover {
+            background: var(--light-blue);
+            color: var(--secondary-blue);
+        }
+        .tab.active {
+            background: var(--light-blue);
+            border-bottom: 3px solid var(--secondary-blue);
+            color: var(--secondary-blue);
+        }
+
+        .content-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+        }
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary-blue);
+            font-size: 1.8rem;
+            position: relative;
+        }
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--highlight-orange);
+        }
+
+        .subsection-title {
+            color: var(--primary-blue);
+            margin: 30px 0 20px 0;
+            font-size: 1.4rem;
+            padding-left: 15px;
+            border-left: 4px solid var(--highlight-orange);
+        }
+
+        .concept {
+            background: var(--concept-yellow);
+            border-left: 4px solid var(--highlight-orange);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        .concept h4 {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .concept h4::before {
+            content: "💡";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .important {
+            background: var(--important-pink);
+            border-left: 4px solid var(--danger-red);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        .important h4 {
+            color: var(--danger-red);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .important h4::before {
+            content: "⚠️";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .definition {
+            background: #e8f5e9;
+            border-left: 4px solid var(--success-green);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        .definition h4 {
+            color: var(--success-green);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .definition h4::before {
+            content: "📘";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .formula {
+            background: #e3f2fd;
+            border-left: 4px solid var(--accent-blue);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        .formula h4 {
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .formula h4::before {
+            content: "∑";
+            margin-right: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .tool-container {
+            background: var(--light-blue);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid var(--secondary-blue);
+            box-shadow: 0 5px 15px rgba(42, 82, 152, 0.1);
+        }
+        .tool-title {
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        .tool-title::before {
+            content: "🛠️";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .result-box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid var(--secondary-blue);
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        .result-value {
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .result-details {
+            color: var(--medium-gray);
+            font-size: 1rem;
+            font-weight: normal;
+        }
+
+        /* Cartes de sélection */
+        .board-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+            text-align: center;
+            min-width: 140px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+        }
+        .board-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        .board-card.selected {
+            border-color: var(--secondary-blue);
+            background: var(--light-blue);
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.2);
+        }
+        .board-card .board-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        .board-card .board-name {
+            font-weight: 700;
+            color: var(--primary-blue);
+            font-size: 1.1rem;
+        }
+        .board-card .board-nickname {
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+            font-style: italic;
+        }
+
+        .board-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .protocol-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            border-left: 5px solid var(--secondary-blue);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+        .protocol-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        .protocol-card.uart {
+            border-left-color: #e74c3c;
+        }
+        .protocol-card.i2c {
+            border-left-color: #2ecc71;
+        }
+        .protocol-card.spi {
+            border-left-color: #3498db;
+        }
+
+        /* Animations */
+        .pulse-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 1.5s infinite;
+        }
+        .pulse-dot.green {
+            background: var(--success-green);
+        }
+        .pulse-dot.blue {
+            background: var(--accent-blue);
+        }
+        .pulse-dot.orange {
+            background: var(--warning-orange);
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.4);
+                opacity: 0.6;
+            }
+        }
+
+        /* Tableaux */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th {
+            background: var(--primary-blue);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+        }
+        tr:nth-child(even) {
+            background: var(--light-blue);
+        }
+        tr:hover {
+            background: #e3f2fd;
+        }
+
+        .figure {
+            text-align: center;
+            margin: 25px 0;
+        }
+        .figure-caption {
+            font-style: italic;
+            margin-top: 10px;
+            color: var(--medium-gray);
+        }
+
+        .mnemonic {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px dashed var(--secondary-blue);
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        .quote-box {
+            background: linear-gradient(135deg, #fffdf0 0%, #fff9e6 100%);
+            border-left: 6px solid var(--highlight-orange);
+            padding: 20px 25px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+            font-size: 1.15rem;
+            font-style: italic;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+        .quote-box .quote-author {
+            display: block;
+            margin-top: 10px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            font-style: normal;
+        }
+
+        /* Évaluation */
+        .evaluation-form {
+            background: var(--light-blue);
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border: 2px solid var(--secondary-blue);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .radio-option:hover {
+            background: white;
+            border-color: var(--secondary-blue);
+        }
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        .btn {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            width: 100%;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(26, 42, 108, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(26, 42, 108, 0.4);
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-secondary {
+            background: var(--medium-gray);
+            margin-top: 10px;
+        }
+        .quiz-section {
+            display: none;
+        }
+        .question {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-blue);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        .question h3 {
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option-label {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        .option-label:hover {
+            background: var(--light-blue);
+            border-color: var(--primary-blue);
+        }
+        .option-label input {
+            margin-right: 10px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            transition: width 0.3s;
+        }
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--secondary-blue);
+            z-index: 1000;
+            display: none;
+            border: 2px solid var(--secondary-blue);
+        }
+        .timer.warning {
+            background: var(--danger-red);
+            color: white;
+            animation: pulse 1s infinite;
+        }
+
+        .note {
+            background: #fff9e6;
+            border-left: 4px solid var(--warning-orange);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        .warning-box {
+            background: #ffebee;
+            border-left: 4px solid var(--danger-red);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        .success-message {
+            background: #e8f5e9;
+            color: var(--success-green);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: center;
+            display: none;
+            border: 1px solid var(--success-green);
+        }
+        .error-message {
+            background: #ffebee;
+            color: var(--danger-red);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: center;
+            display: none;
+            border: 1px solid var(--danger-red);
+        }
+        .attempts-info {
+            background: #e8f0ff;
+            border-left: 4px solid var(--accent-blue);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+        .attempts-info h4 {
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .attempts-info h4::before {
+            content: "📊";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        /* Chip visuel */
+        .chip-visual {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 25px 0;
+        }
+        .chip-box {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+        .chip-box:hover {
+            transform: scale(1.03);
+        }
+        .chip-pin-row {
+            display: flex;
+            gap: 6px;
+            margin: 4px 0;
+        }
+        .chip-pin {
+            width: 18px;
+            height: 10px;
+            background: #c0c0c0;
+            border-radius: 2px;
+        }
+        .chip-body {
+            background: #2c2c2c;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            .nav-tabs {
+                flex-direction: column;
+            }
+            .tab {
+                text-align: center;
+                border-bottom: 1px solid #eee;
+            }
+            .content-section {
+                padding: 20px;
+            }
+            .board-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            .board-card {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chip-visual {
+                flex-direction: column;
+                align-items: center;
+            }
+            .header h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>Électronique Générale</h1>
+                <h2>Compréhension des Cartes Arduino & Microcontrôleurs ATtiny</h2>
+                <div class="instructor-info">
+                    <h3>Enseignant : Dr OBONO BIYOBO Arnaud</h3>
+                    <p>Chargé de Cours - Informatique Industrielle et Automatique</p>
+                    <p>Université de Douala - ENSET</p>
+                    <p>Année académique 2025/2026</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="nav-tabs">
+            <div class="tab active" data-target="cours">Cours</div>
+            <div class="tab" data-target="cartes-arduino">Cartes Arduino</div>
+            <div class="tab" data-target="protocoles">Protocoles</div>
+            <div class="tab" data-target="attiny">ATtiny</div>
+            <div class="tab" data-target="evaluation">Évaluation</div>
+        </div>
+
+        <!-- SECTION COURS -->
+        <div id="cours" class="content-section active">
+            <h2 class="section-title">Chapitre II : Du Microcontrôleur au Système Embarqué – Le Voyage Arduino</h2>
+            <p>Ce chapitre est conçu comme un <span class="highlight">voyage pédagogique</span>, allant du cerveau de l'automate jusqu'aux micro-organismes de l'électronique (l'ATtiny), pour comprendre comment tous ces composants communiquent entre eux et avec le monde extérieur.</p>
+
+            <div class="subsection-title">Étape 1 : Le Cerveau et le Corps – L'Anatomie d'une Carte Arduino</div>
+            <p>Pour comprendre Arduino, il faut imaginer un <strong>corps humain</strong> :</p>
+
+            <div class="concept">
+                <h4>Concept Clé : Le Microcontrôleur – Le Cerveau</h4>
+                <p>Le <strong>microcontrôleur</strong> est la puce noire principale de la carte. C'est elle qui <em>réfléchit</em> et <em>exécute les ordres</em> contenus dans le programme. Sur une Arduino UNO, il s'agit de l'<strong>ATmega328P</strong>, un circuit intégré 8 bits cadencé à 16 MHz.</p>
+            </div>
+
+            <div class="definition">
+                <h4>Définition : Microcontrôleur</h4>
+                <p>Un <strong>microcontrôleur</strong> est un circuit intégré qui rassemble sur une seule puce : un processeur (CPU), de la mémoire (Flash, SRAM, EEPROM), des entrées/sorties (GPIO, ADC, timers) et des interfaces de communication (UART, I2C, SPI). C'est un véritable <em>ordinateur miniature</em>.</p>
+            </div>
+
+            <div class="figure">
+                <div class="chip-visual">
+                    <div class="chip-box">
+                        <div class="chip-pin-row"><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span></div>
+                        <div class="chip-pin-row"><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span></div>
+                        <div class="chip-body">ATmega328P<br><small>16 MHz · 32 kB Flash</small></div>
+                        <div class="chip-pin-row"><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span></div>
+                        <div class="chip-pin-row"><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span></div>
+                    </div>
+                </div>
+                <div class="figure-caption">Représentation simplifiée d'un microcontrôleur ATmega328P (28 broches)</div>
+            </div>
+
+            <p style="margin-top: 20px;"><strong>Les Broches – Les Bras et les Jambes :</strong> Elles permettent à la carte d'interagir avec le monde extérieur. On distingue deux grandes familles :</p>
+            <ul style="margin-left: 30px; margin-bottom: 20px;">
+                <li><span class="highlight">Broches Numériques</span> : Fonctionnent en mode <em>tout ou rien</em> (0 V ou 5 V). Idéales pour allumer une LED, lire un bouton-poussoir ou commander un relais. Niveau logique : HIGH (5 V) ou LOW (0 V).</li>
+                <li><span class="highlight">Broches Analogiques</span> : Permettent de mesurer des <em>nuances</em>. Grâce au Convertisseur Analogique-Numérique (CAN/ADC 10 bits), elles transforment une tension continue (0–5 V) en une valeur numérique (0–1023). Essentielles pour les capteurs de température, de luminosité ou les potentiomètres.</li>
+            </ul>
+
+            <div class="concept">
+                <h4>Concept Clé : L'Énergie – Le Cœur</h4>
+                <p>La gestion de la tension d'alimentation est cruciale. Les cartes Arduino classiques (UNO, MEGA, NANO) fonctionnent en <strong>5 V</strong>. Certaines cartes modernes ou spécifiques utilisent le <strong>3,3 V</strong>. Une alimentation incorrecte peut <em>détruire irrémédiablement</em> le microcontrôleur.</p>
+            </div>
+
+            <div class="note">
+                <strong>Note :</strong> L'Arduino UNO peut être alimentée via le port USB (5 V), une alimentation externe (7–12 V sur le jack DC ou la broche VIN), ou directement par les broches 5V et GND. Le régulateur de tension embarqué abaisse la tension externe à 5 V.
+            </div>
+
+            <div class="subsection-title">Étape 2 : La Famille Arduino – Choisir son Outil</div>
+            <p>Chaque carte Arduino possède une <strong>spécialité</strong> qui la rend plus adaptée à certains projets :</p>
+
+            <table>
+                <caption>Tableau 2.1 – Comparatif des principales cartes Arduino</caption>
+                <thead>
+                    <tr><th>Carte</th><th>Surnom</th><th>Microcontrôleur</th><th>Broches Num.</th><th>Broches Ana.</th><th>Mémoire Flash</th><th>Usage Type</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Arduino UNO</strong></td>
+                        <td>Le Standard</td>
+                        <td>ATmega328P</td>
+                        <td>14 (dont 6 PWM)</td>
+                        <td>6</td>
+                        <td>32 kB</td>
+                        <td>Apprentissage, prototypage, "couteau suisse"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Arduino MEGA</strong></td>
+                        <td>Le Géant</td>
+                        <td>ATmega2560</td>
+                        <td>54 (dont 15 PWM)</td>
+                        <td>16</td>
+                        <td>256 kB</td>
+                        <td>Imprimantes 3D, robots complexes, gros projets</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Arduino NANO</strong></td>
+                        <td>Le Compact</td>
+                        <td>ATmega328P</td>
+                        <td>14 (dont 6 PWM)</td>
+                        <td>8</td>
+                        <td>32 kB</td>
+                        <td>Projets miniatures, mêmes capacités que l'UNO</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ATtiny85</strong></td>
+                        <td>La Puce Minimaliste</td>
+                        <td>ATtiny85</td>
+                        <td>5 (ou 6 selon config)</td>
+                        <td>4 (ADC 10 bits)</td>
+                        <td>8 kB</td>
+                        <td>Intégration finale, ultra-miniaturisation, faible coût</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="important">
+                <h4>À retenir</h4>
+                <p>On commence avec l'<strong>UNO</strong> pour comprendre, on utilise le <strong>MEGA</strong> pour créer des projets ambitieux, on miniaturise avec la <strong>NANO</strong>, et on intègre définitivement avec l'<strong>ATtiny</strong> pour un produit fini minuscule et économique.</p>
+            </div>
+
+            <div class="subsection-title">Étape 3 : Le Langage des Machines – Les Protocoles de Communication</div>
+            <p>Comment la carte Arduino parle-t-elle à ses accessoires (capteurs, modules, autres cartes) ? Il existe trois <strong>"langues"</strong> principales :</p>
+
+            <table>
+                <caption>Tableau 2.2 – Les trois protocoles de communication essentiels</caption>
+                <thead>
+                    <tr><th>Protocole</th><th>Type de liaison</th><th>Nombre de fils</th><th>Vitesse</th><th>Topologie</th><th>Usage typique</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>UART</strong> (Serial)</td>
+                        <td>Conversation privée</td>
+                        <td>2 (TX + RX)</td>
+                        <td>Jusqu'à 2 Mbps</td>
+                        <td>Point à point (1 vers 1)</td>
+                        <td>Communication avec un PC, modules GPS, Bluetooth HC-05</td>
+                    </tr>
+                    <tr>
+                        <td><strong>I²C</strong> (I2C/TWI)</td>
+                        <td>Réunion de travail</td>
+                        <td>2 (SDA + SCL)</td>
+                        <td>100 kHz à 3,4 MHz</td>
+                        <td>Maître-Esclave (1 vers N)</td>
+                        <td>Écrans LCD, capteurs (BMP280, MPU6050), RTC</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SPI</strong></td>
+                        <td>Défilé militaire</td>
+                        <td>4 (MOSI, MISO, SCK, SS)</td>
+                        <td>Jusqu'à 8 MHz</td>
+                        <td>Maître-Esclave (1 vers N)</td>
+                        <td>Cartes SD, écrans TFT rapides, modules radio nRF24L01</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="concept">
+                <h4>Concept Clé : Choisir le bon protocole</h4>
+                <p><strong>UART</strong> : comme un téléphone entre deux personnes. Simple, fiable, mais limité à deux interlocuteurs.<br>
+                    <strong>I²C</strong> : comme une réunion de travail. Un chef (le maître) s'adresse à plusieurs employés (les esclaves) sur seulement deux fils. Chaque employé a un <em>nom unique</em> (une adresse).<br>
+                    <strong>SPI</strong> : comme un défilé militaire. Très rapide, très synchronisé, mais nécessite plus de fils (un fil de sélection par esclave).</p>
+            </div>
+
+            <div class="subsection-title">Étape 4 : Les Caractéristiques Invisibles – Sous le Capot</div>
+            <p>Pour devenir expert, il faut regarder les spécifications internes :</p>
+
+            <div class="definition">
+                <h4>Définition : La Mémoire Flash</h4>
+                <p>La <strong>mémoire Flash</strong> est l'endroit où l'on range le <em>livre de recettes</em> (votre programme compilé). Elle est non volatile : le programme est conservé même hors tension. Sur l'ATmega328P, elle fait 32 kB (dont 2 kB utilisés par le bootloader).</p>
+            </div>
+
+            <div class="definition">
+                <h4>Définition : La SRAM – Le Plan de Travail</h4>
+                <p>La <strong>SRAM</strong> (Static Random Access Memory) est la <em>mémoire vive</em>, le plan de travail de la cuisine. C'est ici que sont stockées les variables, les tableaux et la pile d'exécution pendant le fonctionnement du programme. Sur l'ATmega328P, elle ne fait que <strong>2 kB</strong>. <em>Si elle déborde, le programme plante ou se comporte de manière imprévisible.</em></p>
+            </div>
+
+            <div class="warning-box">
+                <strong>Attention !</strong> Un programme qui utilise beaucoup de chaînes de caractères (<code>String</code>), de grands tableaux ou une récursion profonde peut rapidement saturer la SRAM. Utilisez le mot-clé <code>PROGMEM</code> pour stocker les données constantes en Flash plutôt qu'en SRAM, ou le type <code>F()</code> pour les chaînes littérales.
+            </div>
+
+            <div class="concept">
+                <h4>Concept Clé : La Vitesse d'Horloge (Clock) – Le Rythme Cardiaque</h4>
+                <p>L'horloge détermine le rythme auquel le microcontrôleur exécute les instructions. Plus elle est élevée, plus la carte traite d'informations par seconde. L'Arduino UNO est cadencée à <strong>16 MHz</strong>, soit 16 millions de cycles par seconde. Une instruction simple peut prendre 1 à 4 cycles.</p>
+            </div>
+
+            <div class="formula">
+                <h4>Relation Fréquence / Période</h4>
+                <p>T = 1 / f</p>
+                <p>Pour f = 16 MHz : T = 1 / 16×10⁶ = 62,5 ns (nanosecondes)</p>
+                <p>Cela signifie qu'un cycle d'horloge dure seulement 62,5 milliardièmes de seconde.</p>
+            </div>
+
+            <div class="subsection-title">Étape 5 : Atelier Pratique – Le Cycle de Vie d'un Projet Embarqué</div>
+            <p>Un bon projet électronique suit toujours cette progression méthodologique :</p>
+            <ol style="margin-left: 30px; margin-bottom: 20px; font-size: 1.05rem;">
+                <li><span class="highlight">1. Simulation</span> : Tester son circuit et son code sur ordinateur grâce à des outils comme <strong>Wokwi</strong> ou <strong>Tinkercad</strong>. Cette étape permet de valider la logique sans risque matériel.</li>
+                <li><span class="highlight">2. Prototypage</span> : Monter le circuit physique sur une <strong>breadboard</strong> (plaque d'essai) avec une carte Arduino UNO. C'est l'étape de validation expérimentale.</li>
+                <li><span class="highlight">3. Miniaturisation</span> : Une fois le programme finalisé et validé, transférer le code sur un <strong>ATtiny</strong> (ex. ATtiny85) pour créer un objet minuscule, autonome et économique.</li>
+            </ol>
+
+            <div class="quote-box">
+                "On commence avec l'<strong>UNO</strong> pour comprendre, on utilise le <strong>MEGA</strong> pour créer, et on finit avec l'<strong>ATtiny</strong> pour intégrer."
+                <span class="quote-author">— Principe fondamental de la progression en systèmes embarqués</span>
+            </div>
+
+            <div class="tool-container">
+                <h3 class="tool-title">Outil Interactif : Simulateur de Cycle de Vie d'un Projet</h3>
+                <p style="margin-bottom: 15px;">Sélectionnez l'étape qui vous intéresse pour voir les actions recommandées :</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+                    <button class="btn" style="width:auto; padding:12px 20px; display:inline-block;" onclick="showLifecycleStep('simulation')">🔬 Simulation</button>
+                    <button class="btn" style="width:auto; padding:12px 20px; display:inline-block; background:var(--success-green);" onclick="showLifecycleStep('proto')">🔧 Prototypage</button>
+                    <button class="btn" style="width:auto; padding:12px 20px; display:inline-block; background:var(--attiny-green);" onclick="showLifecycleStep('mini')">🤏 Miniaturisation</button>
+                </div>
+                <div class="result-box" id="lifecycle-result">
+                    <div class="result-value">Cliquez sur une étape pour commencer</div>
+                    <div class="result-details">Découvrez les actions, outils et précautions pour chaque phase du cycle de vie.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION CARTES ARDUINO -->
+        <div id="cartes-arduino" class="content-section">
+            <h2 class="section-title">La Famille Arduino – Comparaison Détaillée</h2>
+            <p>Choisir la bonne carte est essentiel pour la réussite d'un projet. Voici une comparaison approfondie des membres de la famille Arduino.</p>
+
+            <div class="tool-container">
+                <h3 class="tool-title">Outil Interactif : Comparateur de Cartes Arduino</h3>
+                <p style="margin-bottom:15px;">Cliquez sur une carte pour afficher ses spécifications détaillées :</p>
+                <div class="board-grid" id="board-selector">
+                    <div class="board-card selected" data-board="uno" onclick="selectBoard('uno', this)">
+                        <div class="board-icon">🔵</div>
+                        <div class="board-name">Arduino UNO</div>
+                        <div class="board-nickname">Le Standard</div>
+                    </div>
+                    <div class="board-card" data-board="mega" onclick="selectBoard('mega', this)">
+                        <div class="board-icon">🔴</div>
+                        <div class="board-name">Arduino MEGA</div>
+                        <div class="board-nickname">Le Géant</div>
+                    </div>
+                    <div class="board-card" data-board="nano" onclick="selectBoard('nano', this)">
+                        <div class="board-icon">🟣</div>
+                        <div class="board-name">Arduino NANO</div>
+                        <div class="board-nickname">Le Compact</div>
+                    </div>
+                    <div class="board-card" data-board="attiny" onclick="selectBoard('attiny', this)">
+                        <div class="board-icon">🟢</div>
+                        <div class="board-name">ATtiny85</div>
+                        <div class="board-nickname">Le Minimaliste</div>
+                    </div>
+                </div>
+                <div class="result-box" id="board-detail-result">
+                    <div class="result-value" id="board-detail-name">Arduino UNO – Le Standard</div>
+                    <div class="result-details" id="board-detail-specs">
+                        <strong>Microcontrôleur :</strong> ATmega328P<br>
+                        <strong>Fréquence :</strong> 16 MHz<br>
+                        <strong>Flash :</strong> 32 kB | <strong>SRAM :</strong> 2 kB | <strong>EEPROM :</strong> 1 kB<br>
+                        <strong>Broches Numériques :</strong> 14 (dont 6 PWM)<br>
+                        <strong>Broches Analogiques :</strong> 6 (ADC 10 bits)<br>
+                        <strong>Tension :</strong> 5 V<br>
+                        <strong>Prix indicatif :</strong> ~5 000 FCFA (clone)
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection-title">Quand utiliser chaque carte ?</div>
+            <table>
+                <caption>Tableau 2.3 – Guide de choix selon le projet</caption>
+                <thead>
+                    <tr><th>Scénario</th><th>Carte recommandée</th><th>Raison</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Apprentissage, premiers pas</td><td>Arduino UNO</td><td>Robuste, documentation abondante, broches repérées</td></tr>
+                    <tr><td>Imprimante 3D, robot à 6 servomoteurs</td><td>Arduino MEGA</td><td>Grand nombre de broches, timers multiples, 4 UART</td></tr>
+                    <tr><td>Projet portable, montre connectée</td><td>Arduino NANO</td><td>Compacte, mêmes capacités que l'UNO, breadboard-friendly</td></tr>
+                    <tr><td>Produit final miniaturisé</td><td>ATtiny85</td><td>Très petite taille, faible coût (~200 FCFA), faible consommation</td></tr>
+                    <tr><td>Acquisition de données multi-capteurs</td><td>Arduino MEGA</td><td>16 entrées analogiques, grande mémoire SRAM (8 kB)</td></tr>
+                    <tr><td>Prototype rapide sur breadboard</td><td>Arduino NANO</td><td>Se branche directement sur la breadboard, très pratique</td></tr>
+                </tbody>
+            </table>
+
+            <div class="note">
+                <strong>Note économique :</strong> Les clones d'Arduino UNO et NANO sont disponibles à partir de 3 000–5 000 FCFA. L'ATtiny85 coûte environ 200–500 FCFA. Pour la production en série, le choix de l'ATtiny permet des économies considérables.
+            </div>
+        </div>
+
+        <!-- SECTION PROTOCOLES -->
+        <div id="protocoles" class="content-section">
+            <h2 class="section-title">Les Protocoles de Communication – Le Langage des Machines</h2>
+            <p>Comprendre comment les composants échangent des données est fondamental. Voici une analyse détaillée des trois protocoles essentiels.</p>
+
+            <div class="protocol-card uart">
+                <h3 style="color:#e74c3c;">🔴 UART – La Conversation Privée</h3>
+                <p><strong>Principe :</strong> Deux fils seulement (TX pour émettre, RX pour recevoir). La communication est <em>asynchrone</em> : pas d'horloge commune, les deux dispositifs se mettent d'accord sur une vitesse (baud rate : 9600, 115200, etc.).</p>
+                <p><strong>Usage typique :</strong> Envoi de messages au moniteur série de l'ordinateur, modules GPS, Bluetooth HC-05/HC-06.</p>
+                <div class="note">
+                    <strong>À savoir :</strong> Les broches TX et RX doivent être croisées : TX de l'un vers RX de l'autre. Ne jamais connecter TX-TX ou RX-RX !
+                </div>
+            </div>
+
+            <div class="protocol-card i2c">
+                <h3 style="color:#2ecc71;">🟢 I²C – La Réunion de Travail</h3>
+                <p><strong>Principe :</strong> Deux fils partagés par tous les dispositifs : SDA (données) et SCL (horloge). Un <em>maître</em> (Arduino) initie la communication avec un <em>esclave</em> spécifique en envoyant d'abord son <strong>adresse</strong> (7 bits, soit 128 adresses possibles). Chaque capteur I²C possède une adresse unique.</p>
+                <p><strong>Usage typique :</strong> Écrans LCD 16×2, capteur de pression BMP280, centrale inertielle MPU6050, horloge temps réel DS3231.</p>
+                <div class="note">
+                    <strong>À savoir :</strong> Les résistances de pull-up (4,7 kΩ typiques) sur SDA et SCL sont indispensables au bon fonctionnement du bus I²C.
+                </div>
+            </div>
+
+            <div class="protocol-card spi">
+                <h3 style="color:#3498db;">🔵 SPI – Le Défilé Militaire</h3>
+                <p><strong>Principe :</strong> Quatre fils : MOSI (Master Out Slave In), MISO (Master In Slave Out), SCK (horloge série), SS (Slave Select). Chaque esclave possède sa propre ligne SS. Le maître sélectionne l'esclave en mettant sa ligne SS à LOW.</p>
+                <p><strong>Usage typique :</strong> Lecteurs de cartes SD, écrans TFT couleur rapides, modules radio nRF24L01, convertisseurs ADC externes.</p>
+                <div class="note">
+                    <strong>À savoir :</strong> SPI est le plus rapide des trois protocoles mais utilise le plus de broches. Chaque esclave supplémentaire nécessite une broche SS dédiée.
+                </div>
+            </div>
+
+            <div class="tool-container">
+                <h3 class="tool-title">Outil Interactif : Quel Protocole Choisir ?</h3>
+                <p style="margin-bottom:15px;">Décrivez votre besoin pour obtenir une recommandation :</p>
+                <select id="protocol-use-case" style="width:100%; padding:12px; border-radius:8px; border:2px solid #ddd; font-size:16px; margin-bottom:15px;">
+                    <option value="">-- Sélectionnez un cas d'usage --</option>
+                    <option value="pc">Communiquer avec un PC (moniteur série)</option>
+                    <option value="multi-capteurs">Connecter plusieurs petits capteurs (température, pression)</option>
+                    <option value="sd">Lire/écrire rapidement sur une carte SD</option>
+                    <option value="gps">Recevoir des données d'un module GPS</option>
+                    <option value="ecran">Afficher des graphiques sur un écran TFT couleur</option>
+                    <option value="bluetooth">Communiquer sans fil avec un smartphone (Bluetooth)</option>
+                    <option value="plusieurs-ecrans">Gérer un écran LCD + un capteur de température</option>
+                </select>
+                <button class="btn" style="width:auto; display:inline-block; padding:12px 25px;" onclick="recommendProtocol()">Obtenir la Recommandation</button>
+                <div class="result-box" id="protocol-result" style="margin-top:15px;">
+                    <div class="result-value">En attente de votre sélection...</div>
+                    <div class="result-details">Sélectionnez un cas d'usage ci-dessus pour obtenir une recommandation.</div>
+                </div>
+            </div>
+
+            <div class="subsection-title">Tableau Récapitulatif des Protocoles</div>
+            <table>
+                <caption>Tableau 2.4 – Synthèse UART vs I²C vs SPI</caption>
+                <thead>
+                    <tr><th>Critère</th><th>UART</th><th>I²C</th><th>SPI</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Nombre de fils minimum</td><td>2</td><td>2</td><td>4</td></tr>
+                    <tr><td>Nombre max de dispositifs</td><td>2</td><td>127 (adresses 7 bits)</td><td>Illimité (selon broches SS)</td></tr>
+                    <tr><td>Vitesse maximale</td><td>~2 Mbps</td><td>~3,4 Mbps</td><td>~8 Mbps et plus</td></tr>
+                    <tr><td>Complexité de câblage</td><td>Faible</td><td>Faible</td><td>Moyenne à élevée</td></tr>
+                    <tr><td>Full Duplex</td><td>Oui</td><td>Non (half-duplex)</td><td>Oui</td></tr>
+                    <tr><td>Idéal pour</td><td>Liaison simple 1-à-1</td><td>Multi-capteurs sur 2 fils</td><td>Transferts rapides, écrans</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SECTION ATtiny -->
+        <div id="attiny" class="content-section">
+            <h2 class="section-title">L'ATtiny – La Puce Minimaliste pour l'Intégration Finale</h2>
+            <p>L'ATtiny n'est pas une "carte" Arduino complète avec port USB, mais une <strong>petite puce</strong> programmable qui représente l'aboutissement du processus de miniaturisation.</p>
+
+            <div class="figure">
+                <div class="chip-visual">
+                    <div class="chip-box" style="background:#1a1a1a; padding:15px 20px;">
+                        <div class="chip-pin-row"><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span></div>
+                        <div class="chip-body" style="font-size:0.8rem;">ATtiny85<br><small>8 kB · 8 pattes</small></div>
+                        <div class="chip-pin-row"><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span><span class="chip-pin"></span></div>
+                    </div>
+                </div>
+                <div class="figure-caption">L'ATtiny85 en boîtier DIP-8 : seulement 8 pattes pour un microcontrôleur complet</div>
+            </div>
+
+            <div class="concept">
+                <h4>Concept Clé : Qu'est-ce que l'ATtiny ?</h4>
+                <p>L'<strong>ATtiny</strong> est une famille de microcontrôleurs AVR 8 bits de chez Microchip (anciennement Atmel), caractérisée par un très faible nombre de broches (8 pour l'ATtiny85, 6 pour l'ATtiny10) et une consommation électrique minimale. C'est le choix idéal quand le projet est <em>terminé</em> et qu'on souhaite le <strong>miniaturiser au maximum pour un coût dérisoire</strong>.</p>
+            </div>
+
+            <table>
+                <caption>Tableau 2.5 – Spécifications de l'ATtiny85</caption>
+                <thead>
+                    <tr><th>Caractéristique</th><th>Valeur</th><th>Comparaison UNO</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Broches totales</td><td>8</td><td>28 (ATmega328P)</td></tr>
+                    <tr><td>Broches E/S utilisables</td><td>5 ou 6</td><td>20 (14 num. + 6 ana.)</td></tr>
+                    <tr><td>Mémoire Flash</td><td>8 kB</td><td>32 kB</td></tr>
+                    <tr><td>SRAM</td><td>512 octets</td><td>2 kB (2 048 octets)</td></tr>
+                    <tr><td>EEPROM</td><td>512 octets</td><td>1 kB</td></tr>
+                    <tr><td>Fréquence max</td><td>20 MHz</td><td>16 MHz</td></tr>
+                    <tr><td>Consommation (actif)</td><td>~300 µA @ 1 MHz</td><td>~15 mA @ 16 MHz</td></tr>
+                    <tr><td>Prix unitaire</td><td>~200–500 FCFA</td><td>~3 000–5 000 FCFA (clone)</td></tr>
+                    <tr><td>Port USB intégré</td><td>Non</td><td>Oui (via convertisseur)</td></tr>
+                </tbody>
+            </table>
+
+            <div class="definition">
+                <h4>Définition : Programmation ISP (In-System Programming)</h4>
+                <p>Contrairement à l'Arduino UNO qui se programme via USB, l'ATtiny se programme via un <strong>programmateur ISP</strong>. On peut utiliser... une carte Arduino UNO elle-même comme programmateur ! C'est la technique dite <em>"Arduino as ISP"</em> : l'UNO sert de pont entre l'ordinateur et l'ATtiny pour y transférer le programme.</p>
+            </div>
+
+            <div class="important">
+                <h4>Pourquoi utiliser l'ATtiny ?</h4>
+                <p>Apprendre l'ATtiny, c'est apprendre à être <strong>économe en code et en énergie</strong>. Avec seulement 8 kB de Flash et 512 octets de SRAM, chaque ligne de code et chaque variable comptent. C'est une excellente école pour développer des compétences en programmation embarquée optimisée. De plus, sa consommation ridiculement basse le rend idéal pour les projets sur batterie.</p>
+            </div>
+
+            <div class="tool-container">
+                <h3 class="tool-title">Outil Interactif : Comparaison UNO vs ATtiny85</h3>
+                <p style="margin-bottom:15px;">Sélectionnez un critère pour voir la comparaison détaillée :</p>
+                <select id="comparison-criteria" style="width:100%; padding:12px; border-radius:8px; border:2px solid #ddd; font-size:16px; margin-bottom:15px;" onchange="showComparison()">
+                    <option value="broches">Nombre de broches</option>
+                    <option value="memoire">Mémoire (Flash / SRAM / EEPROM)</option>
+                    <option value="conso">Consommation électrique</option>
+                    <option value="cout">Coût</option>
+                    <option value="usage">Cas d'usage idéal</option>
+                </select>
+                <div class="result-box" id="comparison-result">
+                    <div class="result-value">Nombre de broches</div>
+                    <div class="result-details">
+                        <strong>UNO (ATmega328P) :</strong> 28 broches, dont 20 utilisables en E/S (14 numériques + 6 analogiques)<br><br>
+                        <strong>ATtiny85 :</strong> 8 broches, dont 5 ou 6 utilisables en E/S (selon la configuration du pin RESET)<br><br>
+                        <span style="color:var(--danger-red);">🔴 L'ATtiny85 exige une gestion très économe des broches.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection-title">Le Cycle de Vie d'un Projet : De l'UNO à l'ATtiny</div>
+            <div class="quote-box">
+                <strong>Étape 1 – Simulation</strong> : Tester le code sur Wokwi ou Tinkercad avec un Arduino UNO virtuel.<br>
+                <strong>Étape 2 – Prototype</strong> : Monter le circuit physique sur breadboard avec un UNO.<br>
+                <strong>Étape 3 – Miniaturisation</strong> : Transférer le code final validé sur un ATtiny85 pour créer un objet minuscule, autonome et économique.
+                <span class="quote-author">— Les trois étapes clés du développement embarqué</span>
+            </div>
+        </div>
+
+        <!-- SECTION ÉVALUATION -->
+        <div id="evaluation" class="content-section">
+            <h2 class="section-title">Évaluation – Cartes Arduino & Microcontrôleurs</h2>
+            <div class="evaluation-form">
+                <div id="studentInfoEval">
+                    <h3>Informations de l'Étudiant(e)</h3>
+                    <div id="attemptsInfoEval" class="attempts-info">
+                        <h4>Historique des tentatives</h4>
+                        <p id="attemptsDetailsEval">Aucune tentative précédente</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="eval-nom">Nom complet *</label>
+                        <input type="text" id="eval-nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eval-matricule">Matricule et Option *</label>
+                        <input type="text" id="eval-matricule" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eval-email">Email</label>
+                        <input type="email" id="eval-email">
+                    </div>
+                    <div class="form-group">
+                        <label>Style vestimentaire *</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="eval-habillement" value="20" required><span><strong>20 points :</strong> Tenue responsable – bien coiffée, bien chaussée, corps bien couvert</span></label>
+                            <label class="radio-option"><input type="radio" name="eval-habillement" value="10"><span><strong>10 points :</strong> Tenue jeune</span></label>
+                            <label class="radio-option"><input type="radio" name="eval-habillement" value="2"><span><strong>2 points :</strong> Tenue non conforme</span></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Participation en classe *</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="eval-participation" value="20" required><span><strong>20 points :</strong> Participation active et pertinente</span></label>
+                            <label class="radio-option"><input type="radio" name="eval-participation" value="18"><span><strong>18 points :</strong> Participation occasionnelle</span></label>
+                            <label class="radio-option"><input type="radio" name="eval-participation" value="2"><span><strong>2 points :</strong> Peu participatif</span></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Comportement en classe *</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="eval-comportement" value="20" required><span><strong>20 points :</strong> Comportement exemplaire et respectueux</span></label>
+                            <label class="radio-option"><input type="radio" name="eval-comportement" value="18"><span><strong>18 points :</strong> Comportement correct avec quelques écarts</span></label>
+                            <label class="radio-option"><input type="radio" name="eval-comportement" value="2"><span><strong>2 points :</strong> Comportement perturbateur</span></label>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="startEvalQuiz()">Commencer l'Évaluation</button>
+                </div>
+                <div id="quizSectionEval" class="quiz-section">
+                    <div class="progress-bar"><div class="progress-fill" id="progressFillEval" style="width:0%"></div></div>
+                    <div id="questionsContainerEval"></div>
+                    <button class="btn" id="submitBtnEval" onclick="submitEvalQuiz()">Soumettre l'Évaluation</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="timer" class="timer">15:00</div>
+    <div class="success-message" id="successMessage"></div>
+    <div class="error-message" id="errorMessage"></div>
+
+    <script>
+        // ============ DONNÉES ============
+        const boardData = {
+            uno: {
+                name: 'Arduino UNO – Le Standard',
+                specs: '<strong>Microcontrôleur :</strong> ATmega328P<br><strong>Fréquence :</strong> 16 MHz<br><strong>Flash :</strong> 32 kB | <strong>SRAM :</strong> 2 kB | <strong>EEPROM :</strong> 1 kB<br><strong>Broches Numériques :</strong> 14 (dont 6 PWM)<br><strong>Broches Analogiques :</strong> 6 (ADC 10 bits)<br><strong>Tension :</strong> 5 V<br><strong>Prix indicatif :</strong> ~5 000 FCFA (clone)<br><span style="color:#27ae60;">✅ Idéal pour l\'apprentissage et le prototypage.</span>'
+            },
+            mega: {
+                name: 'Arduino MEGA – Le Géant',
+                specs: '<strong>Microcontrôleur :</strong> ATmega2560<br><strong>Fréquence :</strong> 16 MHz<br><strong>Flash :</strong> 256 kB | <strong>SRAM :</strong> 8 kB | <strong>EEPROM :</strong> 4 kB<br><strong>Broches Numériques :</strong> 54 (dont 15 PWM)<br><strong>Broches Analogiques :</strong> 16 (ADC 10 bits)<br><strong>Tension :</strong> 5 V<br><strong>Prix indicatif :</strong> ~12 000 FCFA (clone)<br><span style="color:#c0392b;">🔴 Pour les gros projets : imprimantes 3D, robots complexes.</span>'
+            },
+            nano: {
+                name: 'Arduino NANO – Le Compact',
+                specs: '<strong>Microcontrôleur :</strong> ATmega328P<br><strong>Fréquence :</strong> 16 MHz<br><strong>Flash :</strong> 32 kB | <strong>SRAM :</strong> 2 kB | <strong>EEPROM :</strong> 1 kB<br><strong>Broches Numériques :</strong> 14 (dont 6 PWM)<br><strong>Broches Analogiques :</strong> 8 (ADC 10 bits)<br><strong>Tension :</strong> 5 V<br><strong>Prix indicatif :</strong> ~4 000 FCFA (clone)<br><span style="color:#6c3483;">🟣 Mêmes capacités que l\'UNO, format ultra-compact.</span>'
+            },
+            attiny: {
+                name: 'ATtiny85 – Le Minimaliste',
+                specs: '<strong>Microcontrôleur :</strong> ATtiny85<br><strong>Fréquence :</strong> Jusqu\'à 20 MHz<br><strong>Flash :</strong> 8 kB | <strong>SRAM :</strong> 512 octets | <strong>EEPROM :</strong> 512 octets<br><strong>Broches E/S :</strong> 5 ou 6<br><strong>Broches Analogiques :</strong> 4 (ADC 10 bits)<br><strong>Tension :</strong> 2,7 V à 5,5 V<br><strong>Prix indicatif :</strong> ~200–500 FCFA<br><span style="color:#1e8449;">🟢 Ultra-miniaturisation, coût dérisoire, faible consommation.</span>'
+            }
+        };
+
+        const protocolRecommendations = {
+            'pc': { proto: 'UART (Serial)', color: '#e74c3c',
+                detail: 'Pour communiquer avec un PC via le moniteur série, le protocole <strong>UART</strong> est le choix naturel. Utilisez <code>Serial.begin(9600)</code> et les broches TX/RX.' },
+            'multi-capteurs': { proto: 'I²C', color: '#2ecc71',
+                detail: 'Pour connecter plusieurs capteurs sur un minimum de fils, <strong>I²C</strong> est idéal. Chaque capteur a une adresse unique. Seulement 2 fils (SDA + SCL) suffisent.' },
+            'sd': { proto: 'SPI', color: '#3498db',
+                detail: 'Pour lire/écrire rapidement sur une carte SD, <strong>SPI</strong> est le meilleur choix grâce à sa vitesse élevée (jusqu\'à 8 MHz).' },
+            'gps': { proto: 'UART (Serial)', color: '#e74c3c',
+                detail: 'Les modules GPS envoient leurs données via <strong>UART</strong>. Connectez le TX du GPS au RX de l\'Arduino.' },
+            'ecran': { proto: 'SPI', color: '#3498db',
+                detail: 'Pour un écran TFT couleur nécessitant des rafraîchissements rapides, <strong>SPI</strong> est recommandé pour sa bande passante élevée.' },
+            'bluetooth': { proto: 'UART (Serial)', color: '#e74c3c',
+                detail: 'Les modules Bluetooth (HC-05, HC-06) utilisent <strong>UART</strong>. Une simple liaison série suffit.' },
+            'plusieurs-ecrans': { proto: 'I²C', color: '#2ecc71',
+                detail: 'Pour gérer un écran LCD et un capteur sur les mêmes fils, <strong>I²C</strong> est parfait. L\'écran (adresse 0x27) et le capteur (ex. 0x76) cohabitent sur le même bus.' }
+        };
+
+        const evalQuestions = [
+            { question: 'Quel est le rôle du microcontrôleur sur une carte Arduino ?', options: [
+                    'Fournir l\'alimentation électrique', 'Réfléchir et exécuter les ordres du programme',
+                    'Amplifier les signaux analogiques', 'Convertir le 220 V en 5 V'
+                ], correct: 1 },
+            { question: 'Quel type de broches est utilisé pour mesurer une température précise (nuance) ?', options: [
+                    'Broches numériques', 'Broches d\'alimentation', 'Broches analogiques (ADC)',
+                    'Broches de reset'
+                ], correct: 2 },
+            { question: 'Quelle est la tension de fonctionnement typique d\'un Arduino UNO ?', options: [
+                    '12 V', '3,3 V uniquement', '5 V', '220 V'
+                ], correct: 2 },
+            { question: 'Quelle carte Arduino est la plus adaptée pour un projet d\'imprimante 3D ou un robot complexe ?', options: [
+                    'Arduino UNO', 'Arduino MEGA', 'Arduino NANO', 'ATtiny85'
+                ], correct: 1 },
+            { question: 'Quel est le principal avantage de l\'Arduino NANO par rapport à l\'UNO ?', options: [
+                    'Plus de mémoire Flash', 'Plus de broches numériques', 'Format ultra-compact (taille d\'un timbre)',
+                    'Une fréquence d\'horloge plus élevée'
+                ], correct: 2 },
+            { question: 'Qu\'est-ce que l\'ATtiny85 ?', options: [
+                    'Une carte Arduino avec 54 broches', 'Un logiciel de simulation',
+                    'Une petite puce microcontrôleur à 8 pattes', 'Un type de capteur de température'
+                ], correct: 2 },
+            { question: 'Combien de broches possède l\'ATtiny85 ?', options: ['14', '28', '8', '54'], correct: 2 },
+            { question: 'Quel est le principal avantage d\'utiliser un ATtiny pour le produit final ?', options: [
+                    'Plus de mémoire que l\'UNO', 'Plus rapide que le MEGA',
+                    'Miniaturisation maximale et coût très faible (quelques centimes)',
+                    'Plus de broches d\'entrée/sortie'
+                ], correct: 2 },
+            { question: 'Quel protocole est décrit comme une "conversation privée" entre deux dispositifs ?', options: [
+                    'I²C', 'SPI', 'UART', 'WiFi'
+                ], correct: 2 },
+            { question: 'Quel protocole utilise une architecture Maître-Esclave avec des adresses sur 2 fils ?', options: [
+                    'UART', 'I²C', 'SPI', 'Bluetooth'
+                ], correct: 1 },
+            { question: 'Quel protocole est le plus rapide mais utilise le plus de fils ?', options: [
+                    'UART', 'I²C', 'SPI', 'OneWire'
+                ], correct: 2 },
+            { question: 'Où est stocké le programme (le code) sur un Arduino UNO ?', options: [
+                    'Dans la SRAM', 'Dans l\'EEPROM', 'Dans la mémoire Flash', 'Sur la carte SD'
+                ], correct: 2 },
+            { question: 'À quoi sert la SRAM dans un microcontrôleur ?', options: [
+                    'Stocker le programme de façon permanente', 'Stocker les variables et la pile d\'exécution (mémoire vive)',
+                    'Communiquer avec l\'ordinateur', 'Alimenter les LEDs'
+                ], correct: 1 },
+            { question: 'Quelle est la fréquence d\'horloge de l\'Arduino UNO ?', options: [
+                    '8 MHz', '16 MHz', '32 MHz', '1 GHz'
+                ], correct: 1 },
+            { question: 'Que se passe-t-il si la SRAM déborde pendant l\'exécution ?', options: [
+                    'Le programme s\'exécute plus vite', 'Rien de spécial',
+                    'Le programme peut planter ou avoir un comportement imprévisible',
+                    'La carte redémarre proprement sans conséquence'
+                ], correct: 2 },
+            { question: 'Quelle est la première étape du cycle de vie d\'un projet embarqué ?', options: [
+                    'Miniaturisation sur ATtiny', 'Prototypage sur breadboard', 'Simulation sur ordinateur (Wokwi/Tinkercad)',
+                    'Production en série'
+                ], correct: 2 },
+            { question: 'À quoi sert une breadboard (plaque d\'essai) ?', options: [
+                    'À programmer le microcontrôleur', 'À souder les composants définitivement',
+                    'À réaliser des montages temporaires sans soudure', 'À alimenter le circuit en 220 V'
+                ], correct: 2 },
+            { question: 'Sur un bus I²C, comment le maître identifie-t-il chaque esclave ?', options: [
+                    'Par une broche dédiée par esclave', 'Par une adresse unique (7 bits)',
+                    'Par la couleur du fil', 'Par un signal radio'
+                ], correct: 1 },
+            { question: 'Quel protocole est le mieux adapté pour un lecteur de carte SD rapide ?', options: [
+                    'UART', 'I²C', 'SPI', 'USB'
+                ], correct: 2 },
+            { question: 'Quelle est la philosophie de progression recommandée pour les projets embarqués ?', options: [
+                    'Commencer directement avec l\'ATtiny',
+                    'UNO pour comprendre → MEGA pour créer → ATtiny pour intégrer',
+                    'Utiliser uniquement le MEGA pour tous les projets',
+                    'NANO pour apprendre → UNO pour créer → MEGA pour intégrer'
+                ], correct: 1 }
+        ];
+
+        // ============ VARIABLES GLOBALES ============
+        let currentQuestions = [];
+        let timerInterval;
+        let timeLeft = 900;
+        let evalStudentData = {};
+        const STORAGE_KEY = 'arduino_evaluations';
+
+        // ============ INITIALISATION ============
+        document.addEventListener('DOMContentLoaded', function() {
+            initTabs();
+            document.getElementById('eval-matricule').addEventListener('input', updateAttemptsInfo);
+            // Afficher l'UNO par défaut dans le comparateur
+            selectBoard('uno', document.querySelector('.board-card[data-board="uno"]'));
+        });
+
+        // ============ NAVIGATION ============
+        function initTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            const sections = document.querySelectorAll('.content-section');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const target = this.dataset.target;
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    sections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === target) section.classList.add('active');
+                    });
+                });
+            });
+        }
+
+        // ============ SÉLECTEUR DE CARTE ============
+        function selectBoard(boardId, element) {
+            document.querySelectorAll('.board-card').forEach(card => card.classList.remove(
+            'selected'));
+            element.classList.add('selected');
+            const data = boardData[boardId];
+            document.getElementById('board-detail-name').textContent = data.name;
+            document.getElementById('board-detail-specs').innerHTML = data.specs;
+        }
+
+        // ============ CYCLE DE VIE ============
+        function showLifecycleStep(step) {
+            const result = document.getElementById('lifecycle-result');
+            const steps = {
+                simulation: {
+                    title: '🔬 Étape 1 : Simulation',
+                    detail: '<strong>Outils :</strong> Wokwi, Tinkercad<br><strong>Actions :</strong> Dessiner le schéma, écrire le code, lancer la simulation.<br><strong>Avantage :</strong> Aucun risque matériel, validation rapide de la logique.<br><span style="color:#27ae60;">✅ Idéal pour tester une idée avant d\'acheter des composants.</span>'
+                },
+                proto: {
+                    title: '🔧 Étape 2 : Prototypage',
+                    detail: '<strong>Outils :</strong> Breadboard, Arduino UNO, composants réels.<br><strong>Actions :</strong> Câbler le circuit, téléverser le code, tester en conditions réelles.<br><strong>Attention :</strong> Vérifier les tensions, éviter les courts-circuits.<br><span style="color:#f39c12;">⚠️ Toujours débrancher l\'alimentation avant de modifier le câblage.</span>'
+                },
+                mini: {
+                    title: '🤏 Étape 3 : Miniaturisation',
+                    detail: '<strong>Outils :</strong> ATtiny85, programmateur ISP (ou UNO as ISP).<br><strong>Actions :</strong> Adapter le code aux contraintes de l\'ATtiny, transférer le programme, souder le circuit final.<br><strong>Bénéfice :</strong> Objet minuscule, autonome, économique (~200 FCFA).<br><span style="color:#1e8449;">🟢 L\'aboutissement du processus de développement embarqué.</span>'
+                }
+            };
+            const s = steps[step];
+            result.querySelector('.result-value').textContent = s.title;
+            result.querySelector('.result-details').innerHTML = s.detail;
+        }
+
+        // ============ RECOMMANDATION PROTOCOLE ============
+        function recommendProtocol() {
+            const useCase = document.getElementById('protocol-use-case').value;
+            const resultDiv = document.getElementById('protocol-result');
+            if (!useCase) {
+                resultDiv.querySelector('.result-value').textContent = 'Veuillez sélectionner un cas d\'usage';
+                resultDiv.querySelector('.result-details').textContent =
+                    'Sélectionnez une option dans la liste déroulante.';
+                return;
+            }
+            const rec = protocolRecommendations[useCase];
+            resultDiv.querySelector('.result-value').innerHTML =
+                `Protocole recommandé : <span style="color:${rec.color};">${rec.proto}</span>`;
+            resultDiv.querySelector('.result-details').innerHTML = rec.detail;
+        }
+
+        // ============ COMPARAISON UNO vs ATtiny ============
+        function showComparison() {
+            const criteria = document.getElementById('comparison-criteria').value;
+            const resultDiv = document.getElementById('comparison-result');
+            const comps = {
+                broches: {
+                    title: 'Nombre de broches',
+                    detail: '<strong>UNO (ATmega328P) :</strong> 28 broches, dont 20 utilisables en E/S (14 numériques + 6 analogiques)<br><br><strong>ATtiny85 :</strong> 8 broches, dont 5 ou 6 utilisables en E/S (selon la configuration du pin RESET)<br><br><span style="color:var(--danger-red);">🔴 L\'ATtiny85 exige une gestion très économe des broches.</span>'
+                },
+                memoire: {
+                    title: 'Mémoire (Flash / SRAM / EEPROM)',
+                    detail: '<strong>UNO :</strong> Flash 32 kB | SRAM 2 kB | EEPROM 1 kB<br><br><strong>ATtiny85 :</strong> Flash 8 kB | SRAM 512 octets | EEPROM 512 octets<br><br><span style="color:var(--danger-red);">🔴 La SRAM de l\'ATtiny est 4 fois plus petite : attention aux dépassements !</span>'
+                },
+                conso: {
+                    title: 'Consommation électrique',
+                    detail: '<strong>UNO :</strong> ~15 mA en fonctionnement normal (hors LEDs et périphériques)<br><br><strong>ATtiny85 :</strong> ~300 µA à 1 MHz, moins de 1 mA à 8 MHz<br><br><span style="color:var(--success-green);">🟢 L\'ATtiny85 consomme 50 à 100 fois moins : idéal pour les projets sur batterie.</span>'
+                },
+                cout: {
+                    title: 'Coût unitaire',
+                    detail: '<strong>UNO (clone) :</strong> ~3 000 à 5 000 FCFA<br><br><strong>ATtiny85 :</strong> ~200 à 500 FCFA<br><br><span style="color:var(--success-green);">🟢 L\'ATtiny85 coûte 10 à 25 fois moins cher. Pour 10 000 pièces, l\'économie est massive.</span>'
+                },
+                usage: {
+                    title: 'Cas d\'usage idéal',
+                    detail: '<strong>UNO :</strong> Apprentissage, prototypage, débogage facile grâce au port USB.<br><br><strong>ATtiny85 :</strong> Produit final miniaturisé, projets sur batterie longue durée, production en série.<br><br><span style="color:var(--highlight-orange);">🟠 L\'UNO est l\'outil de développement, l\'ATtiny est le composant d\'intégration finale.</span>'
+                }
+            };
+            const c = comps[criteria];
+            resultDiv.querySelector('.result-value').textContent = c.title;
+            resultDiv.querySelector('.result-details').innerHTML = c.detail;
+        }
+
+        // ============ MESSAGES ============
+        function showSuccessMessage(message) {
+            const el = document.getElementById('successMessage');
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 3000);
+        }
+
+        function showErrorMessage(message) {
+            const el = document.getElementById('errorMessage');
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 3000);
+        }
+
+        // ============ STORAGE ============
+        function getEvaluations() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { return {}; }
+        }
+
+        function saveEvaluation(matricule, evaluationData) {
+            try {
+                const evaluations = getEvaluations();
+                if (!evaluations[matricule]) evaluations[matricule] = [];
+                evaluations[matricule].push({ ...evaluationData, date: new Date().toISOString(),
+                    timestamp: Date.now() });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(evaluations));
+            } catch (e) { console.error('Erreur localStorage:', e); }
+        }
+
+        function updateAttemptsInfo() {
+            const matricule = document.getElementById('eval-matricule').value.trim();
+            const infoDiv = document.getElementById('attemptsInfoEval');
+            const detailsP = document.getElementById('attemptsDetailsEval');
+            if (!matricule) { infoDiv.style.display = 'none'; return; }
+            const evaluations = getEvaluations();
+            const studentEvals = evaluations[matricule] || [];
+            if (studentEvals.length === 0) { infoDiv.style.display = 'none'; return; }
+            const last = studentEvals[studentEvals.length - 1];
+            const lastDate = new Date(last.date).toLocaleDateString('fr-FR');
+            const total = studentEvals.reduce((s, e) => s + parseFloat(e.noteTotale), 0);
+            const avg = total / studentEvals.length;
+            const best = Math.max(...studentEvals.map(e => parseFloat(e.noteTotale)));
+            detailsP.innerHTML =
+                `<p><strong>Nombre de tentatives :</strong> ${studentEvals.length}</p><p><strong>Dernière tentative :</strong> ${lastDate} (Note: ${last.noteTotale}/20)</p><p><strong>Moyenne :</strong> ${avg.toFixed(2)}/20</p><p><strong>Meilleure note :</strong> ${best.toFixed(2)}/20</p>`;
+            infoDiv.style.display = 'block';
+        }
+
+        // ============ ÉVALUATION ============
+        function startEvalQuiz() {
+            const nom = document.getElementById('eval-nom').value.trim();
+            const matricule = document.getElementById('eval-matricule').value.trim();
+            const habillement = document.querySelector('input[name="eval-habillement"]:checked');
+            const participation = document.querySelector('input[name="eval-participation"]:checked');
+            const comportement = document.querySelector('input[name="eval-comportement"]:checked');
+            if (!nom || !matricule || !habillement || !participation || !comportement) {
+                showErrorMessage('Veuillez remplir tous les champs obligatoires !');
+                return;
+            }
+            evalStudentData = {
+                nom,
+                matricule,
+                email: document.getElementById('eval-email').value.trim(),
+                habillement: parseInt(habillement.value),
+                participation: parseInt(participation.value),
+                comportement: parseInt(comportement.value)
+            };
+            currentQuestions = [...evalQuestions];
+            shuffleArray(currentQuestions);
+            document.getElementById('studentInfoEval').style.display = 'none';
+            document.getElementById('quizSectionEval').style.display = 'block';
+            document.getElementById('timer').style.display = 'block';
+            generateEvalQuestions();
+            timeLeft = 900;
+            startEvalTimer();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function generateEvalQuestions() {
+            const container = document.getElementById('questionsContainerEval');
+            container.innerHTML = '';
+            currentQuestions.forEach((q, index) => {
+                const div = document.createElement('div');
+                div.className = 'question';
+                div.innerHTML = `
+                    <h3>Question ${index + 1} : ${q.question}</h3>
+                    <div class="options">
+                        ${q.options.map((opt, i) => `
+                            <label class="option-label">
+                                <input type="radio" name="q${index}" value="${i}">
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>`;
+                container.appendChild(div);
+            });
+            document.getElementById('progressFillEval').style.width = '0%';
+        }
+
+        function startEvalTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                const timerEl = document.getElementById('timer');
+                timerEl.textContent =
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                if (timeLeft <= 120) timerEl.classList.add('warning');
+                if (timeLeft <= 0) { clearInterval(timerInterval);
+                    submitEvalQuiz(true); }
+            }, 1000);
+        }
+
+        function submitEvalQuiz(autoSubmit = false) {
+            clearInterval(timerInterval);
+            if (!autoSubmit && !confirm('Êtes-vous sûr(e) de vouloir soumettre votre évaluation ?')) {
+                startEvalTimer();
+                return;
+            }
+            let score = 0;
+            currentQuestions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected && parseInt(selected.value) === q.correct) score++;
+            });
+            const quizNote = (score / currentQuestions.length) * 20;
+            const noteTotale = ((quizNote * 3) + (evalStudentData.participation * 4) + (evalStudentData
+                .habillement * 2) + (evalStudentData.comportement * 2)) / 11;
+            const evaluations = getEvaluations();
+            const studentEvals = evaluations[evalStudentData.matricule] || [];
+            const attemptNumber = studentEvals.length + 1;
+            const evaluationData = {
+                ...evalStudentData,
+                questionsRepondues: currentQuestions.length,
+                bonnesReponses: score,
+                quizNote: quizNote.toFixed(2),
+                noteHabillement: evalStudentData.habillement,
+                noteParticipation: evalStudentData.participation,
+                noteComportement: evalStudentData.comportement,
+                noteTotale: noteTotale.toFixed(2),
+                tempsUtilise: `${Math.floor((900 - timeLeft) / 60)} min ${(900 - timeLeft) % 60} sec`,
+                numeroTentative: attemptNumber,
+                nombreTentativesTotal: attemptNumber
+            };
+            saveEvaluation(evalStudentData.matricule, evaluationData);
+            generateEvalPDF(evaluationData, attemptNumber);
+        }
+
+        function generateEvalPDF(data, attemptNumber) {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                doc.setFillColor(26, 42, 108);
+                doc.rect(0, 0, 210, 40, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(16);
+                doc.text('ÉVALUATION – CARTES ARDUINO & MICROCONTRÔLEURS', 105, 15, { align: 'center' });
+                doc.setFontSize(11);
+                doc.text('Rapport d\'évaluation', 105, 25, { align: 'center' });
+                doc.text('ENSET de Douala – 2025/2026', 105, 32, { align: 'center' });
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text('INFORMATIONS ÉTUDIANT', 20, 50);
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(10);
+                doc.text(`Nom : ${data.nom}`, 20, 60);
+                doc.text(`Matricule : ${data.matricule}`, 20, 66);
+                if (data.email) doc.text(`Email : ${data.email}`, 20, 72);
+                doc.text(`Tentative n° : ${attemptNumber}`, 20, 78);
+                doc.setFont(undefined, 'bold');
+                doc.text('DÉTAILS DE L\'ÉVALUATION', 20, 90);
+                doc.setFont(undefined, 'normal');
+                doc.text(`Date : ${new Date().toLocaleDateString('fr-FR')}`, 20, 100);
+                doc.text(`Heure : ${new Date().toLocaleTimeString('fr-FR')}`, 20, 106);
+                doc.text(`Temps utilisé : ${data.tempsUtilise}`, 20, 112);
+                doc.text(`Questions : ${data.questionsRepondues} / 20`, 20, 118);
+                doc.text(`Bonnes réponses : ${data.bonnesReponses} / 20`, 20, 124);
+                doc.setFont(undefined, 'bold');
+                doc.text('NOTES DÉTAILLÉES', 20, 140);
+                doc.setFont(undefined, 'normal');
+                doc.text(`Quiz : ${data.quizNote} / 20`, 20, 150);
+                doc.text(`Style vestimentaire : ${data.noteHabillement} / 20`, 20, 156);
+                doc.text(`Participation : ${data.noteParticipation} / 20`, 20, 162);
+                doc.text(`Comportement : ${data.noteComportement} / 20`, 20, 168);
+                doc.setFillColor(26, 42, 108);
+                doc.rect(15, 175, 180, 15, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(14);
+                doc.setFont(undefined, 'bold');
+                doc.text(`NOTE FINALE : ${data.noteTotale} / 20`, 105, 185, { align: 'center' });
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text('APPRÉCIATION', 20, 205);
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(10);
+                const note = parseFloat(data.noteTotale);
+                let appreciation = '';
+                if (note >= 16) appreciation = 'Excellent – Très bonne maîtrise des cartes Arduino et microcontrôleurs';
+                else if (note >= 14) appreciation = 'Très bien – Bonne compréhension des systèmes embarqués';
+                else if (note >= 12) appreciation = 'Bien – Connaissances satisfaisantes';
+                else if (note >= 10) appreciation = 'Satisfaisant – Connaissances de base acquises';
+                else appreciation = 'À renforcer – Révision nécessaire sur les Arduino et microcontrôleurs';
+                doc.text(appreciation, 20, 215, { maxWidth: 170 });
+                doc.setDrawColor(26, 42, 108);
+                doc.line(20, 280, 190, 280);
+                doc.setTextColor(100, 100, 100);
+                doc.setFontSize(8);
+                doc.setFont(undefined, 'italic');
+                doc.text('Enseignant : Dr OBONO BIYOBO Arnaud', 105, 285, { align: 'center' });
+                doc.text('Chargé de Cours – Informatique Industrielle et Automatique', 105, 290, { align: 'center' });
+                const fileName =
+                    `Evaluation_Arduino_${data.matricule}_Tentative${attemptNumber}_${Date.now()}.pdf`;
+                doc.save(fileName);
+                alert(
+                    `✅ Évaluation terminée avec succès !\n\nNote finale : ${data.noteTotale} / 20\n${appreciation}\n\nTentative n° ${attemptNumber}\n\nVotre rapport PDF a été téléchargé.`
+                    );
+                resetEvalForm();
+            } catch (error) {
+                console.error('Erreur PDF:', error);
+                const note = parseFloat(data.noteTotale);
+                let appreciation = note >= 16 ? 'Excellent' : note >= 14 ? 'Très bien' : note >= 12 ? 'Bien' :
+                    note >= 10 ? 'Satisfaisant' : 'À renforcer';
+                alert(
+                    `Évaluation terminée !\n\nNote finale : ${data.noteTotale} / 20\n${appreciation}\n\nTentative n° ${attemptNumber}\n\nErreur PDF: Le rapport n'a pas pu être généré.`
+                    );
+                resetEvalForm();
+            }
+        }
+
+        function resetEvalForm() {
+            document.getElementById('studentInfoEval').style.display = 'block';
+            document.getElementById('quizSectionEval').style.display = 'none';
+            document.getElementById('timer').style.display = 'none';
+            document.getElementById('eval-nom').value = '';
+            document.getElementById('eval-matricule').value = '';
+            document.getElementById('eval-email').value = '';
+            document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+            document.getElementById('attemptsInfoEval').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

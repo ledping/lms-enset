@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Systèmes Logiques Combinatoires - Cours Interactif</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #1a2a6c;
+            --secondary-color: #2a5298;
+            --accent-color: #667eea;
+            --light-color: #f8f9ff;
+            --dark-color: #333;
+            --success-color: #4caf50;
+            --warning-color: #ffa726;
+            --danger-color: #f44336;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f5f7fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            margin-right: 15px;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .logo p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 25px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        nav ul li a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Main Content */
+        main {
+            padding: 40px 0;
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--accent-color);
+            position: relative;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+        }
+        
+        .section-subtitle {
+            color: var(--secondary-color);
+            font-size: 1.4rem;
+            margin: 25px 0 15px;
+        }
+        
+        .content-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .definition-box {
+            background-color: var(--light-color);
+            border-left: 5px solid var(--accent-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .definition-box h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .important-note {
+            background-color: #fff8e1;
+            border-left: 5px solid var(--warning-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        /* Number Systems Visualization */
+        .number-system-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .number-system-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .number-system-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .symbols-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .symbol {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: #e3f2fd;
+            border-radius: 50%;
+            font-weight: bold;
+            border: 2px solid #bbdefb;
+        }
+        
+        .hex-symbol {
+            width: 35px;
+            height: 35px;
+        }
+        
+        .representation-example {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Base Conversion Tool */
+        .conversion-tool {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .tool-title {
+            color: var(--primary-color);
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .conversion-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 42, 108, 0.3);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .conversion-result {
+            background-color: var(--light-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 5px solid var(--success-color);
+        }
+        
+        .result-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .result-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Evaluation Section */
+        .evaluation-section {
+            margin-top: 50px;
+        }
+        
+        .quiz-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .quiz-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .timer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .timer.warning {
+            background-color: var(--warning-color);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .question-card {
+            background-color: var(--light-color);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--accent-color);
+        }
+        
+        .question-number {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .option {
+            padding: 15px;
+            background-color: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option:hover {
+            border-color: var(--accent-color);
+            background-color: #f0f4ff;
+        }
+        
+        .option.selected {
+            border-color: var(--primary-color);
+            background-color: #e8f0fe;
+        }
+        
+        .option input {
+            margin-right: 10px;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #eee;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .result-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            display: none;
+        }
+        
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(var(--success-color) 0% 0%, #eee 0% 100%);
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .score-inner {
+            width: 120px;
+            height: 120px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .score-text {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            margin-top: 10px;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .footer-section p {
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.8;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0 10px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 1.6rem;
+            }
+            
+            .content-card, .conversion-tool, .quiz-container {
+                padding: 20px;
+            }
+            
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-microchip"></i>
+                    <div>
+                        <h1>Systèmes Logiques Combinatoires</h1>
+                        <p>Cours interactif - Enseignant: Dr OBONO BIYOBO Arnaud</p>
+                    </div>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#introduction" class="active">Introduction</a></li>
+                        <li><a href="#numerotation">Systèmes de Numération</a></li>
+                        <li><a href="#conversion">Changement de Bases</a></li>
+                        <li><a href="#evaluation">Évaluation</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Introduction Section -->
+        <section id="introduction">
+            <h2 class="section-title"><i class="fas fa-play-circle"></i> Introduction aux Systèmes Logiques Combinatoires</h2>
+            
+            <div class="content-card">
+                <h3 class="section-subtitle">Qu'est-ce qu'un système logique combinatoire ?</h3>
+                <p>Un système logique combinatoire est un circuit numérique dont les sorties dépendent uniquement des combinaisons actuelles des entrées, sans mémoire des états précédents.</p>
+                
+                <div class="definition-box">
+                    <h4>Caractéristiques principales :</h4>
+                    <ul>
+                        <li><strong>Pas de mémoire :</strong> L'état de sortie ne dépend que des entrées actuelles</li>
+                        <li><strong>Fonction déterministe :</strong> À chaque combinaison d'entrées correspond une sortie unique</li>
+                        <li><strong>Temps de réponse instantané :</strong> En théorie, la sortie change immédiatement après le changement d'entrée</li>
+                        <li><strong>Représentation par fonctions booléennes :</strong> Peut être décrit par des équations logiques</li>
+                    </ul>
+                </div>
+                
+                <h3 class="section-subtitle">Logique positive et convention des niveaux logiques</h3>
+                <p>Dans ce cours, nous utilisons la <strong>logique positive</strong> qui est la convention la plus courante en électronique numérique :</p>
+                
+                <div class="definition-box">
+                    <h4>Convention de la logique positive :</h4>
+                    <ul>
+                        <li><strong>Niveau logique "1" (actif) :</strong> Correspond à une tension haute (généralement proche de la tension d'alimentation, ex: 5V, 3.3V)</li>
+                        <li><strong>Niveau logique "0" (inactif) :</strong> Correspond à une tension basse (généralement proche de 0V)</li>
+                    </ul>
+                </div>
+                
+                <div class="important-note">
+                    <p><strong>Note importante :</strong> La logique positive est une convention. Il existe également la logique négative où les niveaux sont inversés. Dans la pratique, la logique positive est devenue la norme pour la plupart des systèmes numériques.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Number Systems Section -->
+        <section id="numerotation">
+            <h2 class="section-title"><i class="fas fa-calculator"></i> Systèmes de Numération</h2>
+            
+            <div class="content-card">
+                <h3 class="section-subtitle">Définitions fondamentales</h3>
+                
+                <div class="definition-box">
+                    <h4>Système de numération :</h4>
+                    <p>Un système de numération est un ensemble de règles et de symboles permettant de représenter des nombres.</p>
+                </div>
+                
+                <div class="definition-box">
+                    <h4>Base d'un système :</h4>
+                    <p>La base d'un système de numération est le nombre de symboles distincts (chiffres) utilisés pour représenter les nombres dans ce système.</p>
+                </div>
+                
+                <div class="definition-box">
+                    <h4>Représentation polynomiale :</h4>
+                    <p>La représentation polynomiale d'un nombre N dans une base B s'exprime comme la somme des produits de chaque chiffre par la base élevée à la puissance correspondant à sa position.</p>
+                    <p class="representation-example">N = a<sub>n</sub>B<sup>n</sup> + a<sub>n-1</sub>B<sup>n-1</sup> + ... + a<sub>1</sub>B<sup>1</sup> + a<sub>0</sub>B<sup>0</sup> + a<sub>-1</sub>B<sup>-1</sup> + ...</p>
+                </div>
+            </div>
+            
+            <!-- Number Systems Cards -->
+            <div class="content-card">
+                <h3 class="section-subtitle">Les différents systèmes de numération</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 20px;">
+                    <!-- Decimal System -->
+                    <div class="number-system-card">
+                        <div class="number-system-header" style="background-color: #1a2a6c;">
+                            Système Décimal (Base 10)
+                        </div>
+                        <div class="number-system-content">
+                            <div>
+                                <p><strong>Base :</strong> 10</p>
+                                <p><strong>Chiffres utilisés :</strong> 0 à 9</p>
+                                <p><strong>Utilisation :</strong> Système universel pour les calculs humains</p>
+                                
+                                <div class="symbols-list">
+                                    <div class="symbol">0</div>
+                                    <div class="symbol">1</div>
+                                    <div class="symbol">2</div>
+                                    <div class="symbol">3</div>
+                                    <div class="symbol">4</div>
+                                    <div class="symbol">5</div>
+                                    <div class="symbol">6</div>
+                                    <div class="symbol">7</div>
+                                    <div class="symbol">8</div>
+                                    <div class="symbol">9</div>
+                                </div>
+                            </div>
+                            
+                            <div class="representation-example">
+                                <strong>Exemple :</strong> 457<sub>10</sub> = 4×10² + 5×10¹ + 7×10⁰
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Binary System -->
+                    <div class="number-system-card">
+                        <div class="number-system-header" style="background-color: #2a5298;">
+                            Système Binaire (Base 2)
+                        </div>
+                        <div class="number-system-content">
+                            <div>
+                                <p><strong>Base :</strong> 2</p>
+                                <p><strong>Chiffres utilisés :</strong> 0 et 1</p>
+                                <p><strong>Utilisation :</strong> Fondamental pour les systèmes informatiques et électroniques</p>
+                                
+                                <div class="symbols-list">
+                                    <div class="symbol">0</div>
+                                    <div class="symbol">1</div>
+                                </div>
+                            </div>
+                            
+                            <div class="representation-example">
+                                <strong>Exemple :</strong> 1101<sub>2</sub> = 1×2³ + 1×2² + 0×2¹ + 1×2⁰ = 13<sub>10</sub>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Octal System -->
+                    <div class="number-system-card">
+                        <div class="number-system-header" style="background-color: #3a6298;">
+                            Système Octal (Base 8)
+                        </div>
+                        <div class="number-system-content">
+                            <div>
+                                <p><strong>Base :</strong> 8</p>
+                                <p><strong>Chiffres utilisés :</strong> 0 à 7</p>
+                                <p><strong>Utilisation :</strong> Représentation compacte des nombres binaires (3 bits par chiffre octal)</p>
+                                
+                                <div class="symbols-list">
+                                    <div class="symbol">0</div>
+                                    <div class="symbol">1</div>
+                                    <div class="symbol">2</div>
+                                    <div class="symbol">3</div>
+                                    <div class="symbol">4</div>
+                                    <div class="symbol">5</div>
+                                    <div class="symbol">6</div>
+                                    <div class="symbol">7</div>
+                                </div>
+                            </div>
+                            
+                            <div class="representation-example">
+                                <strong>Exemple :</strong> 735<sub>8</sub> = 7×8² + 3×8¹ + 5×8⁰ = 477<sub>10</sub>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hexadecimal System -->
+                    <div class="number-system-card">
+                        <div class="number-system-header" style="background-color: #4a72a8;">
+                            Système Hexadécimal (Base 16)
+                        </div>
+                        <div class="number-system-content">
+                            <div>
+                                <p><strong>Base :</strong> 16</p>
+                                <p><strong>Chiffres utilisés :</strong> 0-9 et A-F</p>
+                                <p><strong>Utilisation :</strong> Représentation très compacte des nombres binaires (4 bits par chiffre hexadécimal)</p>
+                                
+                                <div class="symbols-list">
+                                    <div class="symbol">0</div>
+                                    <div class="symbol">1</div>
+                                    <div class="symbol">2</div>
+                                    <div class="symbol">3</div>
+                                    <div class="symbol">4</div>
+                                    <div class="symbol">5</div>
+                                    <div class="symbol">6</div>
+                                    <div class="symbol">7</div>
+                                    <div class="symbol">8</div>
+                                    <div class="symbol">9</div>
+                                    <div class="symbol hex-symbol">A</div>
+                                    <div class="symbol hex-symbol">B</div>
+                                    <div class="symbol hex-symbol">C</div>
+                                    <div class="symbol hex-symbol">D</div>
+                                    <div class="symbol hex-symbol">E</div>
+                                    <div class="symbol hex-symbol">F</div>
+                                </div>
+                            </div>
+                            
+                            <div class="representation-example">
+                                <strong>Exemple :</strong> 2A7<sub>16</sub> = 2×16² + 10×16¹ + 7×16⁰ = 679<sub>10</sub>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Base Conversion Section -->
+        <section id="conversion">
+            <h2 class="section-title"><i class="fas fa-exchange-alt"></i> Changement de Bases</h2>
+            
+            <div class="content-card">
+                <h3 class="section-subtitle">Méthodes de conversion</h3>
+                
+                <div class="definition-box">
+                    <h4>De la base B vers la base décimale :</h4>
+                    <p>Pour convertir un nombre d'une base B vers la base décimale, on utilise la représentation polynomiale du nombre.</p>
+                    <p><strong>Exemple :</strong> Conversion de 1101<sub>2</sub> en décimal :</p>
+                    <p class="representation-example">1101<sub>2</sub> = 1×2³ + 1×2² + 0×2¹ + 1×2⁰ = 8 + 4 + 0 + 1 = 13<sub>10</sub></p>
+                </div>
+                
+                <div class="definition-box">
+                    <h4>De la base décimale vers la base B :</h4>
+                    <p>Pour convertir un nombre N de la base décimale vers une base B, on effectue des divisions successives par B jusqu'à obtenir un quotient nul, puis on lit les restes dans l'ordre inverse.</p>
+                    <p><strong>Exemple :</strong> Conversion de 25<sub>10</sub> en binaire :</p>
+                    <p class="representation-example">
+                        25 ÷ 2 = 12 reste 1<br>
+                        12 ÷ 2 = 6 reste 0<br>
+                        6 ÷ 2 = 3 reste 0<br>
+                        3 ÷ 2 = 1 reste 1<br>
+                        1 ÷ 2 = 0 reste 1<br>
+                        Résultat : 25<sub>10</sub> = 11001<sub>2</sub>
+                    </p>
+                </div>
+                
+                <div class="definition-box">
+                    <h4>De la base binaire vers les bases octal et hexadécimale :</h4>
+                    <p>Pour convertir un nombre binaire en octal, on regroupe les bits par 3 à partir de la droite, puis on convertit chaque groupe en chiffre octal.</p>
+                    <p>Pour convertir en hexadécimal, on regroupe par 4 bits.</p>
+                    <p><strong>Exemple :</strong> Conversion de 11010111<sub>2</sub> :</p>
+                    <p class="representation-example">
+                        En octal : 11 010 111 → 3 2 7 → 327<sub>8</sub><br>
+                        En hexadécimal : 1101 0111 → D 7 → D7<sub>16</sub>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Conversion Tool -->
+            <div class="conversion-tool">
+                <h3 class="tool-title"><i class="fas fa-cogs"></i> Outil de Conversion de Bases</h3>
+                
+                <div class="conversion-form">
+                    <div class="form-group">
+                        <label for="inputNumber">Nombre à convertir :</label>
+                        <input type="text" id="inputNumber" class="form-control" placeholder="Ex: 1010, 2A, 75" value="1010">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="inputBase">Base d'origine :</label>
+                        <select id="inputBase" class="form-control">
+                            <option value="2">Binaire (Base 2)</option>
+                            <option value="8">Octal (Base 8)</option>
+                            <option value="10" selected>Décimal (Base 10)</option>
+                            <option value="16">Hexadécimal (Base 16)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="outputBase">Base de destination :</label>
+                        <select id="outputBase" class="form-control">
+                            <option value="2" selected>Binaire (Base 2)</option>
+                            <option value="8">Octal (Base 8)</option>
+                            <option value="10">Décimal (Base 10)</option>
+                            <option value="16">Hexadécimal (Base 16)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button id="convertBtn" class="btn btn-block">Convertir</button>
+                
+                <div id="conversionResult" class="conversion-result" style="display: none;">
+                    <div class="result-title">Résultat de la conversion :</div>
+                    <div id="resultValue" class="result-value"></div>
+                    <div id="calculationSteps" style="margin-top: 15px; font-family: 'Courier New', monospace; font-size: 0.9rem;"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Evaluation Section -->
+        <section id="evaluation" class="evaluation-section">
+            <h2 class="section-title"><i class="fas fa-clipboard-check"></i> Évaluation des Connaissances</h2>
+            
+            <div class="quiz-container">
+                <div class="quiz-header">
+                    <h3 class="quiz-title">Testez vos connaissances sur les systèmes logiques</h3>
+                    <div class="timer" id="timer">15:00</div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div id="studentInfo">
+                    <div class="content-card">
+                        <h3 class="section-subtitle">Informations de l'étudiant</h3>
+                        
+                        <div class="form-group">
+                            <label for="studentName">Nom complet :</label>
+                            <input type="text" id="studentName" class="form-control" placeholder="Votre nom complet">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="studentMatricule">Matricule :</label>
+                            <input type="text" id="studentMatricule" class="form-control" placeholder="Votre numéro de matricule">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="studentEmail">Email (facultatif) :</label>
+                            <input type="email" id="studentEmail" class="form-control" placeholder="votre.email@exemple.com">
+                        </div>
+                        
+                        <button id="startQuizBtn" class="btn btn-block">Commencer l'évaluation</button>
+                    </div>
+                </div>
+                
+                <div id="quizQuestions" style="display: none;">
+                    <!-- Questions will be dynamically inserted here -->
+                </div>
+                
+                <div id="quizResults" class="result-card">
+                    <h3 class="section-subtitle">Résultats de votre évaluation</h3>
+                    
+                    <div class="score-circle">
+                        <div class="score-inner">
+                            <div class="score-value" id="finalScore">0/20</div>
+                            <div class="score-text">Note</div>
+                        </div>
+                    </div>
+                    
+                    <div id="resultDetails" style="text-align: left; margin-top: 20px;">
+                        <!-- Result details will be dynamically inserted here -->
+                    </div>
+                    
+                    <button id="restartQuizBtn" class="btn" style="margin-top: 30px;">Recommencer l'évaluation</button>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-book"></i> Cours de Systèmes Logiques</h3>
+                    <p>Ce cours interactif couvre les bases des systèmes logiques combinatoires et des systèmes de numération.</p>
+                    <p>Enseignant : Dr OBONO BIYOBO Arnaud</p>
+                    <p>Université de Douala - ENSET</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3><i class="fas fa-link"></i> Liens rapides</h3>
+                    <p><a href="#introduction" style="color: white; text-decoration: none;">Introduction</a></p>
+                    <p><a href="#numerotation" style="color: white; text-decoration: none;">Systèmes de numération</a></p>
+                    <p><a href="#conversion" style="color: white; text-decoration: none;">Changement de bases</a></p>
+                    <p><a href="#evaluation" style="color: white; text-decoration: none;">Évaluation</a></p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3><i class="fas fa-info-circle"></i> Informations</h3>
+                    <p>Année académique : 2025/2026</p>
+                    <p>UE: Electronique 1 - EC: Systèmes Logiques (GI115)</p>
+                    <p>Génie Informatique - Semestre 1</p>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2025 - Cours de Systèmes Logiques Combinatoires - Tous droits réservés</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Back to Top Button -->
+    <div class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </div>
+
+    <script>
+        // Conversion Tool
+        document.getElementById('convertBtn').addEventListener('click', function() {
+            const inputNumber = document.getElementById('inputNumber').value.trim().toUpperCase();
+            const inputBase = parseInt(document.getElementById('inputBase').value);
+            const outputBase = parseInt(document.getElementById('outputBase').value);
+            
+            if (!inputNumber) {
+                alert("Veuillez entrer un nombre à convertir");
+                return;
+            }
+            
+            // Validate input based on base
+            const validChars = {
+                2: /^[01]+$/,
+                8: /^[0-7]+$/,
+                10: /^[0-9]+$/,
+                16: /^[0-9A-F]+$/
+            };
+            
+            if (!validChars[inputBase].test(inputNumber)) {
+                alert(`Le nombre "${inputNumber}" n'est pas valide pour la base ${inputBase}`);
+                return;
+            }
+            
+            // Convert to decimal first
+            let decimalValue;
+            let steps = "";
+            
+            if (inputBase === 10) {
+                decimalValue = parseInt(inputNumber, 10);
+                steps = `Valeur décimale : ${decimalValue}`;
+            } else {
+                decimalValue = parseInt(inputNumber, inputBase);
+                steps = `${inputNumber}<sub>${inputBase}</sub> = ${decimalValue}<sub>10</sub>`;
+            }
+            
+            // Convert from decimal to output base
+            let result;
+            if (outputBase === 10) {
+                result = decimalValue.toString();
+                steps += `<br>Résultat final : ${result}<sub>10</sub>`;
+            } else {
+                result = decimalValue.toString(outputBase).toUpperCase();
+                steps += `<br>${decimalValue}<sub>10</sub> = ${result}<sub>${outputBase}</sub>`;
+            }
+            
+            // Display result
+            document.getElementById('resultValue').innerHTML = `${inputNumber}<sub>${inputBase}</sub> = ${result}<sub>${outputBase}</sub>`;
+            document.getElementById('calculationSteps').innerHTML = steps;
+            document.getElementById('conversionResult').style.display = 'block';
+        });
+        
+        // Quiz Evaluation System
+        const questions = [
+            {
+                question: "Qu'est-ce qu'un système logique combinatoire ?",
+                options: [
+                    "Un système dont la sortie dépend uniquement des entrées actuelles",
+                    "Un système avec mémoire des états précédents",
+                    "Un système analogique",
+                    "Un système de transmission de données"
+                ],
+                correct: 0,
+                explanation: "Un système combinatoire a des sorties qui dépendent uniquement des combinaisons actuelles des entrées, sans mémoire des états précédents."
+            },
+            {
+                question: "Dans la logique positive, quel niveau de tension correspond au niveau logique '1' ?",
+                options: [
+                    "Tension basse (proche de 0V)",
+                    "Tension haute (proche de la tension d'alimentation)",
+                    "Tension intermédiaire",
+                    "Aucune tension"
+                ],
+                correct: 1,
+                explanation: "En logique positive, le niveau logique '1' correspond à une tension haute, généralement proche de la tension d'alimentation du circuit (ex: 5V, 3.3V)."
+            },
+            {
+                question: "Combien de symboles différents utilise le système de numération binaire ?",
+                options: [
+                    "10 symboles",
+                    "2 symboles",
+                    "8 symboles",
+                    "16 symboles"
+                ],
+                correct: 1,
+                explanation: "Le système binaire utilise uniquement deux symboles : 0 et 1."
+            },
+            {
+                question: "Quelle est la valeur décimale du nombre binaire 1101 ?",
+                options: [
+                    "10",
+                    "11",
+                    "12",
+                    "13"
+                ],
+                correct: 3,
+                explanation: "1101₂ = 1×2³ + 1×2² + 0×2¹ + 1×2⁰ = 8 + 4 + 0 + 1 = 13₁₀"
+            },
+            {
+                question: "Quelle est la base du système de numération hexadécimal ?",
+                options: [
+                    "2",
+                    "8",
+                    "10",
+                    "16"
+                ],
+                correct: 3,
+                explanation: "Le système hexadécimal utilise la base 16, avec les symboles 0-9 et A-F."
+            },
+            {
+                question: "Comment convertit-on un nombre binaire en nombre octal ?",
+                options: [
+                    "En regroupant les bits par 3 à partir de la droite",
+                    "En regroupant les bits par 4 à partir de la droite",
+                    "En divisant par 8",
+                    "En multipliant par 8"
+                ],
+                correct: 0,
+                explanation: "Pour convertir un nombre binaire en octal, on regroupe les bits par 3 à partir de la droite, puis on convertit chaque groupe en chiffre octal."
+            },
+            {
+                question: "Quelle est la représentation hexadécimale du nombre décimal 255 ?",
+                options: [
+                    "FE",
+                    "FF",
+                    "EF",
+                    "EE"
+                ],
+                correct: 1,
+                explanation: "255₁₀ = 16 × 15 + 15 = FF₁₆"
+            },
+            {
+                question: "Quelle méthode utilise-t-on pour convertir un nombre décimal en binaire ?",
+                options: [
+                    "Additions successives",
+                    "Divisions successives par 2",
+                    "Multiplications successives par 2",
+                    "Soustractions successives"
+                ],
+                correct: 1,
+                explanation: "Pour convertir un nombre décimal en binaire, on effectue des divisions successives par 2 et on conserve les restes, qu'on lit ensuite dans l'ordre inverse."
+            },
+            {
+                question: "Quelle est la valeur du nombre octal 347 en décimal ?",
+                options: [
+                    "215",
+                    "231",
+                    "247",
+                    "263"
+                ],
+                correct: 1,
+                explanation: "347₈ = 3×8² + 4×8¹ + 7×8⁰ = 3×64 + 4×8 + 7×1 = 192 + 32 + 7 = 231₁₀"
+            },
+            {
+                question: "Combien de bits sont nécessaires pour représenter un chiffre hexadécimal ?",
+                options: [
+                    "1 bit",
+                    "2 bits",
+                    "3 bits",
+                    "4 bits"
+                ],
+                correct: 3,
+                explanation: "Un chiffre hexadécimal représente 16 valeurs possibles, ce qui nécessite 4 bits (2⁴ = 16)."
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = [];
+        let timeLeft = 900; // 15 minutes in seconds
+        let timerInterval;
+        let quizStarted = false;
+        
+        // Start Quiz
+        document.getElementById('startQuizBtn').addEventListener('click', function() {
+            const name = document.getElementById('studentName').value.trim();
+            const matricule = document.getElementById('studentMatricule').value.trim();
+            
+            if (!name || !matricule) {
+                alert("Veuillez entrer votre nom et votre matricule");
+                return;
+            }
+            
+            document.getElementById('studentInfo').style.display = 'none';
+            document.getElementById('quizQuestions').style.display = 'block';
+            document.getElementById('progressFill').style.width = '0%';
+            
+            quizStarted = true;
+            startTimer();
+            showQuestion(currentQuestion);
+        });
+        
+        // Start Timer
+        function startTimer() {
+            timerInterval = setInterval(function() {
+                timeLeft--;
+                
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('timer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Warning when less than 2 minutes
+                if (timeLeft <= 120) {
+                    document.getElementById('timer').classList.add('warning');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+        
+        // Show Question
+        function showQuestion(index) {
+            const question = questions[index];
+            const quizContainer = document.getElementById('quizQuestions');
+            
+            let optionsHTML = '';
+            question.options.forEach((option, optionIndex) => {
+                optionsHTML += `
+                    <div class="option" onclick="selectOption(${optionIndex})">
+                        <input type="radio" name="q${index}" id="q${index}o${optionIndex}" value="${optionIndex}">
+                        <label for="q${index}o${optionIndex}">${option}</label>
+                    </div>
+                `;
+            });
+            
+            quizContainer.innerHTML = `
+                <div class="question-card">
+                    <div>
+                        <span class="question-number">${index + 1}</span>
+                        <span class="question-text">${question.question}</span>
+                    </div>
+                    <div class="options-container">
+                        ${optionsHTML}
+                    </div>
+                    <div style="margin-top: 20px;">
+                        ${index > 0 ? '<button class="btn" onclick="previousQuestion()" style="margin-right: 10px;">Question précédente</button>' : ''}
+                        <button class="btn" onclick="nextQuestion()">
+                            ${index === questions.length - 1 ? 'Terminer le quiz' : 'Question suivante'}
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Update progress bar
+            const progress = ((index + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            
+            // Restore previous selection if exists
+            if (userAnswers[index] !== undefined) {
+                const options = document.querySelectorAll(`.option`);
+                options[userAnswers[index]].classList.add('selected');
+                document.querySelector(`input[name="q${index}"][value="${userAnswers[index]}"]`).checked = true;
+            }
+        }
+        
+        // Select option
+        window.selectOption = function(optionIndex) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[optionIndex].classList.add('selected');
+            
+            userAnswers[currentQuestion] = optionIndex;
+        };
+        
+        // Next question
+        window.nextQuestion = function() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            } else {
+                finishQuiz();
+            }
+        };
+        
+        // Previous question
+        window.previousQuestion = function() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        };
+        
+        // Finish quiz
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            
+            // Calculate score
+            score = 0;
+            let resultDetailsHTML = '<h4 style="color: #1a2a6c; margin-bottom: 15px;">Détail des réponses :</h4>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === question.correct;
+                
+                if (isCorrect) {
+                    score++;
+                }
+                
+                resultDetailsHTML += `
+                    <div style="margin-bottom: 15px; padding: 10px; border-left: 3px solid ${isCorrect ? '#4caf50' : '#f44336'}; background-color: #f9f9f9;">
+                        <p><strong>Question ${index + 1}:</strong> ${question.question}</p>
+                        <p><strong>Votre réponse:</strong> ${userAnswer !== undefined ? question.options[userAnswer] : 'Non répondue'}</p>
+                        <p><strong>Réponse correcte:</strong> ${question.options[question.correct]}</p>
+                        <p><strong>Explication:</strong> ${question.explanation}</p>
+                    </div>
+                `;
+            });
+            
+            // Calculate final score (out of 20)
+            const finalScore = (score / questions.length) * 20;
+            
+            // Update result card
+            document.getElementById('finalScore').textContent = `${finalScore.toFixed(1)}/20`;
+            document.getElementById('resultDetails').innerHTML = resultDetailsHTML;
+            
+            // Update score circle
+            const scoreCircle = document.querySelector('.score-circle');
+            const percentage = (finalScore / 20) * 100;
+            scoreCircle.style.background = `conic-gradient(#4caf50 0% ${percentage}%, #eee ${percentage}% 100%)`;
+            
+            // Show results
+            document.getElementById('quizQuestions').style.display = 'none';
+            document.getElementById('quizResults').style.display = 'block';
+            
+            // Scroll to results
+            document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Restart quiz
+        document.getElementById('restartQuizBtn').addEventListener('click', function() {
+            currentQuestion = 0;
+            score = 0;
+            userAnswers = [];
+            timeLeft = 900;
+            quizStarted = false;
+            
+            document.getElementById('quizResults').style.display = 'none';
+            document.getElementById('studentInfo').style.display = 'block';
+            document.getElementById('timer').textContent = '15:00';
+            document.getElementById('timer').classList.remove('warning');
+            document.getElementById('progressFill').style.width = '0%';
+            
+            // Clear inputs
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentMatricule').value = '';
+            document.getElementById('studentEmail').value = '';
+        });
+        
+        // Smooth scrolling for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+                
+                // Update active nav link
+                document.querySelectorAll('nav a').forEach(link => link.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Back to top button
+        const backToTopBtn = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+        
+        backToTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Highlight current section in navigation
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('nav a');
+            
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.clientHeight;
+                
+                if (window.pageYOffset >= sectionTop && window.pageYOffset < sectionTop + sectionHeight) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        
+        // Initialize conversion tool with example
+        document.getElementById('convertBtn').click();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Évaluation - Systèmes Logiques - Cours 1</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a2a6c 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        
+        .header p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .instructors {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+        
+        .instructors p {
+            margin: 5px 0;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-section h2 {
+            color: #2a5298;
+            margin-bottom: 20px;
+            font-size: 22px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus, input[type="email"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .radio-option:hover {
+            background: #f8f9ff;
+            border-color: #667eea;
+        }
+        
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #1a2a6c 0%, #2a5298 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: block;
+            width: 100%;
+            margin-top: 30px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(26, 42, 108, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 24px;
+            font-weight: bold;
+            color: #2a5298;
+            z-index: 1000;
+        }
+        
+        .timer.warning {
+            background: #ff6b6b;
+            color: white;
+            animation: pulse 1s infinite;
+        }
+
+        .timer.fast-mode {
+            background: #ffa726;
+            color: white;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .quiz-section {
+            display: none;
+        }
+        
+        .question {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            border-left: 4px solid #1a2a6c;
+        }
+        
+        .question h3 {
+            color: #2a5298;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option-label {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option-label:hover {
+            background: white;
+            border-color: #1a2a6c;
+        }
+        
+        .option-label input {
+            margin-right: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1a2a6c 0%, #2a5298 100%);
+            transition: width 0.3s;
+        }
+
+        .session-info {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .session-info h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+
+        .speed-indicator {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 12px;
+            color: #666;
+            z-index: 1000;
+        }
+
+        .speed-indicator.active {
+            background: #ffa726;
+            color: white;
+            font-weight: bold;
+        }
+
+        .definition-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #1a2a6c;
+            font-style: italic;
+        }
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ÉVALUATION - SYSTÈMES LOGIQUES - COURS 1</h1>
+            <p><strong>Génie Informatique - Semestre 1</strong></p>
+            <p>UE: Electronique 1 - EC: Systèmes Logiques (G115)</p>
+            
+            <div class="instructors">
+                <p><strong>Enseignant :</strong></p>
+                <p>M. OBONO BIYOBO Arnaud</p>
+                <p style="font-size: 12px;">Chargé de Cours - Systèmes Logiques</p>
+                <p style="margin-top: 10px;"><strong>Université de Douala - ENSET</strong></p>
+                <p style="font-size: 12px;">Année académique 2018/2019</p>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div id="studentInfo" class="form-section">
+                <div class="session-info">
+                    <h3>📚 Cours 1 : Notions de base sur les systèmes logiques</h3>
+                    <p><strong>Thèmes abordés :</strong> Définitions fondamentales, Systèmes logiques, Variables logiques, Signaux, Niveaux logiques, Logique combinatoire vs séquentielle</p>
+                </div>
+
+                <h2>Informations de l'Étudiant(e)</h2>
+                
+                <div class="form-group">
+                    <label for="nom">Nom complet *</label>
+                    <input type="text" id="nom" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="matricule">Matricule et Option *</label>
+                    <input type="text" id="matricule" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email">
+                </div>
+                
+                <div class="form-group">
+                    <label>Style vestimentaire *</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="habillement" value="20" required>
+                            <span><strong>20 points :</strong> Tenue responsable - bien coiffée, bien chaussée, corps bien couvert ou polo département</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="habillement" value="10">
+                            <span><strong>10 points :</strong> Tenue jeune</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="habillement" value="2">
+                            <span><strong>2 points :</strong> Tenue non conforme</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Participation en classe *</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="participation" value="20" required>
+                            <span><strong>20 points :</strong> Participation active et pertinente</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="participation" value="15">
+                            <span><strong>15 points :</strong> Participation occasionnelle</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="participation" value="5">
+                            <span><strong>5 points :</strong> Peu participatif</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="startQuiz()">Commencer l'Évaluation</button>
+            </div>
+            
+            <div id="quizSection" class="quiz-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                
+                <div id="questionsContainer"></div>
+                
+                <button class="btn" onclick="submitQuiz()">Soumettre l'Évaluation</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="timer" class="timer hidden">20:00</div>
+    <div id="speedIndicator" class="speed-indicator hidden">Mode normal</div>
+
+    <script>
+        const questionsBase = [
+            {
+                question: "Comment peut-on définir un système en général?",
+                options: [
+                    "Un dispositif ou un ensemble d'éléments ayant une fonction déterminée",
+                    "Uniquement un circuit électronique complexe",
+                    "Un programme informatique",
+                    "Une équation mathématique"
+                ],
+                correct: 0
+            },
+            {
+                question: "Qu'est-ce qu'un système logique?",
+                options: [
+                    "Un système philosophique",
+                    "Un ensemble de circuits électroniques réalisant une ou plusieurs fonctions logiques",
+                    "Un système mathématique abstrait",
+                    "Un programme de raisonnement artificiel"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quels sont les deux types de systèmes logiques?",
+                options: [
+                    "Analogiques et numériques",
+                    "Combinatoires et séquentiels",
+                    "TTL et CMOS",
+                    "Entrée et sortie"
+                ],
+                correct: 1
+            },
+            {
+                question: "Que signifie 'être logique' selon le cours?",
+                options: [
+                    "Avoir plusieurs réponses possibles",
+                    "Avoir une réponse unique sans contradiction",
+                    "Utiliser des circuits électroniques",
+                    "Être capable de programmer"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qu'est-ce qu'une variable booléenne?",
+                options: [
+                    "Une variable qui peut prendre plusieurs valeurs",
+                    "Une variable discrète qui ne peut prendre que deux et seulement deux valeurs",
+                    "Une variable continue",
+                    "Une variable aléatoire"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quelle est la différence entre variable continue et variable discrète?",
+                options: [
+                    "La variable continue prend peu de valeurs, la discrète en prend beaucoup",
+                    "La variable continue prend une infinité de valeurs, la discrète un nombre limité",
+                    "Il n'y a pas de différence",
+                    "La variable continue est logique, la discrète est numérique"
+                ],
+                correct: 1
+            },
+            {
+                question: "Comment représente-t-on l'état vrai d'une variable logique?",
+                options: [
+                    "Par 0",
+                    "Par 1",
+                    "Par V",
+                    "Par T"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qu'est-ce qu'une fonction logique?",
+                options: [
+                    "Un programme informatique",
+                    "Un ensemble de variables logiques reliées par des opérateurs logiques",
+                    "Un circuit électronique",
+                    "Une équation mathématique complexe"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qu'est-ce qu'un signal analogique?",
+                options: [
+                    "Un signal discret",
+                    "Un signal décrit par une fonction mathématique continue",
+                    "Un signal numérique",
+                    "Un signal logique"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qu'est-ce qu'un signal numérique?",
+                options: [
+                    "Un signal continu",
+                    "Un signal discret dont l'amplitude est représentée par un nombre binaire",
+                    "Un signal analogique échantillonné",
+                    "Un signal logique"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qu'est-ce qu'un signal logique?",
+                options: [
+                    "Un signal analogique",
+                    "Un signal obtenu en représentant les différents états d'une variable logique dans le temps",
+                    "Un signal numérique complexe",
+                    "Un signal sinusoïdal"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quels sont les deux niveaux logiques?",
+                options: [
+                    "0 et 1",
+                    "Haut (H) et Bas (L)",
+                    "Vrai et Faux",
+                    "Positif et Négatif"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quelles sont les deux technologies principales des composants logiques?",
+                options: [
+                    "Analogique et numérique",
+                    "TTL et CMOS",
+                    "Résistive et capacitive",
+                    "Série et parallèle"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qu'est-ce que le codage?",
+                options: [
+                    "L'action de programmer",
+                    "L'action d'affecter à un ensemble de symboles une signification particulière",
+                    "Le chiffrement des données",
+                    "La compression d'informations"
+                ],
+                correct: 1
+            },
+            {
+                question: "Dans la logique combinatoire, de quoi dépend l'état de la sortie?",
+                options: [
+                    "De l'histoire du système",
+                    "Uniquement de la combinaison des variables d'entrée",
+                    "Du temps écoulé",
+                    "Des états précédents"
+                ],
+                correct: 1
+            },
+            {
+                question: "Dans la logique séquentielle, de quoi dépend l'état de la sortie à l'instant t?",
+                options: [
+                    "Uniquement des variables d'entrée",
+                    "De la combinaison des variables d'entrée et de l'histoire du système",
+                    "Seulement du temps",
+                    "Des futurs états"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qu'est-ce qu'un circuit intégré?",
+                options: [
+                    "Un circuit simple avec un seul composant",
+                    "Un composant électronique réunissant plusieurs composants en un seul",
+                    "Un circuit logique de base",
+                    "Un circuit analogique"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quelle est la représentation schématique d'un système?",
+                options: [
+                    "Un cercle avec des flèches",
+                    "Signal d'entrée → Système → Signal de sortie",
+                    "Un tableau de valeurs",
+                    "Un graphique temporel"
+                ],
+                correct: 1
+            },
+            {
+                question: "Donnez un exemple de système logique mentionné dans le cours:",
+                options: [
+                    "Un thermostat",
+                    "Un additionneur",
+                    "Un haut-parleur",
+                    "Un moteur électrique"
+                ],
+                correct: 1
+            },
+            {
+                question: "Que signifie l'expression 'Pas d'affirmation et de négation en même temps'?",
+                options: [
+                    "Qu'on ne peut pas avoir deux systèmes fonctionnant ensemble",
+                    "Qu'une variable logique ne peut être à la fois vraie et fausse",
+                    "Qu'on ne peut pas avoir deux entrées sur un système",
+                    "Qu'un système ne peut avoir qu'une seule sortie"
+                ],
+                correct: 1
+            }
+        ];
+
+        let questions = [];
+        let timerInterval;
+        let startTime;
+        let timeLeft = 1200; // 20 minutes
+        let studentData = {};
+        let lastAnswerTime = null;
+        let answersCount = 0;
+        const FAST_ANSWER_THRESHOLD = 3000;
+        const VERY_FAST_THRESHOLD = 1500;
+        let totalTimeReduced = 0;
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function prepareQuestions() {
+            questions = questionsBase.map(q => {
+                const shuffledOptions = [];
+                const indices = [0, 1, 2, 3];
+                const shuffledIndices = shuffleArray(indices);
+                
+                shuffledIndices.forEach(oldIndex => {
+                    shuffledOptions.push(q.options[oldIndex]);
+                });
+                
+                const newCorrectIndex = shuffledIndices.indexOf(q.correct);
+                
+                return {
+                    question: q.question,
+                    options: shuffledOptions,
+                    correct: newCorrectIndex
+                };
+            });
+        }
+
+        function getEvaluationHistory() {
+            const history = localStorage.getItem('evaluationHistory_systemes_logiques');
+            return history ? JSON.parse(history) : [];
+        }
+
+        function saveEvaluation(data) {
+            const history = getEvaluationHistory();
+            const evaluationNumber = history.length + 1;
+            history.push({
+                numero: evaluationNumber,
+                cours: "Cours 1 - Systèmes Logiques",
+                titre: "Notions de base sur les systèmes logiques",
+                date: new Date().toLocaleDateString('fr-FR'),
+                heure: new Date().toLocaleTimeString('fr-FR'),
+                noteTotale: data.noteTotale,
+                quizNote: data.quizNote,
+                noteHabillement: data.noteHabillement,
+                noteParticipation: data.noteParticipation,
+                matricule: data.matricule,
+                nom: data.nom,
+                tempsReduit: data.tempsReduit
+            });
+            localStorage.setItem('evaluationHistory_systemes_logiques', JSON.stringify(history));
+        }
+
+        function startQuiz() {
+            const nom = document.getElementById('nom').value.trim();
+            const matricule = document.getElementById('matricule').value.trim();
+            const habillement = document.querySelector('input[name="habillement"]:checked');
+            const participation = document.querySelector('input[name="participation"]:checked');
+            
+            if (!nom || !matricule || !habillement || !participation) {
+                alert('Veuillez remplir tous les champs obligatoires !');
+                return;
+            }
+            
+            studentData = {
+                nom: nom,
+                matricule: matricule,
+                email: document.getElementById('email').value.trim(),
+                habillement: parseInt(habillement.value),
+                participation: parseInt(participation.value)
+            };
+            
+            prepareQuestions();
+            
+            document.getElementById('studentInfo').style.display = 'none';
+            document.getElementById('quizSection').style.display = 'block';
+            document.getElementById('timer').classList.remove('hidden');
+            document.getElementById('speedIndicator').classList.remove('hidden');
+            
+            generateQuestions();
+            startTime = Date.now();
+            lastAnswerTime = null;
+            answersCount = 0;
+            totalTimeReduced = 0;
+            startTimer();
+        }
+
+        function generateQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <h3>Question ${index + 1} : ${q.question}</h3>
+                    <div class="options">
+                        ${q.options.map((opt, i) => `
+                            <label class="option-label">
+                                <input type="radio" name="q${index}" value="${i}" onchange="trackAnswer()">
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function trackAnswer() {
+            const currentTime = Date.now();
+            
+            if (lastAnswerTime !== null) {
+                const timeSinceLastAnswer = currentTime - lastAnswerTime;
+                
+                let reduction = 0;
+                if (timeSinceLastAnswer < VERY_FAST_THRESHOLD) {
+                    reduction = 60;
+                } else if (timeSinceLastAnswer < FAST_ANSWER_THRESHOLD) {
+                    reduction = 30;
+                }
+                
+                if (reduction > 0) {
+                    timeLeft = Math.max(60, timeLeft - reduction);
+                    totalTimeReduced += reduction;
+                    
+                    const timerElement = document.getElementById('timer');
+                    const speedIndicator = document.getElementById('speedIndicator');
+                    
+                    timerElement.classList.add('fast-mode');
+                    speedIndicator.classList.add('active');
+                    speedIndicator.textContent = `⚡ Mode rapide: -${reduction}s`;
+                    
+                    setTimeout(() => {
+                        timerElement.classList.remove('fast-mode');
+                        speedIndicator.classList.remove('active');
+                        speedIndicator.textContent = 'Mode normal';
+                    }, 2000);
+                }
+            }
+            
+            lastAnswerTime = currentTime;
+            answersCount++;
+            
+            const progress = (answersCount / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                const timerElement = document.getElementById('timer');
+                
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft === 120 && !timerElement.classList.contains('fast-mode')) {
+                    timerElement.classList.add('warning');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz(true);
+                }
+            }, 1000);
+        }
+
+        function submitQuiz(autoSubmit = false) {
+            clearInterval(timerInterval);
+            
+            if (!autoSubmit) {
+                if (!confirm('Êtes-vous sûr(e) de vouloir soumettre votre évaluation ?')) {
+                    startTimer();
+                    return;
+                }
+            }
+            
+            const timeUsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutesUsed = Math.floor(timeUsed / 60);
+            const secondsUsed = timeUsed % 60;
+            
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected && parseInt(selected.value) === q.correct) {
+                    score++;
+                }
+            });
+            
+            const quizNote = (score / questions.length) * 20;
+            // Coefficients : Quiz (3), Participation (4), Habillement (2)
+            const noteTotale = ((quizNote * 3) + (studentData.participation * 4) + (studentData.habillement * 2)) / 9;
+            
+            const evaluationData = {
+                ...studentData,
+                questionsRepondues: questions.length,
+                bonnesReponses: score,
+                quizNote: quizNote.toFixed(2),
+                noteHabillement: studentData.habillement,
+                noteParticipation: studentData.participation,
+                noteTotale: noteTotale.toFixed(2),
+                tempsUtilise: `${minutesUsed} min ${secondsUsed} sec`,
+                tempsReduit: totalTimeReduced
+            };
+            
+            saveEvaluation(evaluationData);
+            generatePDF(evaluationData);
+        }
+
+        function generatePDF(data) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.setFillColor(26, 42, 108);
+            doc.rect(0, 0, 210, 50, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(18);
+            doc.text('RAPPORT D\'ÉVALUATION', 105, 12, { align: 'center' });
+            
+            doc.setFontSize(11);
+            doc.text('Systèmes Logiques - Cours 1', 105, 22, { align: 'center' });
+            doc.text('Notions de base sur les systèmes logiques', 105, 29, { align: 'center' });
+            doc.text('Génie Informatique - Semestre 1', 105, 36, { align: 'center' });
+            doc.setFontSize(10);
+            doc.text('ENSET de Douala', 105, 44, { align: 'center' });
+            
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(11);
+            
+            let y = 65;
+            
+            doc.setFont(undefined, 'bold');
+            doc.text('INFORMATIONS DE L\'ÉTUDIANT(E)', 20, y);
+            y += 10;
+            
+            doc.setFont(undefined, 'normal');
+            doc.text(`Nom : ${data.nom}`, 20, y);
+            y += 7;
+            doc.text(`Matricule : ${data.matricule}`, 20, y);
+            y += 7;
+            if (data.email) {
+                doc.text(`Email : ${data.email}`, 20, y);
+                y += 7;
+            }
+            
+            y += 5;
+            doc.setFont(undefined, 'bold');
+            doc.text('DÉTAILS DE L\'ÉVALUATION', 20, y);
+            y += 10;
+            
+            doc.setFont(undefined, 'normal');
+            doc.text(`Cours : Systèmes Logiques`, 20, y);
+            y += 7;
+            doc.text(`Chapitre : Notions de base sur les systèmes logiques`, 20, y);
+            y += 7;
+            doc.text(`Date : ${new Date().toLocaleDateString('fr-FR')}`, 20, y);
+            y += 7;
+            doc.text(`Heure : ${new Date().toLocaleTimeString('fr-FR')}`, 20, y);
+            y += 7;
+            doc.text(`Temps utilisé : ${data.tempsUtilise}`, 20, y);
+            y += 7;
+            if (data.tempsReduit > 0) {
+                doc.text(`Temps réduit (réponses rapides) : ${data.tempsReduit} secondes`, 20, y);
+                y += 7;
+            }
+            doc.text(`Questions répondues : ${data.questionsRepondues}`, 20, y);
+            y += 7;
+            doc.text(`Bonnes réponses : ${data.bonnesReponses}`, 20, y);
+            y += 10;
+            
+            doc.setFont(undefined, 'bold');
+            doc.text('NOTATION DÉTAILLÉE', 20, y);
+            y += 10;
+            
+            doc.setFont(undefined, 'normal');
+            doc.text(`Note Quiz (sur 20) : ${data.quizNote}`, 20, y);
+            y += 7;
+            doc.text(`Note Habillement (sur 20) : ${data.noteHabillement}`, 20, y);
+            y += 7;
+            doc.text(`Note Participation (sur 20) : ${data.noteParticipation}`, 20, y);
+            y += 12;
+            
+            doc.setFillColor(26, 42, 108);
+            doc.rect(15, y, 180, 22, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(18);
+            doc.setFont(undefined, 'bold');
+            doc.text(`NOTE FINALE : ${data.noteTotale} / 20`, 105, y + 14, { align: 'center' });
+            
+            y += 32;
+            
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.text('APPRÉCIATION', 20, y);
+            y += 8;
+            
+            doc.setFont(undefined, 'normal');
+            let appreciation = '';
+            const note = parseFloat(data.noteTotale);
+            if (note >= 16) appreciation = 'Très bien - Excellente compréhension des systèmes logiques';
+            else if (note >= 14) appreciation = 'Bien - Bonne maîtrise des concepts fondamentaux';
+            else if (note >= 12) appreciation = 'Assez bien - Connaissances satisfaisantes en systèmes logiques';
+            else if (note >= 10) appreciation = 'Passable - Révision conseillée des notions de base';
+            else appreciation = 'Insuffisant - Révision nécessaire des concepts fondamentaux';
+            
+            doc.text(appreciation, 20, y);
+            y += 15;
+            
+            const history = getEvaluationHistory();
+            if (history.length > 0) {
+                doc.addPage();
+                y = 20;
+                
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(14);
+                doc.text('HISTORIQUE DES ÉVALUATIONS', 105, y, { align: 'center' });
+                y += 8;
+                
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                doc.text(`Étudiant(e) : ${data.nom}`, 20, y);
+                y += 7;
+                doc.text(`Cours : Systèmes Logiques - Cours 1`, 20, y);
+                y += 7;
+                doc.text(`Nombre total d'évaluations : ${history.length}`, 20, y);
+                y += 10;
+                
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'bold');
+                doc.text('N°', 15, y);
+                doc.text('Date', 25, y);
+                doc.text('Heure', 55, y);
+                doc.text('Note Quiz', 80, y);
+                doc.text('Note Hab.', 110, y);
+                doc.text('Note Part.', 140, y);
+                doc.text('Note Finale', 170, y);
+                y += 2;
+                doc.line(15, y, 195, y);
+                y += 5;
+                
+                doc.setFont(undefined, 'normal');
+                history.forEach((evaluation, index) => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                        
+                        doc.setFont(undefined, 'bold');
+                        doc.text('N°', 15, y);
+                        doc.text('Date', 25, y);
+                        doc.text('Heure', 55, y);
+                        doc.text('Note Quiz', 80, y);
+                        doc.text('Note Hab.', 110, y);
+                        doc.text('Note Part.', 140, y);
+                        doc.text('Note Finale', 170, y);
+                        y += 2;
+                        doc.line(15, y, 195, y);
+                        y += 5;
+                        doc.setFont(undefined, 'normal');
+                    }
+                    
+                    doc.text(evaluation.numero.toString(), 15, y);
+                    doc.text(evaluation.date, 25, y);
+                    doc.text(evaluation.heure, 55, y);
+                    doc.text(evaluation.quizNote, 80, y);
+                    doc.text(evaluation.noteHabillement.toString(), 110, y);
+                    doc.text(evaluation.noteParticipation.toString(), 140, y);
+                    
+                    if (index === history.length - 1) {
+                        doc.setFont(undefined, 'bold');
+                        doc.setTextColor(26, 42, 108);
+                    }
+                    doc.text(evaluation.noteTotale, 170, y);
+                    doc.setFont(undefined, 'normal');
+                    doc.setTextColor(0, 0, 0);
+                    y += 6;
+                });
+                
+                y += 10;
+                doc.setFont(undefined, 'bold');
+                doc.text('STATISTIQUES', 20, y);
+                y += 8;
+                doc.setFont(undefined, 'normal');
+                
+                const notes = history.map(h => parseFloat(h.noteTotale));
+                const moyenne = (notes.reduce((a, b) => a + b, 0) / notes.length).toFixed(2);
+                const meilleure = Math.max(...notes).toFixed(2);
+                const plusBasse = Math.min(...notes).toFixed(2);
+                
+                doc.text(`Moyenne générale : ${moyenne} / 20`, 20, y);
+                y += 7;
+                doc.text(`Meilleure note : ${meilleure} / 20`, 20, y);
+                y += 7;
+                doc.text(`Note la plus basse : ${plusBasse} / 20`, 20, y);
+                y += 7;
+                
+                const progression = notes.length > 1 ? 
+                    (notes[notes.length - 1] - notes[0]).toFixed(2) : '0.00';
+                const progressionTexte = parseFloat(progression) >= 0 ? 
+                    `+${progression}` : progression;
+                doc.text(`Progression (1ère vs dernière) : ${progressionTexte} points`, 20, y);
+            }
+            
+            const finalY = doc.internal.pageSize.height - 15;
+            doc.setDrawColor(26, 42, 108);
+            doc.line(20, finalY - 5, 190, finalY - 5);
+            
+            doc.setTextColor(100, 100, 100);
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'italic');
+            doc.text('Enseignant : M. OBONO BIYOBO Arnaud', 105, finalY, { align: 'center' });
+            doc.text('École Normale Supérieure d\'Enseignement Technique (ENSET) de Douala', 105, finalY + 5, { align: 'center' });
+            
+            doc.save(`Rapport_Systemes_Logiques_${data.matricule}_${Date.now()}.pdf`);
+            
+            alert(`Évaluation terminée !\n\nNote finale : ${data.noteTotale} / 20\n${appreciation}\n\nNombre d'évaluations effectuées : ${history.length}\n${data.tempsReduit > 0 ? `Temps réduit pour réponses rapides : ${data.tempsReduit}s\n` : ''}Votre rapport PDF avec l'historique complet a été téléchargé.`);
+        }
+    </script>
+</body>
+</html>

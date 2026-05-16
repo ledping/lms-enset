@@ -1,0 +1,2577 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours d'Électrotechnique - Méthodes d'Analyse des Circuits</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Variables de couleurs pédagogiques */
+        :root {
+            --primary-blue: #1a2a6c;
+            --secondary-blue: #2a5298;
+            --accent-blue: #3a6fd8;
+            --light-blue: #e8f0ff;
+            --success-green: #27ae60;
+            --warning-orange: #f39c12;
+            --danger-red: #e74c3c;
+            --concept-yellow: #fff9c4;
+            --important-pink: #ffebee;
+            --highlight-orange: #ff9800;
+            --dark-gray: #333;
+            --medium-gray: #666;
+            --light-gray: #f5f5f5;
+        }
+        
+        /* Styles généraux */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--dark-gray);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* En-tête */
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+        
+        .header-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header h2 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        .institution-info {
+            background: rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
+            max-width: 800px;
+        }
+        
+        .institution-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        .copyright {
+            font-size: 0.9rem;
+            margin-top: 10px;
+            opacity: 0.8;
+            font-style: italic;
+        }
+        
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            color: var(--medium-gray);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab:hover {
+            background: var(--light-blue);
+            color: var(--secondary-blue);
+        }
+        
+        .tab.active {
+            background: var(--light-blue);
+            border-bottom: 3px solid var(--secondary-blue);
+            color: var(--secondary-blue);
+        }
+        
+        /* Sections de contenu */
+        .content-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary-blue);
+            font-size: 1.8rem;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--highlight-orange);
+        }
+        
+        .subsection-title {
+            color: var(--primary-blue);
+            margin: 30px 0 20px 0;
+            font-size: 1.4rem;
+            padding-left: 15px;
+            border-left: 4px solid var(--highlight-orange);
+        }
+        
+        .subsubsection-title {
+            color: var(--secondary-blue);
+            margin: 20px 0 10px 0;
+            font-size: 1.2rem;
+        }
+        
+        /* Mise en évidence des concepts importants */
+        .concept {
+            background: var(--concept-yellow);
+            border-left: 4px solid var(--highlight-orange);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .concept h4 {
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+        
+        .concept h4::before {
+            content: "💡";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .important {
+            background: var(--important-pink);
+            border-left: 4px solid var(--danger-red);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .important h4 {
+            color: var(--danger-red);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+        
+        .important h4::before {
+            content: "⚠️";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .definition {
+            background: #e8f5e9;
+            border-left: 4px solid var(--success-green);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .definition h4 {
+            color: var(--success-green);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+        
+        .definition h4::before {
+            content: "📘";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .formula {
+            background: #e3f2fd;
+            border-left: 4px solid var(--accent-blue);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .formula h4 {
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+        
+        .formula h4::before {
+            content: "∑";
+            margin-right: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        /* Figures et schémas */
+        .figure-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: var(--light-gray);
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        
+        .circuit-diagram {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .component {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .resistor {
+            width: 80px;
+            height: 20px;
+            background: #f0d9b5;
+            border: 2px solid #8b4513;
+            border-radius: 3px;
+        }
+        
+        .voltage-source {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            position: relative;
+        }
+        
+        .voltage-source::before {
+            content: "+";
+            position: absolute;
+            top: 5px;
+            font-weight: bold;
+        }
+        
+        .voltage-source::after {
+            content: "-";
+            position: absolute;
+            bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .wire {
+            background: #333;
+        }
+        
+        .wire-horizontal {
+            width: 100px;
+            height: 2px;
+        }
+        
+        .wire-vertical {
+            width: 2px;
+            height: 100px;
+        }
+        
+        .node {
+            width: 8px;
+            height: 8px;
+            background: #333;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .current-label {
+            position: absolute;
+            font-weight: bold;
+            color: var(--secondary-blue);
+            background: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            border: 1px solid var(--secondary-blue);
+        }
+        
+        .figure-caption {
+            font-style: italic;
+            margin-top: 15px;
+            color: var(--medium-gray);
+            text-align: center;
+        }
+        
+        /* Outils interactifs */
+        .tool-container {
+            background: var(--light-blue);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid var(--secondary-blue);
+            box-shadow: 0 5px 15px rgba(42, 82, 152, 0.1);
+        }
+        
+        .tool-title {
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .tool-title::before {
+            content: "🛠️";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .circuit-simulator {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px solid #ddd;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .circuit-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        
+        .circuit-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .circuit-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .circuit-btn:hover {
+            background: var(--light-blue);
+            border-color: var(--secondary-blue);
+        }
+        
+        .circuit-btn.active {
+            background: var(--secondary-blue);
+            color: white;
+            border-color: var(--secondary-blue);
+        }
+        
+        .simulation-result {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid var(--secondary-blue);
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .result-value {
+            color: var(--primary-blue);
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .result-details {
+            color: var(--medium-gray);
+            font-size: 1rem;
+            margin: 5px 0;
+        }
+        
+        /* Démonstrations mathématiques */
+        .demonstration {
+            background: #f8f9fa;
+            border-left: 4px solid var(--warning-orange);
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .demonstration h4 {
+            color: var(--warning-orange);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+        
+        .demonstration h4::before {
+            content: "🧮";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .step {
+            margin: 15px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .step::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+        
+        /* Tableaux */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: var(--primary-blue);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:nth-child(even) {
+            background: var(--light-blue);
+        }
+        
+        tr:hover {
+            background: #e3f2fd;
+        }
+        
+        /* Section d'évaluation */
+        .evaluation-form {
+            background: var(--light-blue);
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border: 2px solid var(--secondary-blue);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        
+        input[type="text"], input[type="email"], input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input[type="text"]:focus, input[type="email"]:focus, input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .radio-option:hover {
+            background: white;
+            border-color: var(--secondary-blue);
+        }
+        
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            width: 100%;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(26, 42, 108, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(26, 42, 108, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-secondary {
+            background: var(--medium-gray);
+            margin-top: 10px;
+        }
+        
+        .quiz-section {
+            display: none;
+        }
+        
+        .question {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-blue);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .question h3 {
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option-label {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option-label:hover {
+            background: var(--light-blue);
+            border-color: var(--primary-blue);
+        }
+        
+        .option-label input {
+            margin-right: 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            transition: width 0.3s;
+        }
+        
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--secondary-blue);
+            z-index: 1000;
+            display: none;
+            border: 2px solid var(--secondary-blue);
+        }
+        
+        .timer.warning {
+            background: var(--danger-red);
+            color: white;
+            animation: pulse 1s infinite;
+        }
+        
+        .timer.fast-mode {
+            background: var(--warning-orange);
+            color: white;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* Couleurs pour les composants */
+        .math-formula {
+            font-family: 'Cambria Math', 'Latin Modern Math', STIXGeneral, serif;
+            font-size: 1.1em;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .note {
+            background: #fff9e6;
+            border-left: 4px solid var(--warning-orange);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .warning-box {
+            background: #ffebee;
+            border-left: 4px solid var(--danger-red);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        
+        .mnemonic {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px dashed var(--secondary-blue);
+            margin: 20px 0;
+            font-style: italic;
+        }
+        
+        .code-example {
+            font-family: 'Courier New', monospace;
+            background: var(--light-gray);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid var(--secondary-blue);
+            overflow-x: auto;
+        }
+        
+        .success-message {
+            background: #e8f5e9;
+            color: var(--success-green);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: center;
+            display: none;
+            border: 1px solid var(--success-green);
+        }
+        
+        .error-message {
+            background: #ffebee;
+            color: var(--danger-red);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: center;
+            display: none;
+            border: 1px solid var(--danger-red);
+        }
+        
+        .speed-indicator {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 12px;
+            color: #666;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .speed-indicator.active {
+            background: var(--warning-orange);
+            color: white;
+            font-weight: bold;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content-section {
+                padding: 25px;
+            }
+            
+            .circuit-diagram {
+                transform: scale(0.8);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                text-align: center;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .circuit-controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .circuit-diagram {
+                transform: scale(0.7);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 25px 0;
+            }
+            
+            .header h1 {
+                font-size: 1.7rem;
+            }
+            
+            .header h2 {
+                font-size: 1.2rem;
+            }
+            
+            .content-section {
+                padding: 20px;
+            }
+            
+            .circuit-diagram {
+                transform: scale(0.6);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>Électrotechnique - Analyse des Circuits</h1>
+                <h2>Méthodes d'Analyse des Circuits Électriques</h2>
+                <div class="institution-info">
+                    <h3>Université de Douala - École Normale Supérieure d'Enseignement Technique (ENSET)</h3>
+                    <p><strong>Département de Génie Informatique</strong></p>
+                    <p><strong>Enseignant : Dr OBONO.B.A - Chargé de Cours</strong></p>
+                    <p><strong>Année académique 2025/2026</strong></p>
+                    <div class="copyright">
+                        © Ce support de cours est destiné à un usage pédagogique exclusif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="nav-tabs">
+            <div class="tab active" data-target="introduction">Introduction</div>
+            <div class="tab" data-target="analyse-branches">Analyse par Branches</div>
+            <div class="tab" data-target="analyse-mailles">Analyse par Mailles</div>
+            <div class="tab" data-target="outils">Outils Interactifs</div>
+            <div class="tab" data-target="evaluation">Évaluation</div>
+        </div>
+        
+        <!-- Section Introduction -->
+        <div id="introduction" class="content-section active">
+            <h2 class="section-title">Leçon 3: Méthodes d'Analyse des Circuits Électriques</h2>
+            
+            <div class="concept">
+                <h4>Objectifs du Cours</h4>
+                <p>Ce cours a pour objectif de vous initier aux méthodes systématiques d'analyse des circuits électriques complexes. À la fin de ce module, vous serez capable de :</p>
+                <ul>
+                    <li>Comprendre les fondements théoriques des méthodes d'analyse</li>
+                    <li>Appliquer la méthode d'analyse par branches</li>
+                    <li>Utiliser la méthode d'analyse par mailles (approche générale et programmée)</li>
+                    <li>Résoudre des circuits complexes avec plusieurs sources</li>
+                    <li>Vérifier vos résultats par différentes méthodes</li>
+                </ul>
+            </div>
+            
+            <div class="subsection-title">Concepts Fondamentaux</div>
+            
+            <div class="definition">
+                <h4>Qu'est-ce qu'un circuit électrique ?</h4>
+                <p>Un <strong>circuit électrique</strong> est un ensemble de composants électriques interconnectés (résistances, sources de tension, sources de courant, etc.) formant au moins un chemin fermé pour la circulation du courant électrique.</p>
+            </div>
+            
+            <div class="definition">
+                <h4>Lois de Kirchhoff</h4>
+                <p>Ces deux lois fondamentales sont à la base de toutes les méthodes d'analyse de circuits :</p>
+                
+                <div class="formula">
+                    <h4>Loi des nœuds (LKC - Kirchhoff's Current Law)</h4>
+                    <p>\[ \sum_{k=1}^{n} I_k = 0 \]</p>
+                    <p>La somme algébrique des courants entrant dans un nœud est égale à la somme algébrique des courants sortant du nœud.</p>
+                </div>
+                
+                <div class="formula">
+                    <h4>Loi des mailles (LKT - Kirchhoff's Voltage Law)</h4>
+                    <p>\[ \sum_{k=1}^{n} V_k = 0 \]</p>
+                    <p>La somme algébrique des différences de potentiel (tensions) le long de toute maille fermée est nulle.</p>
+                </div>
+            </div>
+            
+            <div class="important">
+                <h4>Pourquoi des méthodes systématiques ?</h4>
+                <p>Pour les circuits simples, les lois d'Ohm et de Kirchhoff suffisent. Cependant, pour les circuits complexes comportant plusieurs sources et résistances, des méthodes systématiques deviennent nécessaires pour :</p>
+                <ul>
+                    <li>Éviter les erreurs de calcul</li>
+                    <li>Minimiser le temps de résolution</li>
+                    <li>Assurer la reproductibilité des résultats</li>
+                    <li>Permettre l'automatisation (simulation par ordinateur)</li>
+                </ul>
+            </div>
+            
+            <div class="subsection-title">Types de Circuits</div>
+            
+            <div class="figure-container">
+                <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin: 20px 0;">
+                    <div style="text-align: center;">
+                        <div style="width: 120px; height: 80px; background: #f0f0f0; border: 2px solid var(--secondary-blue); border-radius: 5px; position: relative; margin: 0 auto;">
+                            <div style="position: absolute; top: 10px; left: 20px; width: 40px; height: 20px; background: #f0d9b5; border: 1px solid #8b4513;"></div>
+                            <div style="position: absolute; top: 40px; left: 20px; width: 60px; height: 30px; border: 2px solid #333; border-radius: 50%; background: white;"></div>
+                        </div>
+                        <p class="figure-caption">Circuit simple</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="width: 150px; height: 100px; background: #f0f0f0; border: 2px solid var(--secondary-blue); border-radius: 5px; position: relative; margin: 0 auto;">
+                            <div style="position: absolute; top: 10px; left: 20px; width: 40px; height: 20px; background: #f0d9b5; border: 1px solid #8b4513;"></div>
+                            <div style="position: absolute; top: 40px; left: 20px; width: 60px; height: 30px; border: 2px solid #333; border-radius: 50%; background: white;"></div>
+                            <div style="position: absolute; top: 10px; left: 80px; width: 40px; height: 20px; background: #f0d9b5; border: 1px solid #8b4513;"></div>
+                            <div style="position: absolute; top: 40px; left: 80px; width: 60px; height: 30px; border: 2px solid #333; border-radius: 50%; background: white;"></div>
+                        </div>
+                        <p class="figure-caption">Circuit complexe</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="note">
+                <strong>Note importante :</strong> Ce cours se concentre sur les circuits linéaires, c'est-à-dire les circuits dont les composants ont des caractéristiques voltage-courant linéaires (loi d'Ohm).
+            </div>
+        </div>
+        
+        <!-- Section Analyse par Branches -->
+        <div id="analyse-branches" class="content-section">
+            <h2 class="section-title">Analyse par Branches</h2>
+            
+            <div class="concept">
+                <h4>Principe de la Méthode</h4>
+                <p>La méthode d'analyse par branches consiste à attribuer un courant inconnu à chaque branche du circuit, puis à écrire les équations de Kirchhoff pour tous les nœuds et toutes les mailles indépendantes. Le système d'équations ainsi obtenu permet de déterminer tous les courants de branches.</p>
+            </div>
+            
+            <div class="subsection-title">Étapes de la Méthode</div>
+            
+            <ol style="margin-left: 30px; margin-bottom: 20px;">
+                <li><span class="highlight">Attribuer un courant distinct</span> de sens arbitraire à chacune des branches du réseau</li>
+                <li><span class="highlight">Indiquer les polarités</span> des chutes de tension aux bornes de chaque résistance à partir du sens arbitraire donné au courant</li>
+                <li><span class="highlight">Appliquer la loi des mailles</span> à chaque trajet fermé et la loi des courants aux nœuds</li>
+                <li><span class="highlight">Résoudre le système d'équations linéaires</span> résultant par la méthode des déterminants ou autre méthode</li>
+            </ol>
+            
+            <div class="important">
+                <h4>Attention !</h4>
+                <p>Le nombre d'équations indépendantes doit être égal au nombre d'inconnues (courants de branches).</p>
+                <p>Pour un circuit avec <em>b</em> branches et <em>n</em> nœuds, on a besoin de :</p>
+                <div class="formula">
+                    <p>\[ (n - 1) \text{ équations de nœuds} \]</p>
+                    <p>\[ (b - n + 1) \text{ équations de mailles} \]</p>
+                </div>
+            </div>
+            
+            <div class="subsection-title">Exercice d'Application</div>
+            
+            <div class="figure-container">
+                <div class="circuit-diagram" style="height: 250px; position: relative;">
+                    <!-- Circuit pour l'exercice 1 -->
+                    <div style="position: absolute; top: 50px; left: 50px; width: 60px; height: 60px; border: 2px solid #333; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center;">
+                        10V
+                    </div>
+                    <div style="position: absolute; top: 50px; left: 150px; width: 80px; height: 20px; background: #f0d9b5; border: 2px solid #8b4513; border-radius: 3px;"></div>
+                    <div style="position: absolute; top: 50px; left: 270px; width: 80px; height: 20px; background: #f0d9b5; border: 2px solid #8b4513; border-radius: 3px;"></div>
+                    <div style="position: absolute; top: 150px; left: 150px; width: 80px; height: 20px; background: #f0d9b5; border: 2px solid #8b4513; border-radius: 3px;"></div>
+                    <div style="position: absolute; top: 150px; left: 50px; width: 60px; height: 60px; border: 2px solid #333; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center;">
+                        5V
+                    </div>
+                    
+                    <!-- Wires -->
+                    <div style="position: absolute; top: 80px; left: 110px; width: 40px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 80px; left: 230px; width: 40px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 80px; left: 350px; width: 40px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 80px; left: 390px; width: 2px; height: 70px; background: #333;"></div>
+                    <div style="position: absolute; top: 150px; left: 390px; width: 40px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 150px; left: 350px; width: 40px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 150px; left: 230px; width: 40px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 150px; left: 110px; width: 40px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 150px; left: 50px; width: 2px; height: 100px; background: #333;"></div>
+                    <div style="position: absolute; top: 50px; left: 50px; width: 2px; height: 100px; background: #333;"></div>
+                    
+                    <!-- Résistance labels -->
+                    <div style="position: absolute; top: 30px; left: 150px;">2Ω</div>
+                    <div style="position: absolute; top: 30px; left: 270px;">4Ω</div>
+                    <div style="position: absolute; top: 170px; left: 150px;">1Ω</div>
+                    
+                    <!-- Current labels -->
+                    <div style="position: absolute; top: 40px; left: 190px;" class="current-label">I₁</div>
+                    <div style="position: absolute; top: 40px; left: 310px;" class="current-label">I₂</div>
+                    <div style="position: absolute; top: 180px; left: 190px;" class="current-label">I₃</div>
+                </div>
+                <p class="figure-caption">Figure 1: Circuit avec deux sources de tension et trois résistances</p>
+            </div>
+            
+            <div class="demonstration">
+                <h4>Démonstration Mathématique</h4>
+                
+                <div class="step">
+                    <strong>Étape 1 : Attribution des courants</strong>
+                    <p>On attribue trois courants arbitraires I₁, I₂, I₃ aux trois branches.</p>
+                </div>
+                
+                <div class="step">
+                    <strong>Étape 2 : Application de la loi des nœuds</strong>
+                    <p>Au nœud supérieur : \( I_1 = I_2 + I_3 \)</p>
+                </div>
+                
+                <div class="step">
+                    <strong>Étape 3 : Application de la loi des mailles</strong>
+                    <p>Maille gauche : \( 10 - 2I_1 - 1I_3 - 5 = 0 \)</p>
+                    <p>Maille droite : \( 5 + 1I_3 - 4I_2 = 0 \)</p>
+                </div>
+                
+                <div class="step">
+                    <strong>Étape 4 : Résolution du système</strong>
+                    <p>Système d'équations :</p>
+                    <div class="math-formula">
+                        \[
+                        \begin{cases}
+                        I_1 - I_2 - I_3 = 0 \\
+                        2I_1 + I_3 = 5 \\
+                        4I_2 - I_3 = 5
+                        \end{cases}
+                        \]
+                    </div>
+                    <p>Résolution par la méthode des déterminants :</p>
+                    <div class="math-formula">
+                        \[
+                        \Delta = \begin{vmatrix}
+                        1 & -1 & -1 \\
+                        2 & 0 & 1 \\
+                        0 & 4 & -1
+                        \end{vmatrix} = 1(0 \cdot (-1) - 1 \cdot 4) - (-1)(2 \cdot (-1) - 1 \cdot 0) + (-1)(2 \cdot 4 - 0 \cdot 0) = -4 - 2 - 8 = -14
+                        \]
+                    </div>
+                    <div class="math-formula">
+                        \[
+                        I_1 = \frac{\begin{vmatrix}
+                        0 & -1 & -1 \\
+                        5 & 0 & 1 \\
+                        5 & 4 & -1
+                        \end{vmatrix}}{\Delta} = \frac{35}{-14} = -2.5A
+                        \]
+                        \[
+                        I_2 = \frac{\begin{vmatrix}
+                        1 & 0 & -1 \\
+                        2 & 5 & 1 \\
+                        0 & 5 & -1
+                        \end{vmatrix}}{\Delta} = \frac{-15}{-14} = 1.07A
+                        \]
+                        \[
+                        I_3 = \frac{\begin{vmatrix}
+                        1 & -1 & 0 \\
+                        2 & 0 & 5 \\
+                        0 & 4 & 5
+                        \end{vmatrix}}{\Delta} = \frac{-50}{-14} = 3.57A
+                        \]
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <strong>Étape 5 : Interprétation des résultats</strong>
+                    <p>Le signe négatif de I₁ indique que le sens réel du courant est opposé au sens arbitraire choisi.</p>
+                </div>
+            </div>
+            
+            <div class="note">
+                <strong>Remarque :</strong> La méthode par branches est simple conceptuellement mais peut devenir fastidieuse pour les circuits complexes avec de nombreuses branches.
+            </div>
+        </div>
+        
+        <!-- Section Analyse par Mailles -->
+        <div id="analyse-mailles" class="content-section">
+            <h2 class="section-title">Analyse par Mailles</h2>
+            
+            <div class="concept">
+                <h4>Principe de la Méthode</h4>
+                <p>La méthode d'analyse par mailles utilise les courants de mailles (courants fictifs circulant dans les mailles indépendantes) comme inconnues. Cette méthode réduit le nombre d'équations à résoudre et est particulièrement efficace pour les circuits plans.</p>
+            </div>
+            
+            <div class="subsection-title">Approche Générale</div>
+            
+            <ol style="margin-left: 30px; margin-bottom: 20px;">
+                <li><span class="highlight">Attribuer un courant distinct</span> de sens horaire (pour standardisation) à chacune des mailles indépendantes du réseau</li>
+                <li><span class="highlight">Indiquer les polarités</span> des chutes de tension aux bornes de chaque résistance</li>
+                <li><span class="highlight">Appliquer la loi des mailles</span> à chaque maille indépendante</li>
+                <li><span class="highlight">Résoudre le système d'équations linéaires</span> pour obtenir les courants de mailles</li>
+            </ol>
+            
+            <div class="important">
+                <h4>Règles importantes</h4>
+                <ul>
+                    <li>Le courant de maille est égal au courant de branche seulement s'il est le seul courant de maille à parcourir cette branche</li>
+                    <li>Si une résistance est traversée par plusieurs courants de mailles, le courant net est la somme algébrique de ces courants</li>
+                    <li>La polarité d'une source de tension ne dépend pas des courants de mailles</li>
+                </ul>
+            </div>
+            
+            <div class="subsection-title">Exercice d'Application</div>
+            
+            <div class="figure-container">
+                <div class="circuit-diagram" style="height: 300px; position: relative;">
+                    <!-- Circuit pour l'exercice 2 -->
+                    <div style="position: absolute; top: 50px; left: 50px; width: 60px; height: 60px; border: 2px solid #333; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center;">
+                        20V
+                    </div>
+                    <div style="position: absolute; top: 50px; left: 150px; width: 80px; height: 20px; background: #f0d9b5; border: 2px solid #8b4513; border-radius: 3px;"></div>
+                    <div style="position: absolute; top: 150px; left: 150px; width: 80px; height: 20px; background: #f0d9b5; border: 2px solid #8b4513; border-radius: 3px;"></div>
+                    <div style="position: absolute; top: 150px; left: 270px; width: 80px; height: 20px; background: #f0d9b5; border: 2px solid #8b4513; border-radius: 3px;"></div>
+                    <div style="position: absolute; top: 50px; left: 270px; width: 60px; height: 60px; border: 2px solid #333; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center;">
+                        10V
+                    </div>
+                    
+                    <!-- Wires -->
+                    <div style="position: absolute; top: 80px; left: 110px; width: 40px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 80px; left: 230px; width: 40px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 80px; left: 330px; width: 40px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 80px; left: 370px; width: 2px; height: 70px; background: #333;"></div>
+                    <div style="position: absolute; top: 150px; left: 370px; width: 40px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 150px; left: 330px; width: 40px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 150px; left: 230px; width: 40px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 150px; left: 110px; width: 40px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 50px; left: 50px; width: 2px; height: 30px; background: #333;"></div>
+                    <div style="position: absolute; top: 120px; left: 50px; width: 2px; height: 80px; background: #333;"></div>
+                    <div style="position: absolute; top: 200px; left: 50px; width: 320px; height: 2px; background: #333;"></div>
+                    <div style="position: absolute; top: 200px; left: 370px; width: 2px; height: 30px; background: #333;"></div>
+                    
+                    <!-- Résistance labels -->
+                    <div style="position: absolute; top: 30px; left: 150px;">2Ω</div>
+                    <div style="position: absolute; top: 170px; left: 150px;">6Ω</div>
+                    <div style="position: absolute; top: 170px; left: 270px;">4Ω</div>
+                    
+                    <!-- Current labels -->
+                    <div style="position: absolute; top: 40px; left: 190px;" class="current-label">I₁</div>
+                    <div style="position: absolute; top: 180px; left: 310px;" class="current-label">I₂</div>
+                </div>
+                <p class="figure-caption">Figure 2: Circuit avec deux mailles indépendantes</p>
+            </div>
+            
+            <div class="demonstration">
+                <h4>Démonstration Mathématique</h4>
+                
+                <div class="step">
+                    <strong>Étape 1 : Attribution des courants de mailles</strong>
+                    <p>On attribue I₁ à la maille gauche et I₂ à la maille droite.</p>
+                </div>
+                
+                <div class="step">
+                    <strong>Étape 2 : Application de la loi des mailles</strong>
+                    <p>Maille 1 : \( 20 - 2I_1 - 6(I_1 - I_2) = 0 \)</p>
+                    <p>Maille 2 : \( 6(I_1 - I_2) - 4I_2 - 10 = 0 \)</p>
+                </div>
+                
+                <div class="step">
+                    <strong>Étape 3 : Simplification des équations</strong>
+                    <p>Maille 1 : \( 8I_1 - 6I_2 = 20 \)</p>
+                    <p>Maille 2 : \( -6I_1 + 10I_2 = -10 \)</p>
+                </div>
+                
+                <div class="step">
+                    <strong>Étape 4 : Résolution du système</strong>
+                    <div class="math-formula">
+                        \[
+                        \begin{cases}
+                        8I_1 - 6I_2 = 20 \\
+                        -6I_1 + 10I_2 = -10
+                        \end{cases}
+                        \]
+                    </div>
+                    <p>Par la méthode de Cramer :</p>
+                    <div class="math-formula">
+                        \[
+                        \Delta = \begin{vmatrix}
+                        8 & -6 \\
+                        -6 & 10
+                        \end{vmatrix} = 8 \times 10 - (-6) \times (-6) = 80 - 36 = 44
+                        \]
+                        \[
+                        I_1 = \frac{\begin{vmatrix}
+                        20 & -6 \\
+                        -10 & 10
+                        \end{vmatrix}}{\Delta} = \frac{20 \times 10 - (-6) \times (-10)}{44} = \frac{200 - 60}{44} = \frac{140}{44} = 3.18A
+                        \]
+                        \[
+                        I_2 = \frac{\begin{vmatrix}
+                        8 & 20 \\
+                        -6 & -10
+                        \end{vmatrix}}{\Delta} = \frac{8 \times (-10) - 20 \times (-6)}{44} = \frac{-80 + 120}{44} = \frac{40}{44} = 0.91A
+                        \]
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <strong>Étape 5 : Calcul des courants de branches</strong>
+                    <p>Courant dans R₂ (6Ω) : \( I_{R2} = I_1 - I_2 = 3.18 - 0.91 = 2.27A \)</p>
+                </div>
+            </div>
+            
+            <div class="subsection-title">Approche Programmée</div>
+            
+            <div class="concept">
+                <h4>Méthode Systématique</h4>
+                <p>L'approche programmée permet d'écrire rapidement les équations des mailles sans risque d'erreur grâce à un algorithme systématique :</p>
+            </div>
+            
+            <ol style="margin-left: 30px; margin-bottom: 20px;">
+                <li>Somme des résistances traversées par le courant de la maille × courant de la maille</li>
+                <li>Termes mixtes (toujours négatifs) : Résistance commune × courant de l'autre maille</li>
+                <li>Membre de droite : Somme algébrique des sources de tension</li>
+            </ol>
+            
+            <div class="formula">
+                <h4>Forme Générale des Équations</h4>
+                <p>Pour un circuit à n mailles :</p>
+                <div class="math-formula">
+                    \[
+                    \begin{cases}
+                    R_{11}I_1 - R_{12}I_2 - \cdots - R_{1n}I_n = V_1 \\
+                    -R_{21}I_1 + R_{22}I_2 - \cdots - R_{2n}I_n = V_2 \\
+                    \vdots \\
+                    -R_{n1}I_1 - R_{n2}I_2 - \cdots + R_{nn}I_n = V_n
+                    \end{cases}
+                    \]
+                </div>
+                <p>où \( R_{ii} \) = somme des résistances dans la maille i<br>
+                   \( R_{ij} \) = résistance commune aux mailles i et j<br>
+                   \( V_i \) = somme algébrique des sources dans la maille i</p>
+            </div>
+            
+            <div class="warning-box">
+                <strong>Attention :</strong> Les termes diagonaux \( R_{ii} \) sont toujours positifs. Les termes non-diagonaux \( R_{ij} \) sont toujours négatifs dans cette représentation. Les sources sont positives si traversées de la borne négative à la borne positive.
+            </div>
+        </div>
+        
+        <!-- Section Outils Interactifs -->
+        <div id="outils" class="content-section">
+            <h2 class="section-title">Outils Interactifs pour l'Analyse de Circuits</h2>
+            
+            <div class="concept">
+                <h4>Simulateur de Circuits</h4>
+                <p>Cet outil interactif vous permet de visualiser et d'analyser des circuits électriques. Vous pouvez modifier les valeurs des composants et observer les effets sur les courants et tensions.</p>
+            </div>
+            
+            <div class="circuit-simulator">
+                <h3 class="tool-title">Simulateur d'Analyse par Mailles</h3>
+                
+                <div class="circuit-selector">
+                    <button class="circuit-btn active" data-circuit="circuit1">Circuit 1</button>
+                    <button class="circuit-btn" data-circuit="circuit2">Circuit 2</button>
+                    <button class="circuit-btn" data-circuit="circuit3">Circuit 3</button>
+                </div>
+                
+                <div class="circuit-controls">
+                    <div style="flex: 1;">
+                        <label for="voltage1">Source V₁ (V)</label>
+                        <input type="number" id="voltage1" value="20" min="0" max="100" step="1">
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <label for="voltage2">Source V₂ (V)</label>
+                        <input type="number" id="voltage2" value="10" min="0" max="100" step="1">
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <label for="resistor1">R₁ (Ω)</label>
+                        <input type="number" id="resistor1" value="2" min="1" max="100" step="1">
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <label for="resistor2">R₂ (Ω)</label>
+                        <input type="number" id="resistor2" value="6" min="1" max="100" step="1">
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <label for="resistor3">R₃ (Ω)</label>
+                        <input type="number" id="resistor3" value="4" min="1" max="100" step="1">
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn" onclick="simulateCircuit()">Simuler</button>
+                    <button class="btn btn-secondary" onclick="resetSimulation()">Réinitialiser</button>
+                </div>
+                
+                <div id="circuit-diagram-interactive" class="figure-container" style="margin-top: 30px;">
+                    <!-- Diagramme interactif sera généré ici -->
+                </div>
+                
+                <div class="simulation-result">
+                    <div id="simulation-result-value" class="result-value">Résultats de la simulation</div>
+                    <div id="simulation-result-details" class="result-details">
+                        Cliquez sur "Simuler" pour calculer les courants et tensions
+                    </div>
+                    <div id="simulation-equations" class="result-details" style="margin-top: 15px; font-family: 'Courier New', monospace;">
+                        <!-- Équations seront affichées ici -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tool-container">
+                <h3 class="tool-title">Calculateur de Déterminants</h3>
+                
+                <p>Cet outil vous aide à résoudre les systèmes d'équations linéaires par la méthode des déterminants (règle de Cramer).</p>
+                
+                <div style="margin: 20px 0;">
+                    <label for="matrix-size">Taille de la matrice :</label>
+                    <select id="matrix-size" onchange="createMatrixInputs()" style="width: 100px; margin-left: 10px;">
+                        <option value="2">2×2</option>
+                        <option value="3" selected>3×3</option>
+                    </select>
+                </div>
+                
+                <div id="matrix-inputs" style="margin: 20px 0;">
+                    <!-- Les inputs de matrice seront générés ici -->
+                </div>
+                
+                <button class="btn" onclick="calculateDeterminant()">Calculer le déterminant</button>
+                
+                <div id="determinant-result" class="simulation-result" style="margin-top: 20px; display: none;">
+                    <div class="result-value">Résultat</div>
+                    <div id="determinant-value" class="result-details"></div>
+                    <div id="determinant-steps" class="result-details" style="margin-top: 10px; text-align: left;"></div>
+                </div>
+            </div>
+            
+            <div class="note">
+                <strong>Conseil pédagogique :</strong> Utilisez ces outils pour vérifier vos calculs manuels et pour explorer l'effet de la modification des paramètres du circuit.
+            </div>
+        </div>
+        
+        <!-- Section Évaluation -->
+        <div id="evaluation" class="content-section">
+            <h2 class="section-title">Évaluation - Méthodes d'Analyse des Circuits</h2>
+            
+            <div class="evaluation-form">
+                <div id="studentInfo">
+                    <div class="session-info">
+                        <h3>📋 Évaluation sur les Méthodes d'Analyse des Circuits</h3>
+                        <p><strong>Thèmes évalués :</strong> Analyse par branches, Analyse par mailles, Lois de Kirchhoff, Résolution de systèmes d'équations, Méthode des déterminants</p>
+                    </div>
+
+                    <h3>Informations de l'Étudiant(e)</h3>
+                    
+                    <div class="form-group">
+                        <label for="eval-nom">Nom complet *</label>
+                        <input type="text" id="eval-nom" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eval-matricule">Matricule et Option *</label>
+                        <input type="text" id="eval-matricule" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eval-email">Email</label>
+                        <input type="email" id="eval-email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Style vestimentaire *</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="eval-habillement" value="20" required>
+                                <span><strong>20 points :</strong> Tenue responsable - bien coiffée, bien chaussée, corps bien couvert ou polo département</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-habillement" value="10">
+                                <span><strong>10 points :</strong> Tenue jeune</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-habillement" value="2">
+                                <span><strong>2 points :</strong> Tenue non conforme</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Participation et Travaux Pratiques *</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="eval-participation" value="20" required>
+                                <span><strong>20 points :</strong> Participation active et travaux pratiques excellents</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-participation" value="18">
+                                <span><strong>18 points :</strong> Participation occasionnelle et travaux satisfaisants</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-participation" value="2">
+                                <span><strong>2 points :</strong> Participation faible et travaux insuffisants</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" onclick="startEvalQuiz()">Commencer l'Évaluation</button>
+                </div>
+                
+                <div id="quizSection" class="quiz-section">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    
+                    <div id="questionsContainer"></div>
+                    
+                    <button class="btn" id="submitBtn" onclick="submitEvalQuiz()">Soumettre l'Évaluation</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="timer" class="timer">15:00</div>
+    <div id="speedIndicator" class="speed-indicator">Mode normal</div>
+    
+    <div class="success-message" id="successMessage"></div>
+    <div class="error-message" id="errorMessage"></div>
+
+    <script>
+        // Configuration MathJax
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+        
+        // Données pour les circuits
+        const circuitTemplates = {
+            circuit1: {
+                name: "Circuit à 2 mailles",
+                description: "Circuit avec deux sources de tension et trois résistances",
+                voltages: [20, 10],
+                resistors: [2, 6, 4],
+                currents: [3.18, 0.91]
+            },
+            circuit2: {
+                name: "Circuit à 3 branches",
+                description: "Circuit avec deux sources et trois résistances en parallèle",
+                voltages: [10, 5],
+                resistors: [2, 4, 1],
+                currents: [2.5, 1.07, 3.57]
+            },
+            circuit3: {
+                name: "Circuit complexe",
+                description: "Circuit avec trois mailles indépendantes",
+                voltages: [12, 6, 9],
+                resistors: [1, 2, 3, 4],
+                currents: [1.5, 2.0, 0.8]
+            }
+        };
+        
+        // Questions pour l'évaluation
+        const evalQuestions = [
+            {
+                question: "Quelle est la loi de Kirchhoff qui énonce que la somme des courants entrant dans un nœud est égale à la somme des courants sortant ?",
+                options: [
+                    "Loi d'Ohm",
+                    "Loi des mailles (LKT)",
+                    "Loi des nœuds (LKC)",
+                    "Loi de Faraday"
+                ],
+                correct: 2
+            },
+            {
+                question: "Combien d'équations indépendantes faut-il pour résoudre un circuit avec 5 branches et 3 nœuds par la méthode des branches ?",
+                options: [
+                    "3 équations",
+                    "5 équations",
+                    "8 équations",
+                    "10 équations"
+                ],
+                correct: 1
+            },
+            {
+                question: "Dans la méthode d'analyse par branches, que représente chaque variable inconnue ?",
+                options: [
+                    "Les tensions aux bornes des résistances",
+                    "Les courants dans chaque branche",
+                    "Les courants dans chaque maille",
+                    "Les puissances dissipées"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quelle est la principale différence entre l'analyse par branches et l'analyse par mailles ?",
+                options: [
+                    "L'analyse par branches utilise moins d'équations",
+                    "L'analyse par mailles utilise les courants de branches comme inconnues",
+                    "L'analyse par mailles utilise les courants de mailles comme inconnues",
+                    "Seule l'analyse par branches utilise les lois de Kirchhoff"
+                ],
+                correct: 2
+            },
+            {
+                question: "Dans la méthode des mailles, que doit-on faire si une résistance est traversée par deux courants de mailles ?",
+                options: [
+                    "Ignorer un des courants",
+                    "Prendre la moyenne des deux courants",
+                    "Utiliser la différence algébrique des courants",
+                    "Ajouter les valeurs absolues des courants"
+                ],
+                correct: 2
+            },
+            {
+                type: "calculation",
+                question: "Pour un circuit avec 8 branches et 5 nœuds, combien d'équations de mailles indépendantes sont nécessaires ?",
+                options: [
+                    "3 équations",
+                    "4 équations",
+                    "5 équations",
+                    "8 équations"
+                ],
+                correct: 1,
+                explanation: "Nombre d'équations de mailles = b - n + 1 = 8 - 5 + 1 = 4"
+            },
+            {
+                question: "Dans l'approche programmée de l'analyse par mailles, quel est le signe des termes non-diagonaux dans les équations ?",
+                options: [
+                    "Toujours positif",
+                    "Toujours négatif",
+                    "Dépend du sens des courants",
+                    "Peut être positif ou négatif"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quelle méthode utiliseriez-vous de préférence pour analyser un circuit avec seulement 3 branches mais 2 sources de tension ?",
+                options: [
+                    "Analyse par branches",
+                    "Analyse par mailles",
+                    "Théorème de superposition",
+                    "Théorème de Thévenin"
+                ],
+                correct: 0
+            },
+            {
+                type: "calculation",
+                question: "Calculez le déterminant de la matrice : [[2, -1], [-3, 4]]",
+                options: [
+                    "5",
+                    "8",
+                    "11",
+                    "14"
+                ],
+                correct: 0,
+                explanation: "det = (2×4) - (-1×-3) = 8 - 3 = 5"
+            },
+            {
+                question: "Que signifie un courant négatif obtenu après résolution d'un système d'équations ?",
+                options: [
+                    "Le circuit est en court-circuit",
+                    "Le sens réel du courant est opposé au sens arbitraire choisi",
+                    "La résistance est négative",
+                    "Il y a une erreur de calcul"
+                ],
+                correct: 1
+            },
+            {
+                question: "Dans la méthode des déterminants (Cramer), que représente Δ ?",
+                options: [
+                    "La matrice des coefficients",
+                    "Le déterminant principal",
+                    "Le vecteur des solutions",
+                    "La matrice augmentée"
+                ],
+                correct: 1
+            },
+            {
+                type: "calculation",
+                question: "Résolvez le système : 2x + y = 5, x - y = 1. Quelle est la valeur de x ?",
+                options: [
+                    "1",
+                    "2",
+                    "3",
+                    "4"
+                ],
+                correct: 1,
+                explanation: "Par addition : (2x+y)+(x-y)=5+1 => 3x=6 => x=2"
+            },
+            {
+                question: "Pourquoi recommande-t-on de choisir le sens horaire pour les courants de mailles ?",
+                options: [
+                    "C'est une convention internationale",
+                    "Cela minimise les risques d'erreur de signe",
+                    "C'est plus facile à dessiner",
+                    "Cela donne toujours des courants positifs"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quelle loi physique est à la base de la chute de tension aux bornes d'une résistance ?",
+                options: [
+                    "Loi de Kirchhoff",
+                    "Loi d'Ohm",
+                    "Loi de Faraday",
+                    "Loi de Lenz"
+                ],
+                correct: 1
+            },
+            {
+                type: "calculation",
+                question: "Dans un circuit, si I₁ = 2A, I₂ = -1A et R = 3Ω est traversée par I₁ et I₂ en sens opposés, quelle est la tension aux bornes de R ?",
+                options: [
+                    "3V",
+                    "6V",
+                    "9V",
+                    "12V"
+                ],
+                correct: 2,
+                explanation: "Courant net = I₁ - I₂ = 2 - (-1) = 3A, V = R×I = 3×3 = 9V"
+            },
+            {
+                question: "Quelle est la condition pour qu'un système d'équations linéaires ait une solution unique ?",
+                options: [
+                    "Le déterminant doit être nul",
+                    "Le déterminant doit être non nul",
+                    "Le nombre d'équations doit être pair",
+                    "Tous les coefficients doivent être positifs"
+                ],
+                correct: 1
+            },
+            {
+                question: "Dans l'analyse par mailles, que représente le terme R₁₁ dans l'équation de la maille 1 ?",
+                options: [
+                    "La résistance commune aux mailles 1 et 2",
+                    "La somme des résistances dans la maille 1",
+                    "La tension de la source dans la maille 1",
+                    "Le courant dans la maille 2"
+                ],
+                correct: 1
+            },
+            {
+                type: "calculation",
+                question: "Pour un circuit à 2 mailles : R₁₁ = 8Ω, R₂₂ = 10Ω, R₁₂ = 6Ω, V₁ = 20V, V₂ = -10V. Quel est le courant I₁ ?",
+                options: [
+                    "1.5A",
+                    "2.0A",
+                    "2.5A",
+                    "3.0A"
+                ],
+                correct: 2,
+                explanation: "Δ = 8×10 - 6×6 = 80 - 36 = 44, Δ₁ = 20×10 - 6×(-10) = 200 + 60 = 260, I₁ = 260/44 ≈ 2.5A"
+            },
+            {
+                question: "Quelle méthode est généralement plus efficace pour les circuits avec beaucoup de branches ?",
+                options: [
+                    "Analyse par branches",
+                    "Analyse par mailles",
+                    "Les deux sont équivalentes",
+                    "Cela dépend du circuit"
+                ],
+                correct: 1
+            },
+            {
+                question: "Pour vérifier vos résultats après analyse d'un circuit, quelle méthode est recommandée ?",
+                options: [
+                    "Refaire les mêmes calculs",
+                    "Utiliser une méthode différente",
+                    "Vérifier la puissance totale",
+                    "Toutes ces réponses"
+                ],
+                correct: 3
+            }
+        ];
+        
+        // Variables globales
+        let currentCircuit = 'circuit1';
+        let questions = [];
+        let timerInterval;
+        let startTime;
+        let timeLeft = 900;
+        let studentData = {};
+        let lastAnswerTime = null;
+        let answersCount = 0;
+        const FAST_ANSWER_THRESHOLD = 3000;
+        const VERY_FAST_THRESHOLD = 1500;
+        let totalTimeReduced = 0;
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initTabs();
+            createMatrixInputs();
+            updateCircuitDiagram();
+            initCircuitButtons();
+            
+            // Initialiser MathJax
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        });
+        
+        // Initialisation des onglets
+        function initTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            const sections = document.querySelectorAll('.content-section');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const target = this.dataset.target;
+                    
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    sections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === target) {
+                            section.classList.add('active');
+                        }
+                    });
+                    
+                    // Re-typeset MathJax quand on change d'onglet
+                    if (window.MathJax) {
+                        MathJax.typesetPromise();
+                    }
+                });
+            });
+        }
+        
+        // Initialisation des boutons de circuit
+        function initCircuitButtons() {
+            const buttons = document.querySelectorAll('.circuit-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    currentCircuit = this.dataset.circuit;
+                    
+                    // Mettre à jour les valeurs des champs
+                    const circuit = circuitTemplates[currentCircuit];
+                    document.getElementById('voltage1').value = circuit.voltages[0];
+                    document.getElementById('voltage2').value = circuit.voltages[1] || circuit.voltages[0];
+                    document.getElementById('resistor1').value = circuit.resistors[0];
+                    document.getElementById('resistor2').value = circuit.resistors[1];
+                    document.getElementById('resistor3').value = circuit.resistors[2] || circuit.resistors[1];
+                    
+                    updateCircuitDiagram();
+                });
+            });
+        }
+        
+        // Mise à jour du diagramme de circuit
+        function updateCircuitDiagram() {
+            const container = document.getElementById('circuit-diagram-interactive');
+            const circuit = circuitTemplates[currentCircuit];
+            
+            let diagramHTML = '';
+            
+            if (currentCircuit === 'circuit1') {
+                diagramHTML = `
+                    <div style="position: relative; width: 400px; height: 250px; margin: 0 auto;">
+                        <!-- Sources de tension -->
+                        <div style="position: absolute; top: 50px; left: 50px; width: 60px; height: 60px; border: 2px solid #333; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            ${circuit.voltages[0]}V
+                        </div>
+                        <div style="position: absolute; top: 50px; left: 270px; width: 60px; height: 60px; border: 2px solid #333; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            ${circuit.voltages[1]}V
+                        </div>
+                        
+                        <!-- Résistances -->
+                        <div style="position: absolute; top: 50px; left: 150px; width: 80px; height: 20px; background: #f0d9b5; border: 2px solid #8b4513; border-radius: 3px;"></div>
+                        <div style="position: absolute; top: 150px; left: 150px; width: 80px; height: 20px; background: #f0d9b5; border: 2px solid #8b4513; border-radius: 3px;"></div>
+                        <div style="position: absolute; top: 150px; left: 270px; width: 80px; height: 20px; background: #f0d9b5; border: 2px solid #8b4513; border-radius: 3px;"></div>
+                        
+                        <!-- Labels des résistances -->
+                        <div style="position: absolute; top: 30px; left: 150px; font-weight: bold;">${circuit.resistors[0]}Ω</div>
+                        <div style="position: absolute; top: 170px; left: 150px; font-weight: bold;">${circuit.resistors[1]}Ω</div>
+                        <div style="position: absolute; top: 170px; left: 270px; font-weight: bold;">${circuit.resistors[2]}Ω</div>
+                        
+                        <!-- Courants -->
+                        <div style="position: absolute; top: 40px; left: 190px;" class="current-label">I₁</div>
+                        <div style="position: absolute; top: 180px; left: 310px;" class="current-label">I₂</div>
+                        
+                        <!-- Fils -->
+                        <div style="position: absolute; top: 80px; left: 110px; width: 40px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 80px; left: 230px; width: 40px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 80px; left: 330px; width: 40px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 80px; left: 370px; width: 2px; height: 70px; background: #333;"></div>
+                        <div style="position: absolute; top: 150px; left: 370px; width: 40px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 150px; left: 330px; width: 40px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 150px; left: 230px; width: 40px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 150px; left: 110px; width: 40px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 50px; left: 50px; width: 2px; height: 30px; background: #333;"></div>
+                        <div style="position: absolute; top: 120px; left: 50px; width: 2px; height: 80px; background: #333;"></div>
+                        <div style="position: absolute; top: 200px; left: 50px; width: 320px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 200px; left: 370px; width: 2px; height: 30px; background: #333;"></div>
+                    </div>
+                `;
+            } else if (currentCircuit === 'circuit2') {
+                diagramHTML = `
+                    <div style="position: relative; width: 400px; height: 250px; margin: 0 auto;">
+                        <!-- Circuit 2 -->
+                        <div style="position: absolute; top: 50px; left: 50px; width: 60px; height: 60px; border: 2px solid #333; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            ${circuit.voltages[0]}V
+                        </div>
+                        <div style="position: absolute; top: 150px; left: 50px; width: 60px; height: 60px; border: 2px solid #333; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            ${circuit.voltages[1]}V
+                        </div>
+                        
+                        <!-- Résistances -->
+                        <div style="position: absolute; top: 50px; left: 150px; width: 80px; height: 20px; background: #f0d9b5; border: 2px solid #8b4513; border-radius: 3px;"></div>
+                        <div style="position: absolute; top: 50px; left: 270px; width: 80px; height: 20px; background: #f0d9b5; border: 2px solid #8b4513; border-radius: 3px;"></div>
+                        <div style="position: absolute; top: 150px; left: 150px; width: 80px; height: 20px; background: #f0d9b5; border: 2px solid #8b4513; border-radius: 3px;"></div>
+                        
+                        <!-- Labels -->
+                        <div style="position: absolute; top: 30px; left: 150px; font-weight: bold;">${circuit.resistors[0]}Ω</div>
+                        <div style="position: absolute; top: 30px; left: 270px; font-weight: bold;">${circuit.resistors[1]}Ω</div>
+                        <div style="position: absolute; top: 170px; left: 150px; font-weight: bold;">${circuit.resistors[2]}Ω</div>
+                        
+                        <!-- Courants -->
+                        <div style="position: absolute; top: 40px; left: 190px;" class="current-label">I₁</div>
+                        <div style="position: absolute; top: 40px; left: 310px;" class="current-label">I₂</div>
+                        <div style="position: absolute; top: 180px; left: 190px;" class="current-label">I₃</div>
+                        
+                        <!-- Fils -->
+                        <div style="position: absolute; top: 80px; left: 110px; width: 40px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 80px; left: 230px; width: 40px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 80px; left: 350px; width: 40px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 80px; left: 390px; width: 2px; height: 70px; background: #333;"></div>
+                        <div style="position: absolute; top: 150px; left: 390px; width: 40px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 150px; left: 350px; width: 40px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 150px; left: 230px; width: 40px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 150px; left: 110px; width: 40px; height: 2px; background: #333;"></div>
+                        <div style="position: absolute; top: 150px; left: 50px; width: 2px; height: 100px; background: #333;"></div>
+                        <div style="position: absolute; top: 50px; left: 50px; width: 2px; height: 100px; background: #333;"></div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = `
+                <div style="text-align: center;">
+                    ${diagramHTML}
+                    <p class="figure-caption">${circuit.name}: ${circuit.description}</p>
+                </div>
+            `;
+        }
+        
+        // Simulation de circuit
+        function simulateCircuit() {
+            const V1 = parseFloat(document.getElementById('voltage1').value);
+            const V2 = parseFloat(document.getElementById('voltage2').value);
+            const R1 = parseFloat(document.getElementById('resistor1').value);
+            const R2 = parseFloat(document.getElementById('resistor2').value);
+            const R3 = parseFloat(document.getElementById('resistor3').value);
+            
+            // Calcul des courants pour le circuit 1
+            const delta = (R1 + R2) * R3 - R2 * R2;
+            const I1 = (V1 * (R2 + R3) - V2 * R2) / delta;
+            const I2 = (V2 * (R1 + R2) - V1 * R2) / delta;
+            const I_R2 = I1 - I2;
+            
+            // Affichage des résultats
+            const resultElement = document.getElementById('simulation-result-value');
+            const detailsElement = document.getElementById('simulation-result-details');
+            const equationsElement = document.getElementById('simulation-equations');
+            
+            resultElement.innerHTML = `Résultats de la simulation`;
+            
+            detailsElement.innerHTML = `
+                Courant I₁ = ${I1.toFixed(2)} A<br>
+                Courant I₂ = ${I2.toFixed(2)} A<br>
+                Courant dans R₂ = ${I_R2.toFixed(2)} A<br>
+                Tension aux bornes de R₁ = ${(I1 * R1).toFixed(2)} V<br>
+                Tension aux bornes de R₂ = ${(I_R2 * R2).toFixed(2)} V<br>
+                Tension aux bornes de R₃ = ${(I2 * R3).toFixed(2)} V
+            `;
+            
+            equationsElement.innerHTML = `
+                <strong>Équations du système :</strong><br>
+                ${R1 + R2}I₁ - ${R2}I₂ = ${V1}<br>
+                -${R2}I₁ + ${R2 + R3}I₂ = ${V2}
+            `;
+            
+            showSuccessMessage('Circuit simulé avec succès !');
+            
+            // Re-typeset MathJax
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+        
+        // Réinitialisation de la simulation
+        function resetSimulation() {
+            const circuit = circuitTemplates[currentCircuit];
+            document.getElementById('voltage1').value = circuit.voltages[0];
+            document.getElementById('voltage2').value = circuit.voltages[1] || circuit.voltages[0];
+            document.getElementById('resistor1').value = circuit.resistors[0];
+            document.getElementById('resistor2').value = circuit.resistors[1];
+            document.getElementById('resistor3').value = circuit.resistors[2] || circuit.resistors[1];
+            
+            document.getElementById('simulation-result-details').innerHTML = 'Cliquez sur "Simuler" pour calculer les courants et tensions';
+            document.getElementById('simulation-equations').innerHTML = '';
+            
+            updateCircuitDiagram();
+        }
+        
+        // Création des inputs pour la matrice
+        function createMatrixInputs() {
+            const size = parseInt(document.getElementById('matrix-size').value);
+            const container = document.getElementById('matrix-inputs');
+            
+            let html = '<div style="display: inline-block; vertical-align: top; margin-right: 20px;">';
+            html += '<strong>Matrice :</strong><br>';
+            
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    html += `<input type="number" id="m${i}${j}" value="${i === j ? 1 : 0}" style="width: 50px; margin: 2px;">`;
+                }
+                html += '<br>';
+            }
+            html += '</div>';
+            
+            if (size === 3) {
+                html += '<div style="display: inline-block; vertical-align: top;">';
+                html += '<strong>Vecteur constant :</strong><br>';
+                html += '<input type="number" id="b0" value="1" style="width: 50px; margin: 2px;"><br>';
+                html += '<input type="number" id="b1" value="2" style="width: 50px; margin: 2px;"><br>';
+                html += '<input type="number" id="b2" value="3" style="width: 50px; margin: 2px;">';
+                html += '</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // Calcul du déterminant
+        function calculateDeterminant() {
+            const size = parseInt(document.getElementById('matrix-size').value);
+            const resultDiv = document.getElementById('determinant-result');
+            const valueDiv = document.getElementById('determinant-value');
+            const stepsDiv = document.getElementById('determinant-steps');
+            
+            resultDiv.style.display = 'block';
+            
+            if (size === 2) {
+                const a = parseFloat(document.getElementById('m00').value);
+                const b = parseFloat(document.getElementById('m01').value);
+                const c = parseFloat(document.getElementById('m10').value);
+                const d = parseFloat(document.getElementById('m11').value);
+                
+                const det = a * d - b * c;
+                
+                valueDiv.innerHTML = `det = ${a}×${d} - ${b}×${c} = ${det}`;
+                stepsDiv.innerHTML = `
+                    <strong>Étapes :</strong><br>
+                    1. Multiplication des éléments de la diagonale principale : ${a} × ${d} = ${a * d}<br>
+                    2. Multiplication des éléments de l'autre diagonale : ${b} × ${c} = ${b * c}<br>
+                    3. Soustraction : ${a * d} - ${b * c} = ${det}
+                `;
+            } else if (size === 3) {
+                const a = parseFloat(document.getElementById('m00').value);
+                const b = parseFloat(document.getElementById('m01').value);
+                const c = parseFloat(document.getElementById('m02').value);
+                const d = parseFloat(document.getElementById('m10').value);
+                const e = parseFloat(document.getElementById('m11').value);
+                const f = parseFloat(document.getElementById('m12').value);
+                const g = parseFloat(document.getElementById('m20').value);
+                const h = parseFloat(document.getElementById('m21').value);
+                const i = parseFloat(document.getElementById('m22').value);
+                
+                const det = a*(e*i - f*h) - b*(d*i - f*g) + c*(d*h - e*g);
+                
+                valueDiv.innerHTML = `det = ${det.toFixed(2)}`;
+                stepsDiv.innerHTML = `
+                    <strong>Étapes par la règle de Sarrus :</strong><br>
+                    1. Diagonale principale et parallèles : ${a}×${e}×${i} + ${b}×${f}×${g} + ${c}×${d}×${h}<br>
+                    2. Autre diagonale et parallèles : ${c}×${e}×${g} + ${a}×${f}×${h} + ${b}×${d}×${i}<br>
+                    3. Déterminant = (1) - (2)<br>
+                    4. Résultat : ${det}
+                `;
+                
+                // Calcul des solutions si demandé
+                const b0 = parseFloat(document.getElementById('b0').value);
+                const b1 = parseFloat(document.getElementById('b1').value);
+                const b2 = parseFloat(document.getElementById('b2').value);
+                
+                // Calcul des déterminants pour chaque variable
+                const detX = b0*(e*i - f*h) - b1*(b*i - c*h) + b2*(b*f - c*e);
+                const detY = a*(b1*i - b2*h) - b0*(d*i - f*g) + c*(d*h - b1*g);
+                const detZ = a*(e*b2 - f*b1) - b*(d*b2 - f*b0) + b0*(d*h - e*g);
+                
+                const x = detX / det;
+                const y = detY / det;
+                const z = detZ / det;
+                
+                stepsDiv.innerHTML += `<br><br><strong>Solutions (règle de Cramer) :</strong><br>
+                    x = detX/det = ${detX}/${det} = ${x.toFixed(2)}<br>
+                    y = detY/det = ${detY}/${det} = ${y.toFixed(2)}<br>
+                    z = detZ/det = ${detZ}/${det} = ${z.toFixed(2)}`;
+            }
+        }
+        
+        // Afficher un message de succès
+        function showSuccessMessage(message) {
+            const successMsg = document.getElementById('successMessage');
+            successMsg.textContent = message;
+            successMsg.style.display = 'block';
+            
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Afficher un message d'erreur
+        function showErrorMessage(message) {
+            const errorMsg = document.getElementById('errorMessage');
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            
+            setTimeout(() => {
+                errorMsg.style.display = 'none';
+            }, 3000);
+        }
+        
+        // ÉVALUATION FUNCTIONS
+        
+        // Mélanger un tableau
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+        
+        // Préparer les questions
+        function prepareQuestions() {
+            questions = evalQuestions.map(q => {
+                const shuffledOptions = [];
+                const indices = [0, 1, 2, 3];
+                const shuffledIndices = shuffleArray(indices);
+                
+                shuffledIndices.forEach(oldIndex => {
+                    shuffledOptions.push(q.options[oldIndex]);
+                });
+                
+                const newCorrectIndex = shuffledIndices.indexOf(q.correct);
+                
+                return {
+                    question: q.question,
+                    options: shuffledOptions,
+                    correct: newCorrectIndex,
+                    type: q.type || "theory",
+                    explanation: q.explanation || ""
+                };
+            });
+        }
+        
+        // Obtenir l'historique des évaluations
+        function getEvaluationHistory() {
+            const history = localStorage.getItem('evaluationHistory_circuits');
+            return history ? JSON.parse(history) : [];
+        }
+        
+        // Sauvegarder une évaluation
+        function saveEvaluation(data) {
+            const history = getEvaluationHistory();
+            const evaluationNumber = history.length + 1;
+            history.push({
+                numero: evaluationNumber,
+                seance: "Cours 3",
+                titre: "Méthodes d'Analyse des Circuits",
+                date: new Date().toLocaleDateString('fr-FR'),
+                heure: new Date().toLocaleTimeString('fr-FR'),
+                noteTotale: data.noteTotale,
+                quizNote: data.quizNote,
+                noteHabillement: data.noteHabillement,
+                noteParticipation: data.noteParticipation,
+                matricule: data.matricule,
+                nom: data.nom,
+                tempsReduit: data.tempsReduit
+            });
+            localStorage.setItem('evaluationHistory_circuits', JSON.stringify(history));
+        }
+        
+        // Démarrer l'évaluation
+        function startEvalQuiz() {
+            const nom = document.getElementById('eval-nom').value.trim();
+            const matricule = document.getElementById('eval-matricule').value.trim();
+            const habillement = document.querySelector('input[name="eval-habillement"]:checked');
+            const participation = document.querySelector('input[name="eval-participation"]:checked');
+            
+            if (!nom || !matricule || !habillement || !participation) {
+                showErrorMessage('Veuillez remplir tous les champs obligatoires !');
+                return;
+            }
+            
+            studentData = {
+                nom: nom,
+                matricule: matricule,
+                email: document.getElementById('eval-email').value.trim(),
+                habillement: parseInt(habillement.value),
+                participation: parseInt(participation.value)
+            };
+            
+            prepareQuestions();
+            
+            document.getElementById('studentInfo').style.display = 'none';
+            document.getElementById('quizSection').style.display = 'block';
+            document.getElementById('timer').style.display = 'block';
+            document.getElementById('speedIndicator').style.display = 'block';
+            
+            generateEvalQuestions();
+            startTime = Date.now();
+            lastAnswerTime = null;
+            answersCount = 0;
+            totalTimeReduced = 0;
+            startTimer();
+        }
+        
+        // Générer les questions d'évaluation
+        function generateEvalQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                
+                let questionClass = 'question';
+                if (q.type === 'calculation') {
+                    questionClass += ' calculation-question';
+                }
+                
+                questionDiv.className = questionClass;
+                questionDiv.innerHTML = `
+                    <h3>Question ${index + 1} : ${q.question}</h3>
+                    <div class="options">
+                        ${q.options.map((opt, i) => `
+                            <label class="option-label">
+                                <input type="radio" name="q${index}" value="${i}" onchange="trackAnswer()">
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+            
+            updateProgressBar(0);
+        }
+        
+        // Suivre les réponses
+        function trackAnswer() {
+            const currentTime = Date.now();
+            
+            if (lastAnswerTime !== null) {
+                const timeSinceLastAnswer = currentTime - lastAnswerTime;
+                
+                let reduction = 0;
+                if (timeSinceLastAnswer < VERY_FAST_THRESHOLD) {
+                    reduction = 60;
+                } else if (timeSinceLastAnswer < FAST_ANSWER_THRESHOLD) {
+                    reduction = 30;
+                }
+                
+                if (reduction > 0) {
+                    timeLeft = Math.max(60, timeLeft - reduction);
+                    totalTimeReduced += reduction;
+                    
+                    const timerElement = document.getElementById('timer');
+                    const speedIndicator = document.getElementById('speedIndicator');
+                    
+                    timerElement.classList.add('fast-mode');
+                    speedIndicator.classList.add('active');
+                    speedIndicator.textContent = `⚡ Mode rapide: -${reduction}s`;
+                    
+                    setTimeout(() => {
+                        timerElement.classList.remove('fast-mode');
+                        speedIndicator.classList.remove('active');
+                        speedIndicator.textContent = 'Mode normal';
+                    }, 2000);
+                }
+            }
+            
+            lastAnswerTime = currentTime;
+            answersCount++;
+            
+            const progress = (answersCount / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+        
+        // Mettre à jour la barre de progression
+        function updateProgressBar(progress) {
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+        
+        // Démarrer le timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                const timerElement = document.getElementById('timer');
+                
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft === 120 && !timerElement.classList.contains('fast-mode')) {
+                    timerElement.classList.add('warning');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitEvalQuiz(true);
+                }
+            }, 1000);
+        }
+        
+        // Soumettre l'évaluation
+        function submitEvalQuiz(autoSubmit = false) {
+            clearInterval(timerInterval);
+            
+            if (!autoSubmit) {
+                if (!confirm('Êtes-vous sûr(e) de vouloir soumettre votre évaluation ?')) {
+                    startTimer();
+                    return;
+                }
+            }
+            
+            const timeUsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutesUsed = Math.floor(timeUsed / 60);
+            const secondsUsed = timeUsed % 60;
+            
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected && parseInt(selected.value) === q.correct) {
+                    score++;
+                }
+            });
+            
+            const quizNote = (score / questions.length) * 20;
+            // Coefficients : Quiz (3), Participation (4), Habillement (2)
+            const noteTotale = ((quizNote * 3) + (studentData.participation * 4) + (studentData.habillement * 2)) / 9;
+            
+            const evaluationData = {
+                ...studentData,
+                questionsRepondues: questions.length,
+                bonnesReponses: score,
+                quizNote: quizNote.toFixed(2),
+                noteHabillement: studentData.habillement,
+                noteParticipation: studentData.participation,
+                noteTotale: noteTotale.toFixed(2),
+                tempsUtilise: `${minutesUsed} min ${secondsUsed} sec`,
+                tempsReduit: totalTimeReduced
+            };
+            
+            saveEvaluation(evaluationData);
+            generatePDF(evaluationData);
+        }
+        
+        // Générer le PDF
+        function generatePDF(data) {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // En-tête
+                doc.setFillColor(26, 42, 108);
+                doc.rect(0, 0, 210, 50, 'F');
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(18);
+                doc.text('RAPPORT D\'ÉVALUATION', 105, 12, { align: 'center' });
+                
+                doc.setFontSize(11);
+                doc.text('Méthodes d\'Analyse des Circuits Électriques', 105, 22, { align: 'center' });
+                doc.text('Cours d\'Électrotechnique - Leçon 3', 105, 29, { align: 'center' });
+                doc.setFontSize(10);
+                doc.text('Génie Informatique - Semestre 1', 105, 37, { align: 'center' });
+                doc.text('ENSET de Douala - Université de Douala', 105, 44, { align: 'center' });
+                
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(11);
+                
+                let y = 65;
+                
+                doc.setFont(undefined, 'bold');
+                doc.text('INFORMATIONS DE L\'ÉTUDIANT(E)', 20, y);
+                y += 10;
+                
+                doc.setFont(undefined, 'normal');
+                doc.text(`Nom : ${data.nom}`, 20, y);
+                y += 7;
+                doc.text(`Matricule : ${data.matricule}`, 20, y);
+                y += 7;
+                if (data.email) {
+                    doc.text(`Email : ${data.email}`, 20, y);
+                    y += 7;
+                }
+                
+                y += 5;
+                doc.setFont(undefined, 'bold');
+                doc.text('DÉTAILS DE L\'ÉVALUATION', 20, y);
+                y += 10;
+                
+                doc.setFont(undefined, 'normal');
+                doc.text(`Matière : Électrotechnique`, 20, y);
+                y += 7;
+                doc.text(`Séance : Cours 3 - Méthodes d'Analyse des Circuits`, 20, y);
+                y += 7;
+                doc.text(`Date : ${new Date().toLocaleDateString('fr-FR')}`, 20, y);
+                y += 7;
+                doc.text(`Heure : ${new Date().toLocaleTimeString('fr-FR')}`, 20, y);
+                y += 7;
+                doc.text(`Temps utilisé : ${data.tempsUtilise}`, 20, y);
+                y += 7;
+                if (data.tempsReduit > 0) {
+                    doc.text(`Temps réduit (réponses rapides) : ${data.tempsReduit} secondes`, 20, y);
+                    y += 7;
+                }
+                doc.text(`Questions répondues : ${data.questionsRepondues}`, 20, y);
+                y += 7;
+                doc.text(`Bonnes réponses : ${data.bonnesReponses}`, 20, y);
+                y += 10;
+                
+                doc.setFont(undefined, 'bold');
+                doc.text('NOTATION DÉTAILLÉE', 20, y);
+                y += 10;
+                
+                doc.setFont(undefined, 'normal');
+                doc.text(`Note Quiz (sur 20) : ${data.quizNote}`, 20, y);
+                y += 7;
+                doc.text(`Note Habillement (sur 20) : ${data.noteHabillement}`, 20, y);
+                y += 7;
+                doc.text(`Note Participation (sur 20) : ${data.noteParticipation}`, 20, y);
+                y += 12;
+                
+                doc.setFillColor(26, 42, 108);
+                doc.rect(15, y, 180, 22, 'F');
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(18);
+                doc.setFont(undefined, 'bold');
+                doc.text(`NOTE FINALE : ${data.noteTotale} / 20`, 105, y + 14, { align: 'center' });
+                
+                y += 32;
+                
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(11);
+                doc.setFont(undefined, 'bold');
+                doc.text('APPRÉCIATION', 20, y);
+                y += 8;
+                
+                doc.setFont(undefined, 'normal');
+                let appreciation = '';
+                const note = parseFloat(data.noteTotale);
+                if (note >= 16) appreciation = 'Très bien - Excellente maîtrise des méthodes d\'analyse';
+                else if (note >= 14) appreciation = 'Bien - Bonne compréhension des méthodes par branches et par mailles';
+                else if (note >= 12) appreciation = 'Assez bien - Connaissances satisfaisantes en analyse de circuits';
+                else if (note >= 10) appreciation = 'Passable - Révision conseillée des lois de Kirchhoff et méthodes systématiques';
+                else appreciation = 'Insuffisant - Révision nécessaire des concepts fondamentaux';
+                
+                doc.text(appreciation, 20, y);
+                y += 15;
+                
+                const history = getEvaluationHistory();
+                if (history.length > 0) {
+                    doc.addPage();
+                    y = 20;
+                    
+                    doc.setFont(undefined, 'bold');
+                    doc.setFontSize(14);
+                    doc.text('HISTORIQUE DES ÉVALUATIONS', 105, y, { align: 'center' });
+                    y += 8;
+                    
+                    doc.setFontSize(10);
+                    doc.setFont(undefined, 'normal');
+                    doc.text(`Étudiant(e) : ${data.nom}`, 20, y);
+                    y += 7;
+                    doc.text(`Matricule : ${data.matricule}`, 20, y);
+                    y += 7;
+                    doc.text(`Matière : Électrotechnique - Méthodes d'Analyse des Circuits`, 20, y);
+                    y += 7;
+                    doc.text(`Nombre total d'évaluations : ${history.length}`, 20, y);
+                    y += 10;
+                    
+                    doc.setFontSize(9);
+                    doc.setFont(undefined, 'bold');
+                    doc.text('N°', 15, y);
+                    doc.text('Date', 25, y);
+                    doc.text('Heure', 55, y);
+                    doc.text('Note Quiz', 80, y);
+                    doc.text('Note Hab.', 110, y);
+                    doc.text('Note Part.', 140, y);
+                    doc.text('Note Finale', 170, y);
+                    y += 2;
+                    doc.line(15, y, 195, y);
+                    y += 5;
+                    
+                    doc.setFont(undefined, 'normal');
+                    history.forEach((evaluation, index) => {
+                        if (y > 270) {
+                            doc.addPage();
+                            y = 20;
+                            
+                            doc.setFont(undefined, 'bold');
+                            doc.text('N°', 15, y);
+                            doc.text('Date', 25, y);
+                            doc.text('Heure', 55, y);
+                            doc.text('Note Quiz', 80, y);
+                            doc.text('Note Hab.', 110, y);
+                            doc.text('Note Part.', 140, y);
+                            doc.text('Note Finale', 170, y);
+                            y += 2;
+                            doc.line(15, y, 195, y);
+                            y += 5;
+                            doc.setFont(undefined, 'normal');
+                        }
+                        
+                        doc.text(evaluation.numero.toString(), 15, y);
+                        doc.text(evaluation.date, 25, y);
+                        doc.text(evaluation.heure, 55, y);
+                        doc.text(evaluation.quizNote, 80, y);
+                        doc.text(evaluation.noteHabillement.toString(), 110, y);
+                        doc.text(evaluation.noteParticipation.toString(), 140, y);
+                        
+                        if (index === history.length - 1) {
+                            doc.setFont(undefined, 'bold');
+                            doc.setTextColor(26, 42, 108);
+                        }
+                        doc.text(evaluation.noteTotale, 170, y);
+                        doc.setFont(undefined, 'normal');
+                        doc.setTextColor(0, 0, 0);
+                        y += 6;
+                    });
+                    
+                    y += 10;
+                    doc.setFont(undefined, 'bold');
+                    doc.text('STATISTIQUES', 20, y);
+                    y += 8;
+                    doc.setFont(undefined, 'normal');
+                    
+                    const notes = history.map(h => parseFloat(h.noteTotale));
+                    const moyenne = (notes.reduce((a, b) => a + b, 0) / notes.length).toFixed(2);
+                    const meilleure = Math.max(...notes).toFixed(2);
+                    const plusBasse = Math.min(...notes).toFixed(2);
+                    
+                    doc.text(`Moyenne générale : ${moyenne} / 20`, 20, y);
+                    y += 7;
+                    doc.text(`Meilleure note : ${meilleure} / 20`, 20, y);
+                    y += 7;
+                    doc.text(`Note la plus basse : ${plusBasse} / 20`, 20, y);
+                    y += 7;
+                    
+                    const progression = notes.length > 1 ? 
+                        (notes[notes.length - 1] - notes[0]).toFixed(2) : '0.00';
+                    const progressionTexte = parseFloat(progression) >= 0 ? 
+                        `+${progression}` : progression;
+                    doc.text(`Progression (1ère vs dernière) : ${progressionTexte} points`, 20, y);
+                }
+                
+                const finalY = doc.internal.pageSize.height - 15;
+                doc.setDrawColor(26, 42, 108);
+                doc.line(20, finalY - 5, 190, finalY - 5);
+                
+                doc.setTextColor(100, 100, 100);
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'italic');
+                doc.text('Enseignant : Dr OBONO.B.A - Chargé de Cours', 105, finalY, { align: 'center' });
+                doc.text('Département de Génie Informatique - ENSET de Douala', 105, finalY + 5, { align: 'center' });
+                doc.text('Année académique 2025/2026', 105, finalY + 10, { align: 'center' });
+                
+                doc.save(`Rapport_Electrotechnique_${data.matricule}_${Date.now()}.pdf`);
+                
+                alert(`Évaluation terminée !\n\nNote finale : ${data.noteTotale} / 20\n${appreciation}\n\nNombre d'évaluations effectuées : ${history.length}\n${data.tempsReduit > 0 ? `Temps réduit pour réponses rapides : ${data.tempsReduit}s\n` : ''}Votre rapport PDF avec l'historique complet a été téléchargé.`);
+                
+            } catch (error) {
+                console.error('Erreur lors de la génération du PDF:', error);
+                showErrorMessage('Erreur lors de la génération du PDF: ' + error.message);
+                
+                // Fallback: afficher les résultats dans une alerte
+                const note = parseFloat(data.noteTotale);
+                let appreciation = '';
+                if (note >= 16) appreciation = 'Très bien - Excellente maîtrise des méthodes d\'analyse';
+                else if (note >= 14) appreciation = 'Bien - Bonne compréhension des méthodes par branches et par mailles';
+                else if (note >= 12) appreciation = 'Assez bien - Connaissances satisfaisantes en analyse de circuits';
+                else if (note >= 10) appreciation = 'Passable - Révision conseillée des lois de Kirchhoff et méthodes systématiques';
+                else appreciation = 'Insuffisant - Révision nécessaire des concepts fondamentaux';
+                
+                alert(`Évaluation terminée !\n\nNote finale : ${data.noteTotale} / 20\n${appreciation}\n\nErreur PDF: Le rapport n'a pas pu être généré.`);
+            }
+        }
+    </script>
+</body>
+</html>

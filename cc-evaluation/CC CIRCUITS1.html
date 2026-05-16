@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Évaluation - Circuits Électriques - Chapitre 1</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        
+        .header p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .course-info {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+        
+        .course-info p {
+            margin: 5px 0;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-section h2 {
+            color: #1565c0;
+            margin-bottom: 20px;
+            font-size: 22px;
+            border-bottom: 2px solid #2196f3;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus, input[type="email"]:focus {
+            outline: none;
+            border-color: #2196f3;
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .radio-option:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+        
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: block;
+            width: 100%;
+            margin-top: 30px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(13, 71, 161, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 24px;
+            font-weight: bold;
+            color: #1565c0;
+            z-index: 1000;
+        }
+        
+        .timer.warning {
+            background: #ff6b6b;
+            color: white;
+            animation: pulse 1s infinite;
+        }
+
+        .timer.fast-mode {
+            background: #ffa726;
+            color: white;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .quiz-section {
+            display: none;
+        }
+        
+        .question {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #e3f2fd;
+            border-radius: 10px;
+            border-left: 4px solid #0d47a1;
+        }
+        
+        .question h3 {
+            color: #1565c0;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option-label {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option-label:hover {
+            background: white;
+            border-color: #0d47a1;
+        }
+        
+        .option-label input {
+            margin-right: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0d47a1 0%, #1565c0 100%);
+            transition: width 0.3s;
+        }
+        
+        .chapter-info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .chapter-info h3 {
+            color: #1565c0;
+            margin-bottom: 10px;
+        }
+        
+        .formula {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #0d47a1;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+        
+        .calculation-question {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .evaluation-note {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #e3f2fd;
+        }
+        
+        .section-title {
+            color: #0d47a1;
+            font-size: 20px;
+            margin: 25px 0 15px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #2196f3;
+        }
+        
+        .important-note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .speed-indicator {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 12px;
+            color: #666;
+            z-index: 1000;
+        }
+
+        .speed-indicator.active {
+            background: #ffa726;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CIRCUITS ÉLECTRIQUES - ÉVALUATION</h1>
+            <p><strong>Chapitre 1 : Notions de Base sur l'Étude des Circuits Électriques</strong></p>
+            <p>Génie Informatique - Semestre 1 - Circuits Électriques</p>
+            
+            <div class="course-info">
+                <p><strong>Enseignant :</strong></p>
+                <p>Dr OBONO BIYOBO Arnaud</p>
+                <p style="font-size: 12px;">Chargé de Cours - Circuits Électriques et Automatique</p>
+                <p style="margin-top: 10px;"><strong>Unité d'Enseignement :</strong> Circuits Électriques</p>
+                <p style="font-size: 12px;">Année académique : 2025/2026 - Semestre 1</p>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div id="studentInfo" class="form-section">
+                <div class="chapter-info">
+                    <h3>📘 Chapitre 1 : Notions de Base sur l'Étude des Circuits Électriques</h3>
+                    <p><strong>Thèmes évalués :</strong> Effets du courant électrique, Définitions fondamentales, Sources d'énergie (CC et CA), Dipôles (actifs et passifs), Méthodes d'analyse</p>
+                    <p><strong>Objectif :</strong> Vérifier la compréhension des concepts fondamentaux sur les circuits électriques</p>
+                </div>
+
+                <h2>Informations de l'Étudiant(e)</h2>
+                
+                <div class="form-group">
+                    <label for="nom">Nom complet *</label>
+                    <input type="text" id="nom" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="matricule">Matricule et Option *</label>
+                    <input type="text" id="matricule" required placeholder="Ex: 18G1234 - GINFO1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email">
+                </div>
+                
+                <div class="evaluation-note">
+                    <p><strong>Note importante :</strong> La note finale est calculée avec les coefficients suivants :</p>
+                    <p>Quiz (3) + CC écrit et Simulation (4) + Habillement (2) = Total / 9</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Style vestimentaire *</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="habillement" value="20" required>
+                            <span><strong>20 points :</strong> Tenue responsable - bien coiffée, bien chaussée, corps bien couvert ou polo département</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="habillement" value="10">
+                            <span><strong>10 points :</strong> Tenue jeune</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="habillement" value="2">
+                            <span><strong>2 points :</strong> Tenue non conforme</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>CC écrit et Simulation - Circuits Électriques *</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="cc" value="20" required>
+                            <span><strong>20 points :</strong> Excellent travail, simulation complète et rapport détaillé sur les circuits électriques</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="cc" value="18">
+                            <span><strong>18 points :</strong> Bon travail, simulation correcte et rapport satisfaisant</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="cc" value="2">
+                            <span><strong>2 points :</strong> Travail insuffisant, simulation absente ou incorrecte</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="startEvaluation()">Commencer le Quiz sur les Circuits Électriques</button>
+            </div>
+            
+            <div id="quizSection" class="quiz-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                
+                <div id="questionsContainer"></div>
+                
+                <button class="btn" onclick="submitEvaluation()">Soumettre l'Évaluation</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="timer" class="timer hidden">15:00</div>
+    <div id="speedIndicator" class="speed-indicator hidden">Mode normal</div>
+
+    <script>
+        const questionsBase = [
+            {
+                question: "Quel est l'effet du courant électrique utilisé dans un fer à repasser?",
+                options: [
+                    "Effet lumineux",
+                    "Effet calorifique ou thermique",
+                    "Effet magnétique",
+                    "Effet chimique"
+                ],
+                correct: 1,
+                explanation: "Le fer à repasser utilise l'effet calorifique ou thermique du courant électrique."
+            },
+            {
+                question: "Quelle est la définition du courant électrique?",
+                options: [
+                    "La différence de potentiel entre deux points",
+                    "Le déplacement des électrons libres dans un conducteur",
+                    "La résistance au passage des électrons",
+                    "La puissance dissipée dans un circuit"
+                ],
+                correct: 1,
+                explanation: "Le courant électrique est le déplacement des électrons libres dans un conducteur."
+            },
+            {
+                question: "Quelle est l'unité de mesure de l'intensité du courant électrique?",
+                options: [
+                    "Volt (V)",
+                    "Watt (W)",
+                    "Ampère (A)",
+                    "Ohm (Ω)"
+                ],
+                correct: 2,
+                explanation: "L'intensité du courant se mesure en ampère (A)."
+            },
+            {
+                question: "Comment définit-on la tension électrique V_AB entre deux points A et B?",
+                options: [
+                    "V_AB = V_A + V_B",
+                    "V_AB = V_A - V_B",
+                    "V_AB = V_A × V_B",
+                    "V_AB = V_A / V_B"
+                ],
+                correct: 1,
+                explanation: "La tension V_AB entre deux points A et B est définie par V_AB = V_A - V_B."
+            },
+            {
+                question: "Qu'est-ce qu'un circuit électrique?",
+                options: [
+                    "Un ensemble de composants électroniques seulement",
+                    "Un appareil qui produit de l'énergie électrique",
+                    "Un ensemble d'éléments électriques interconnectés avec source, récepteur et liaisons",
+                    "Un dispositif qui transforme l'énergie électrique"
+                ],
+                correct: 2,
+                explanation: "Un circuit électrique est un ensemble d'éléments électriques interconnectés comprenant un générateur, un récepteur et des éléments de liaison."
+            },
+            {
+                question: "Qu'est-ce qu'un nœud électrique?",
+                options: [
+                    "Un point de rencontre d'au moins trois conducteurs",
+                    "Une portion de circuit entre deux nœuds",
+                    "Un parcours fermé de branches électriques",
+                    "Un élément qui transforme l'énergie"
+                ],
+                correct: 0,
+                explanation: "Un nœud électrique est un point de rencontre d'au moins trois conducteurs électriques."
+            },
+            {
+                question: "Qu'est-ce qu'une maille électrique?",
+                options: [
+                    "Un point de rencontre de plusieurs conducteurs",
+                    "Une portion de circuit entre deux nœuds",
+                    "Un parcours fermé constitué de branches électriques",
+                    "Un élément qui produit de l'énergie"
+                ],
+                correct: 2,
+                explanation: "Une maille électrique est un parcours fermé constitué de branches électriques."
+            },
+            {
+                question: "Quelle est la caractéristique d'une source de tension idéale indépendante?",
+                options: [
+                    "Sa tension dépend du courant débité",
+                    "Elle a une résistance interne en série",
+                    "Elle impose une tension constante indépendamment du courant",
+                    "Sa tension dépend d'une autre grandeur du circuit"
+                ],
+                correct: 2,
+                explanation: "Une source de tension idéale indépendante impose une tension constante à ses bornes, indépendamment du courant qui la traverse."
+            },
+            {
+                question: "Comment se comporte une source de tension réelle lorsqu'on augmente la charge?",
+                options: [
+                    "Sa tension augmente",
+                    "Sa tension reste constante",
+                    "Sa tension diminue",
+                    "Sa tension devient nulle"
+                ],
+                correct: 2,
+                explanation: "Une source de tension réelle voit sa tension diminuer lorsque le courant débité augmente (charge plus importante)."
+            },
+            {
+                question: "Quelle précaution faut-il prendre avec une source de tension?",
+                options: [
+                    "Elle ne doit jamais être ouverte",
+                    "Elle ne doit jamais être court-circuitée",
+                    "Elle ne doit jamais être chargée",
+                    "Elle doit toujours être en parallèle"
+                ],
+                correct: 1,
+                explanation: "Une source de tension ne doit jamais être court-circuitée car le courant serait destructeur."
+            },
+            {
+                question: "Quelle précaution faut-il prendre avec une source de courant?",
+                options: [
+                    "Elle ne doit jamais être ouverte",
+                    "Elle ne doit jamais être court-circuitée",
+                    "Elle doit toujours être en série",
+                    "Elle ne doit jamais être chargée"
+                ],
+                correct: 0,
+                explanation: "Le circuit d'une source de courant ne doit jamais être ouvert car cela provoquerait une surtension."
+            },
+            {
+                question: "Qu'est-ce que le courant de court-circuit (Icc) d'une source de tension?",
+                options: [
+                    "Le courant lorsqu'elle est ouverte",
+                    "Le courant maximal qu'elle peut fournir",
+                    "Le courant lorsqu'elle est court-circuitée",
+                    "Le courant nominal de fonctionnement"
+                ],
+                correct: 2,
+                explanation: "Le courant de court-circuit est le courant qui circule lorsque la source de tension est court-circuitée (U=0V)."
+            },
+            {
+                question: "Comment définit-on le courant alternatif?",
+                options: [
+                    "Un courant constant dans le temps",
+                    "Un courant variable, périodique et bidirectionnel",
+                    "Un courant qui ne circule que dans un sens",
+                    "Un courant qui produit seulement de la chaleur"
+                ],
+                correct: 1,
+                explanation: "Le courant alternatif est un courant variable, périodique, bidirectionnel et symétrique."
+            },
+            {
+                question: "Quelle notation est utilisée pour représenter une tension alternative en notation complexe?",
+                options: [
+                    "e(t) = E_max sin(ωt + φ)",
+                    "e = E_max e^(j(ωt + φ))",
+                    "e = E_max",
+                    "e = R × i"
+                ],
+                correct: 1,
+                explanation: "En notation complexe, une tension alternative s'écrit e = E_max e^(j(ωt + φ))."
+            },
+            {
+                question: "Qu'est-ce qu'un dipôle actif?",
+                options: [
+                    "Un dipôle qui consomme de l'énergie",
+                    "Un dipôle qui fournit de l'énergie au circuit",
+                    "Un dipôle à caractéristique linéaire",
+                    "Un dipôle à deux bornes seulement"
+                ],
+                correct: 1,
+                explanation: "Un dipôle est dit actif lorsqu'il est capable de fournir de l'énergie au circuit (E≠0)."
+            },
+            {
+                question: "Quelle est la relation entre tension et courant pour une résistance (loi d'Ohm)?",
+                options: [
+                    "U = R/I",
+                    "U = R × I",
+                    "U = I/R",
+                    "U = R + I"
+                ],
+                correct: 1,
+                explanation: "Pour une résistance, la loi d'Ohm s'écrit U = R × I."
+            },
+            {
+                question: "Comment calcule-t-on la résistance d'un fil conducteur?",
+                options: [
+                    "R = ρ × S/L",
+                    "R = ρ × L/S",
+                    "R = S/(ρ × L)",
+                    "R = L/(ρ × S)"
+                ],
+                correct: 1,
+                explanation: "La résistance d'un fil conducteur se calcule par R = ρ × L/S où ρ est la résistivité, L la longueur et S la section."
+            },
+            {
+                question: "Quelle est l'expression de la variation de résistance avec la température?",
+                options: [
+                    "R = R₀(1 + α(T - T₀))",
+                    "R = R₀α(T - T₀)",
+                    "R = R₀/(1 + α(T - T₀))",
+                    "R = R₀ + α(T + T₀)"
+                ],
+                correct: 0,
+                explanation: "La variation de résistance avec la température s'exprime par R = R₀(1 + α(T - T₀))."
+            },
+            {
+                type: "calculation",
+                question: "Si un circuit possède 5 branches et 3 nœuds, combien de mailles indépendantes peut-il avoir?",
+                options: [
+                    "2 mailles",
+                    "3 mailles",
+                    "4 mailles",
+                    "5 mailles"
+                ],
+                correct: 1,
+                explanation: "Pour un circuit plan, le nombre de mailles indépendantes est donné par m = b - n + 1 = 5 - 3 + 1 = 3 mailles."
+            },
+            {
+                type: "calculation",
+                question: "Une source de tension de 12V avec une résistance interne de 2Ω est court-circuitée. Quel est le courant de court-circuit?",
+                options: [
+                    "2A",
+                    "6A",
+                    "12A",
+                    "24A"
+                ],
+                correct: 1,
+                explanation: "Icc = E/R = 12V/2Ω = 6A."
+            }
+        ];
+
+        let questions = [];
+        let timerInterval;
+        let startTime;
+        let timeLeft = 900;
+        let studentData = {};
+        let lastAnswerTime = null;
+        let answersCount = 0;
+        const FAST_ANSWER_THRESHOLD = 3000;
+        const VERY_FAST_THRESHOLD = 1500;
+        let totalTimeReduced = 0;
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function prepareQuestions() {
+            questions = questionsBase.map(q => {
+                const shuffledOptions = [];
+                const indices = [0, 1, 2, 3];
+                const shuffledIndices = shuffleArray(indices);
+                
+                shuffledIndices.forEach(oldIndex => {
+                    shuffledOptions.push(q.options[oldIndex]);
+                });
+                
+                const newCorrectIndex = shuffledIndices.indexOf(q.correct);
+                
+                return {
+                    question: q.question,
+                    options: shuffledOptions,
+                    correct: newCorrectIndex,
+                    type: q.type || "theory",
+                    explanation: q.explanation || ""
+                };
+            });
+        }
+
+        function getEvaluationHistory() {
+            const history = localStorage.getItem('evaluationHistory_circuits_ch1');
+            return history ? JSON.parse(history) : [];
+        }
+
+        function saveEvaluation(data) {
+            const history = getEvaluationHistory();
+            const evaluationNumber = history.length + 1;
+            history.push({
+                numero: evaluationNumber,
+                chapitre: "Chapitre 1 - Circuits Électriques",
+                date: new Date().toLocaleDateString('fr-FR'),
+                heure: new Date().toLocaleTimeString('fr-FR'),
+                noteTotale: data.noteTotale,
+                quizNote: data.quizNote,
+                noteHabillement: data.noteHabillement,
+                noteCC: data.noteCC,
+                score: data.score,
+                totalQuestions: data.totalQuestions,
+                matricule: data.matricule,
+                nom: data.nom,
+                tempsReduit: data.tempsReduit
+            });
+            localStorage.setItem('evaluationHistory_circuits_ch1', JSON.stringify(history));
+        }
+
+        function startEvaluation() {
+            const nom = document.getElementById('nom').value.trim();
+            const matricule = document.getElementById('matricule').value.trim();
+            const habillement = document.querySelector('input[name="habillement"]:checked');
+            const cc = document.querySelector('input[name="cc"]:checked');
+            
+            if (!nom || !matricule || !habillement || !cc) {
+                alert('Veuillez remplir tous les champs obligatoires !');
+                return;
+            }
+            
+            studentData = {
+                nom: nom,
+                matricule: matricule,
+                email: document.getElementById('email').value.trim(),
+                habillement: parseInt(habillement.value),
+                cc: parseInt(cc.value)
+            };
+            
+            prepareQuestions();
+            
+            document.getElementById('studentInfo').style.display = 'none';
+            document.getElementById('quizSection').style.display = 'block';
+            document.getElementById('timer').classList.remove('hidden');
+            document.getElementById('speedIndicator').classList.remove('hidden');
+            
+            generateQuestions();
+            startTime = Date.now();
+            lastAnswerTime = null;
+            answersCount = 0;
+            totalTimeReduced = 0;
+            startTimer();
+        }
+
+        function generateQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                
+                let questionClass = 'question';
+                if (q.type === 'calculation') {
+                    questionClass += ' calculation-question';
+                }
+                
+                questionDiv.className = questionClass;
+                questionDiv.innerHTML = `
+                    <h3>Question ${index + 1} : ${q.question}</h3>
+                    <div class="options">
+                        ${q.options.map((opt, i) => `
+                            <label class="option-label">
+                                <input type="radio" name="q${index}" value="${i}" onchange="trackAnswer()">
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function trackAnswer() {
+            const currentTime = Date.now();
+            
+            if (lastAnswerTime !== null) {
+                const timeSinceLastAnswer = currentTime - lastAnswerTime;
+                
+                let reduction = 0;
+                if (timeSinceLastAnswer < VERY_FAST_THRESHOLD) {
+                    reduction = 60;
+                } else if (timeSinceLastAnswer < FAST_ANSWER_THRESHOLD) {
+                    reduction = 30;
+                }
+                
+                if (reduction > 0) {
+                    timeLeft = Math.max(60, timeLeft - reduction);
+                    totalTimeReduced += reduction;
+                    
+                    const timerElement = document.getElementById('timer');
+                    const speedIndicator = document.getElementById('speedIndicator');
+                    
+                    timerElement.classList.add('fast-mode');
+                    speedIndicator.classList.add('active');
+                    speedIndicator.textContent = `⚡ Mode rapide: -${reduction}s`;
+                    
+                    setTimeout(() => {
+                        timerElement.classList.remove('fast-mode');
+                        speedIndicator.classList.remove('active');
+                        speedIndicator.textContent = 'Mode normal';
+                    }, 2000);
+                }
+            }
+            
+            lastAnswerTime = currentTime;
+            answersCount++;
+            
+            const progress = (answersCount / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                const timerElement = document.getElementById('timer');
+                
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft === 120 && !timerElement.classList.contains('fast-mode')) {
+                    timerElement.classList.add('warning');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitEvaluation(true);
+                }
+            }, 1000);
+        }
+
+        function submitEvaluation(autoSubmit = false) {
+            clearInterval(timerInterval);
+            
+            if (!autoSubmit) {
+                if (!confirm('Êtes-vous sûr(e) de vouloir soumettre votre évaluation ?')) {
+                    startTimer();
+                    return;
+                }
+            }
+            
+            const timeUsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutesUsed = Math.floor(timeUsed / 60);
+            const secondsUsed = timeUsed % 60;
+            
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected && parseInt(selected.value) === q.correct) {
+                    score++;
+                }
+            });
+            
+            const quizNote = (score / questions.length) * 20;
+            const noteTotale = ((quizNote * 3) + (studentData.cc * 4) + (studentData.habillement * 2)) / 9;
+            
+            const evaluationData = {
+                ...studentData,
+                totalQuestions: questions.length,
+                score: score,
+                quizNote: quizNote.toFixed(2),
+                noteHabillement: studentData.habillement,
+                noteCC: studentData.cc,
+                noteTotale: noteTotale.toFixed(2),
+                tempsUtilise: `${minutesUsed} min ${secondsUsed} sec`,
+                tempsReduit: totalTimeReduced
+            };
+            
+            saveEvaluation(evaluationData);
+            generatePDF(evaluationData);
+        }
+
+        function generatePDF(data) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.setFillColor(13, 71, 161);
+            doc.rect(0, 0, 210, 50, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(18);
+            doc.text('RAPPORT D\'ÉVALUATION', 105, 12, { align: 'center' });
+            
+            doc.setFontSize(11);
+            doc.text('Circuits Électriques - Chapitre 1 : Notions de Base', 105, 22, { align: 'center' });
+            doc.text('Génie Informatique - Semestre 1', 105, 29, { align: 'center' });
+            doc.setFontSize(10);
+            doc.text('Enseignant : Dr OBONO BIYOBO Arnaud', 105, 37, { align: 'center' });
+            doc.text('ENSET de Douala', 105, 44, { align: 'center' });
+            
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(11);
+            
+            let y = 65;
+            
+            doc.setFont(undefined, 'bold');
+            doc.text('INFORMATIONS DE L\'ÉTUDIANT(E)', 20, y);
+            y += 10;
+            
+            doc.setFont(undefined, 'normal');
+            doc.text(`Nom : ${data.nom}`, 20, y);
+            y += 7;
+            doc.text(`Matricule : ${data.matricule}`, 20, y);
+            y += 7;
+            if (data.email) {
+                doc.text(`Email : ${data.email}`, 20, y);
+                y += 7;
+            }
+            
+            y += 5;
+            doc.setFont(undefined, 'bold');
+            doc.text('DÉTAILS DE L\'ÉVALUATION', 20, y);
+            y += 10;
+            
+            doc.setFont(undefined, 'normal');
+            doc.text(`Matière : Circuits Électriques`, 20, y);
+            y += 7;
+            doc.text(`Chapitre : Notions de Base sur l'Étude des Circuits`, 20, y);
+            y += 7;
+            doc.text(`Date : ${new Date().toLocaleDateString('fr-FR')}`, 20, y);
+            y += 7;
+            doc.text(`Heure : ${new Date().toLocaleTimeString('fr-FR')}`, 20, y);
+            y += 7;
+            doc.text(`Temps utilisé : ${data.tempsUtilise}`, 20, y);
+            y += 7;
+            if (data.tempsReduit > 0) {
+                doc.text(`Temps réduit (réponses rapides) : ${data.tempsReduit} secondes`, 20, y);
+                y += 7;
+            }
+            doc.text(`Questions répondues : ${data.totalQuestions}`, 20, y);
+            y += 7;
+            doc.text(`Bonnes réponses : ${data.score}`, 20, y);
+            y += 10;
+            
+            doc.setFont(undefined, 'bold');
+            doc.text('NOTATION DÉTAILLÉE', 20, y);
+            y += 10;
+            
+            doc.setFont(undefined, 'normal');
+            doc.text(`Note Quiz (sur 20) : ${data.quizNote}`, 20, y);
+            y += 7;
+            doc.text(`Note Habillement (sur 20) : ${data.noteHabillement}`, 20, y);
+            y += 7;
+            doc.text(`Note CC écrit et Simulation (sur 20) : ${data.noteCC}`, 20, y);
+            y += 12;
+            
+            doc.setFont(undefined, 'bold');
+            doc.text('CALCUL DE LA NOTE FINALE', 20, y);
+            y += 10;
+            
+            doc.setFont(undefined, 'normal');
+            doc.text(`Formule : Note = (Quiz×3 + CC×4 + Habillement×2) / 9`, 20, y);
+            y += 7;
+            doc.text(`Calcul : (${data.quizNote}×3 + ${data.noteCC}×4 + ${data.noteHabillement}×2) / 9`, 20, y);
+            y += 7;
+            doc.text(`= (${(data.quizNote * 3).toFixed(2)} + ${(data.noteCC * 4).toFixed(2)} + ${(data.noteHabillement * 2).toFixed(2)}) / 9`, 20, y);
+            y += 7;
+            doc.text(`= ${((data.quizNote * 3) + (data.noteCC * 4) + (data.noteHabillement * 2)).toFixed(2)} / 9`, 20, y);
+            y += 10;
+            
+            doc.setFillColor(13, 71, 161);
+            doc.rect(15, y, 180, 22, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(20);
+            doc.setFont(undefined, 'bold');
+            doc.text(`NOTE FINALE : ${data.noteTotale} / 20`, 105, y + 14, { align: 'center' });
+            
+            y += 32;
+            
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.text('APPRÉCIATION', 20, y);
+            y += 8;
+            
+            doc.setFont(undefined, 'normal');
+            let appreciation = '';
+            const noteValue = parseFloat(data.noteTotale);
+            if (noteValue >= 16) appreciation = 'Très bien - Excellente maîtrise des circuits électriques';
+            else if (noteValue >= 14) appreciation = 'Bien - Bonne compréhension des concepts fondamentaux';
+            else if (noteValue >= 12) appreciation = 'Assez bien - Connaissances satisfaisantes en circuits électriques';
+            else if (noteValue >= 10) appreciation = 'Passable - Révision conseillée sur certains points';
+            else appreciation = 'Insuffisant - Révision nécessaire des concepts fondamentaux';
+            
+            doc.text(appreciation, 20, y);
+            y += 15;
+            
+            const history = getEvaluationHistory();
+            if (history.length > 0) {
+                doc.addPage();
+                y = 20;
+                
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(14);
+                doc.text('HISTORIQUE DES ÉVALUATIONS', 105, y, { align: 'center' });
+                y += 8;
+                
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                doc.text(`Étudiant(e) : ${data.nom}`, 20, y);
+                y += 7;
+                doc.text(`Chapitre : Notions de Base - Circuits Électriques`, 20, y);
+                y += 7;
+                doc.text(`Nombre total d'évaluations : ${history.length}`, 20, y);
+                y += 10;
+                
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'bold');
+                doc.text('N°', 15, y);
+                doc.text('Date', 25, y);
+                doc.text('Heure', 55, y);
+                doc.text('Note Quiz', 80, y);
+                doc.text('Note Hab.', 110, y);
+                doc.text('Note CC', 140, y);
+                doc.text('Note Finale', 170, y);
+                y += 2;
+                doc.line(15, y, 195, y);
+                y += 5;
+                
+                doc.setFont(undefined, 'normal');
+                history.forEach((evaluation, index) => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                        
+                        doc.setFont(undefined, 'bold');
+                        doc.text('N°', 15, y);
+                        doc.text('Date', 25, y);
+                        doc.text('Heure', 55, y);
+                        doc.text('Note Quiz', 80, y);
+                        doc.text('Note Hab.', 110, y);
+                        doc.text('Note CC', 140, y);
+                        doc.text('Note Finale', 170, y);
+                        y += 2;
+                        doc.line(15, y, 195, y);
+                        y += 5;
+                        doc.setFont(undefined, 'normal');
+                    }
+                    
+                    doc.text(evaluation.numero.toString(), 15, y);
+                    doc.text(evaluation.date, 25, y);
+                    doc.text(evaluation.heure, 55, y);
+                    doc.text(evaluation.quizNote, 80, y);
+                    doc.text(evaluation.noteHabillement.toString(), 110, y);
+                    doc.text(evaluation.noteCC.toString(), 140, y);
+                    
+                    if (index === history.length - 1) {
+                        doc.setFont(undefined, 'bold');
+                        doc.setTextColor(13, 71, 161);
+                    }
+                    doc.text(evaluation.noteTotale, 170, y);
+                    doc.setFont(undefined, 'normal');
+                    doc.setTextColor(0, 0, 0);
+                    y += 6;
+                });
+                
+                y += 10;
+                doc.setFont(undefined, 'bold');
+                doc.text('STATISTIQUES', 20, y);
+                y += 8;
+                doc.setFont(undefined, 'normal');
+                
+                const notes = history.map(h => parseFloat(h.noteTotale));
+                const moyenne = (notes.reduce((a, b) => a + b, 0) / notes.length).toFixed(2);
+                const meilleure = Math.max(...notes).toFixed(2);
+                const plusBasse = Math.min(...notes).toFixed(2);
+                
+                doc.text(`Moyenne générale : ${moyenne} / 20`, 20, y);
+                y += 7;
+                doc.text(`Meilleure note : ${meilleure} / 20`, 20, y);
+                y += 7;
+                doc.text(`Note la plus basse : ${plusBasse} / 20`, 20, y);
+                y += 7;
+                
+                const progression = notes.length > 1 ? 
+                    (notes[notes.length - 1] - notes[0]).toFixed(2) : '0.00';
+                const progressionTexte = parseFloat(progression) >= 0 ? 
+                    `+${progression}` : progression;
+                doc.text(`Progression (1ère vs dernière) : ${progressionTexte} points`, 20, y);
+            }
+            
+            const finalY = doc.internal.pageSize.height - 15;
+            doc.setDrawColor(13, 71, 161);
+            doc.line(20, finalY - 5, 190, finalY - 5);
+            
+            doc.setTextColor(100, 100, 100);
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'italic');
+            doc.text('Enseignant : Dr OBONO BIYOBO Arnaud - Circuits Électriques', 105, finalY, { align: 'center' });
+            doc.text('École Normale Supérieure d\'Enseignement Technique (ENSET) de Douala', 105, finalY + 5, { align: 'center' });
+            
+            doc.save(`Rapport_Circuits_Ch1_${data.matricule}_${Date.now()}.pdf`);
+            
+            alert(`Évaluation terminée !\n\nScore Quiz : ${data.score}/${data.totalQuestions}\nNote Quiz : ${data.quizNote} / 20\nNote Habillement : ${data.noteHabillement} / 20\nNote CC : ${data.noteCC} / 20\nNote Finale : ${data.noteTotale} / 20\n\n${appreciation}\n\nNombre d'évaluations effectuées : ${history.length}\n${data.tempsReduit > 0 ? `Temps réduit pour réponses rapides : ${data.tempsReduit}s\n` : ''}Votre rapport PDF avec l'historique complet a été téléchargé.`);
+        }
+    </script>
+</body>
+</html>

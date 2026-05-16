@@ -1,0 +1,2855 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours d'Électronique Générale - Les Résistances</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        /* Variables de couleurs pédagogiques */
+        :root {
+            --primary-blue: #1a2a6c;
+            --secondary-blue: #2a5298;
+            --accent-blue: #3a6fd8;
+            --light-blue: #e8f0ff;
+            --success-green: #27ae60;
+            --warning-orange: #f39c12;
+            --danger-red: #e74c3c;
+            --concept-yellow: #fff9c4;
+            --important-pink: #ffebee;
+            --highlight-orange: #ff9800;
+            --dark-gray: #333;
+            --medium-gray: #666;
+            --light-gray: #f5f5f5;
+        }
+        
+        /* Styles généraux */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--dark-gray);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* En-tête */
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+        
+        .header-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header h2 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        .instructor-info {
+            background: rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .instructor-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            color: var(--medium-gray);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab:hover {
+            background: var(--light-blue);
+            color: var(--secondary-blue);
+        }
+        
+        .tab.active {
+            background: var(--light-blue);
+            border-bottom: 3px solid var(--secondary-blue);
+            color: var(--secondary-blue);
+        }
+        
+        /* Sections de contenu */
+        .content-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary-blue);
+            font-size: 1.8rem;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--highlight-orange);
+        }
+        
+        .subsection-title {
+            color: var(--primary-blue);
+            margin: 30px 0 20px 0;
+            font-size: 1.4rem;
+            padding-left: 15px;
+            border-left: 4px solid var(--highlight-orange);
+        }
+        
+        .subsubsection-title {
+            color: var(--secondary-blue);
+            margin: 20px 0 10px 0;
+            font-size: 1.2rem;
+        }
+        
+        /* Mise en évidence des concepts importants */
+        .concept {
+            background: var(--concept-yellow);
+            border-left: 4px solid var(--highlight-orange);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .concept h4 {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .concept h4::before {
+            content: "💡";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .important {
+            background: var(--important-pink);
+            border-left: 4px solid var(--danger-red);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .important h4 {
+            color: var(--danger-red);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .important h4::before {
+            content: "⚠️";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .definition {
+            background: #e8f5e9;
+            border-left: 4px solid var(--success-green);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .definition h4 {
+            color: var(--success-green);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .definition h4::before {
+            content: "📘";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .formula {
+            background: #e3f2fd;
+            border-left: 4px solid var(--accent-blue);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .formula h4 {
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .formula h4::before {
+            content: "∑";
+            margin-right: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        /* Outils interactifs */
+        .tool-container {
+            background: var(--light-blue);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid var(--secondary-blue);
+            box-shadow: 0 5px 15px rgba(42, 82, 152, 0.1);
+        }
+        
+        .tool-title {
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .tool-title::before {
+            content: "🛠️";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .tool-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        
+        .tool-controls label {
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        
+        /* Amélioration de l'outil de résistance */
+        .resistor-tool {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px solid #ddd;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .resistor-selector {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .resistor-type-selector {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .resistor-type-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .resistor-type-btn:hover {
+            background: var(--light-blue);
+            border-color: var(--secondary-blue);
+        }
+        
+        .resistor-type-btn.active {
+            background: var(--secondary-blue);
+            color: white;
+            border-color: var(--secondary-blue);
+        }
+        
+        .color-band-selector {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .band-selector-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+            min-width: 120px;
+        }
+        
+        .band-label {
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .color-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            max-width: 120px;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 2px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+            border-color: #333;
+        }
+        
+        .color-option.selected {
+            border: 3px solid #333;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 2px white, 0 0 0 4px var(--highlight-orange);
+        }
+        
+        .resistor-visual-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .resistor-visual {
+            width: 400px;
+            height: 120px;
+            background: #f0d9b5;
+            border-radius: 60px;
+            position: relative;
+            border: 2px solid #d4a574;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .resistor-ends {
+            position: absolute;
+            width: 30px;
+            height: 8px;
+            background: #8b4513;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .resistor-end-left {
+            left: -30px;
+            border-radius: 4px 0 0 4px;
+        }
+        
+        .resistor-end-right {
+            right: -30px;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .band {
+            width: 18px;
+            height: 80px;
+            border-radius: 5px;
+            margin: 0 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .band-label-visual {
+            position: absolute;
+            bottom: -25px;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+        
+        .band-1-label { left: 18%; }
+        .band-2-label { left: 32%; }
+        .band-3-label { left: 46%; }
+        .band-4-label { left: 60%; }
+        .band-5-label { left: 74%; }
+        
+        .band-3-label, .band-5-label {
+            color: var(--secondary-blue);
+            font-style: italic;
+        }
+        
+        .result-box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid var(--secondary-blue);
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .result-value {
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .result-details {
+            color: var(--medium-gray);
+            font-size: 1rem;
+            font-weight: normal;
+        }
+        
+        /* Tableaux et figures */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: var(--primary-blue);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:nth-child(even) {
+            background: var(--light-blue);
+        }
+        
+        tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .figure {
+            text-align: center;
+            margin: 25px 0;
+        }
+        
+        .figure img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .figure-caption {
+            font-style: italic;
+            margin-top: 10px;
+            color: var(--medium-gray);
+        }
+        
+        /* Section d'évaluation */
+        .evaluation-form {
+            background: var(--light-blue);
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border: 2px solid var(--secondary-blue);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        
+        input[type="text"], input[type="email"], input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input[type="text"]:focus, input[type="email"]:focus, input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .radio-option:hover {
+            background: white;
+            border-color: var(--secondary-blue);
+        }
+        
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            width: 100%;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(26, 42, 108, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(26, 42, 108, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-secondary {
+            background: var(--medium-gray);
+            margin-top: 10px;
+        }
+        
+        .quiz-section {
+            display: none;
+        }
+        
+        .question {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-blue);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .question h3 {
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option-label {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option-label:hover {
+            background: var(--light-blue);
+            border-color: var(--primary-blue);
+        }
+        
+        .option-label input {
+            margin-right: 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            transition: width 0.3s;
+        }
+        
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--secondary-blue);
+            z-index: 1000;
+            display: none;
+            border: 2px solid var(--secondary-blue);
+        }
+        
+        .timer.warning {
+            background: var(--danger-red);
+            color: white;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* Couleurs pour les résistances */
+        .color-black { background-color: #000000; }
+        .color-brown { background-color: #8B4513; }
+        .color-red { background-color: #FF0000; }
+        .color-orange { background-color: #FF8C00; }
+        .color-yellow { background-color: #FFD700; }
+        .color-green { background-color: #008000; }
+        .color-blue { background-color: #0000FF; }
+        .color-violet { background-color: #8A2BE2; }
+        .color-gray { background-color: #808080; }
+        .color-white { background-color: #FFFFFF; border: 1px solid #ddd; }
+        .color-gold { background: linear-gradient(45deg, #FFD700 50%, #DAA520 50%); }
+        .color-silver { background: linear-gradient(45deg, #C0C0C0 50%, #A9A9A9 50%); }
+        
+        /* Utilitaires */
+        .note {
+            background: #fff9e6;
+            border-left: 4px solid var(--warning-orange);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .warning-box {
+            background: #ffebee;
+            border-left: 4px solid var(--danger-red);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        
+        .mnemonic {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px dashed var(--secondary-blue);
+            margin: 20px 0;
+            font-style: italic;
+        }
+        
+        .code-example {
+            font-family: 'Courier New', monospace;
+            background: var(--light-gray);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid var(--secondary-blue);
+            overflow-x: auto;
+        }
+        
+        .success-message {
+            background: #e8f5e9;
+            color: var(--success-green);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: center;
+            display: none;
+            border: 1px solid var(--success-green);
+        }
+        
+        .error-message {
+            background: #ffebee;
+            color: var(--danger-red);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: center;
+            display: none;
+            border: 1px solid var(--danger-red);
+        }
+        
+        /* Nouveau style pour l'info des tentatives */
+        .attempts-info {
+            background: #e8f0ff;
+            border-left: 4px solid var(--accent-blue);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            display: none;
+        }
+        
+        .attempts-info h4 {
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .attempts-info h4::before {
+            content: "📊";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .resistor-visual {
+                width: 350px;
+                height: 100px;
+                padding: 0 30px;
+            }
+            
+            .band {
+                width: 16px;
+                height: 70px;
+                margin: 0 6px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                text-align: center;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .content-section {
+                padding: 20px;
+            }
+            
+            .color-band-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .band-selector-group {
+                margin: 5px;
+            }
+            
+            .resistor-visual {
+                width: 300px;
+                height: 90px;
+                padding: 0 25px;
+            }
+            
+            .band {
+                width: 14px;
+                height: 65px;
+                margin: 0 5px;
+            }
+            
+            .resistor-ends {
+                width: 20px;
+            }
+            
+            .resistor-end-left {
+                left: -20px;
+            }
+            
+            .resistor-end-right {
+                right: -20px;
+            }
+            
+            .band-label-visual {
+                font-size: 10px;
+                bottom: -20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .resistor-visual {
+                width: 250px;
+                height: 80px;
+                padding: 0 20px;
+            }
+            
+            .band {
+                width: 12px;
+                height: 60px;
+                margin: 0 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>Électronique Générale</h1>
+                <h2>Composants de Base: Les Résistances</h2>
+                <div class="instructor-info">
+                    <h3>Enseignant : Dr OBONO BIYOBO Arnaud</h3>
+                    <p>Chargé de Cours - Informatique Industrielle et Automatique</p>
+                    <p>Université de Douala - ENSET</p>
+                    <p>Année académique 2025/2026</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="nav-tabs">
+            <div class="tab active" data-target="cours">Cours</div>
+            <div class="tab" data-target="code-couleur">Code des Couleurs</div>
+            <div class="tab" data-target="smd">Résistances CMS</div>
+            <div class="tab" data-target="valeurs-normalisees">Valeurs Normalisées</div>
+            <div class="tab" data-target="evaluation">Évaluation</div>
+        </div>
+        
+        <!-- Section Cours -->
+        <div id="cours" class="content-section active">
+            <h2 class="section-title">Chapitre I: Composants de Base de l'Électronique - Les Résistances</h2>
+            
+            <div class="subsection-title">I- Généralités</div>
+            <p>Dans tout matériau, il existe une force, analogue à un frottement mécanique à de nombreux égards, qui s'oppose au déplacement des charges. Cette force d'opposition qui résulte des collisions des électrons entre eux et des électrons avec les atomes, transforme de l'énergie électrique en énergie thermique ; on l'appelle la <span class="highlight">résistance</span> du matériau.</p>
+            
+            <div class="concept">
+                <h4>Concept Clé : La Résistance</h4>
+                <p>La <strong>résistance</strong> est l'opposition qu'un matériau offre au passage du courant électrique. Elle convertit l'énergie électrique en énergie thermique par effet Joule.</p>
+            </div>
+            
+            <p>L'unité de mesure de la résistance est l'ohm, symbolisé par la lettre de l'alphabet grec Ω (Oméga). Devant la diversité des valeurs des résistances, on emploie les multiples et éventuellement les sous-multiples de l'ohm.</p>
+            
+            <table>
+                <caption>Tableau 1.1 - Multiples et sous-multiples de l'ohm</caption>
+                <thead>
+                    <tr>
+                        <th>Multiples</th>
+                        <th>Symbole</th>
+                        <th>Valeur</th>
+                        <th>Sous-multiples</th>
+                        <th>Symbole</th>
+                        <th>Valeur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Mégohm</td>
+                        <td>MΩ</td>
+                        <td>10⁶ Ω</td>
+                        <td>Milliohm</td>
+                        <td>mΩ</td>
+                        <td>10⁻³ Ω</td>
+                    </tr>
+                    <tr>
+                        <td>Kilohm</td>
+                        <td>kΩ</td>
+                        <td>10³ Ω</td>
+                        <td>Microhm</td>
+                        <td>μΩ</td>
+                        <td>10⁻⁶ Ω</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="note">
+                <strong>Note :</strong> Pour les composants électroniques, on utilise surtout le kilo-ohm et le mégohm. Le milliohm apparaît seulement pour chiffrer des résistances parasites comme les résistances de contact.
+            </div>
+            
+            <div class="figure">
+                <div style="display: flex; justify-content: center; gap: 40px; margin: 20px 0; flex-wrap: wrap;">
+                    <div>
+                        <div style="width: 100px; height: 30px; background: #f0d9b5; border-radius: 15px; position: relative;">
+                            <div style="position: absolute; left: 15px; top: 5px; width: 70px; height: 20px; background: white; border-radius: 10px;"></div>
+                        </div>
+                        <div class="figure-caption">Symbole normalisé d'une résistance</div>
+                    </div>
+                    <div>
+                        <div style="width: 120px; height: 10px; background: black; position: relative;">
+                            <div style="position: absolute; left: 20px; top: -5px; width: 80px; height: 20px; background: white; border: 1px solid black;"></div>
+                        </div>
+                        <div class="figure-caption">Symbole courant d'une résistance</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection-title">Facteurs influençant la résistance</div>
+            <p>La résistance d'un conducteur de section transversale uniforme dépend uniquement de quatre facteurs :</p>
+            <ul style="margin-left: 30px; margin-bottom: 20px;">
+                <li><span class="highlight">La nature du matériau</span> (résistivité ρ)</li>
+                <li><span class="highlight">La longueur du conducteur</span> (L)</li>
+                <li><span class="highlight">L'aire de la section</span> (S)</li>
+                <li><span class="highlight">La température</span> (T)</li>
+            </ul>
+            
+            <div class="formula">
+                <h4>Loi de Pouillet</h4>
+                <p>R = ρ × (L / S)</p>
+                <p>Où R est la résistance (Ω), ρ la résistivité (Ω·m), L la longueur (m), et S la section (m²).</p>
+            </div>
+            
+            <p>Elle est proportionnelle à la longueur du conducteur et à la nature du matériau dont il est constitué, et inversement proportionnelle à l'aire de sa section.</p>
+            
+            <div class="definition">
+                <h4>Définition : Résistivité</h4>
+                <p>La <strong>résistivité ρ</strong> (rhô) est une constante caractéristique du matériau conducteur. C'est la résistance d'un fil de 1m de longueur et de 1 m² de section, mesurée à une température précise.</p>
+            </div>
+            
+            <div class="important">
+                <h4>À retenir</h4>
+                <p>La résistivité est faible pour les conducteurs, très grande pour les isolants et moyenne pour les semi-conducteurs. Elle varie avec la température.</p>
+            </div>
+            
+            <div class="subsection-title">Types de résistances</div>
+            <p>En électronique, la résistance est un composant passif à deux bornes qui s'oppose à la circulation des électrons. Elle dissipe de l'énergie par effet Joule.</p>
+            
+            <div class="concept">
+                <h4>Concept Clé : Effet Joule</h4>
+                <p>L'<strong>effet Joule</strong> est la transformation de l'énergie électrique en énergie thermique lorsqu'un courant traverse une résistance. La puissance dissipée est donnée par P = R × I².</p>
+            </div>
+            
+            <table>
+                <caption>Tableau 1.2 - Types de résistances et leurs caractéristiques</caption>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Sous-type</th>
+                        <th>Caractéristiques</th>
+                        <th>Applications</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="2">Résistances au carbone</td>
+                        <td>Agglomérées</td>
+                        <td>Peu coûteuses, robustes, peu précises</td>
+                        <td>Applications générales non critiques</td>
+                    </tr>
+                    <tr>
+                        <td>À couche de carbone</td>
+                        <td>Stabilité et précision moyennes, puissance 1/8W à 2W</td>
+                        <td>Applications générales, les plus répandues</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">Résistances métalliques</td>
+                        <td>À feuilles métalliques</td>
+                        <td>Haute précision, bonne tenue en température, jusqu'à 100 MHz</td>
+                        <td>Circuits haute fréquence, applications de précision</td>
+                    </tr>
+                    <tr>
+                        <td>Bobinées</td>
+                        <td>Puissance élevée (jusqu'à 1kW), caractéristique inductive</td>
+                        <td>Résistances de puissance, basses fréquences</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="subsection-title">Caractéristiques d'une résistance</div>
+            <p>Un résistor linéaire est caractérisé par :</p>
+            <ul style="margin-left: 30px; margin-bottom: 20px;">
+                <li><span class="highlight">La résistance nominale (en ohms)</span> : valeur indiquée par le constructeur</li>
+                <li><span class="highlight">La tolérance (en %)</span> : écart maximal entre la valeur nominale et la valeur réelle</li>
+                <li><span class="highlight">La puissance nominale (en watts)</span> : puissance normale que peut dissiper la résistance</li>
+                <li><span class="highlight">La stabilité</span> : évolution de la résistance dans le temps</li>
+                <li><span class="highlight">Le coefficient de température (en ppm/°C)</span> : sensibilité par rapport à la température</li>
+                <li><span class="highlight">La température d'utilisation (°C)</span> : plage de température de fonctionnement</li>
+                <li><span class="highlight">La tension de service maximum (en volts)</span> : tension maximale applicable</li>
+            </ul>
+            
+            <div class="warning-box">
+                <strong>Attention !</strong> Si on demande à une résistance de dissiper une puissance trop importante, elle peut : Soit brûler, soit, plus insidieusement, changer fortement de valeur sans modification de son aspect externe.
+            </div>
+            
+            <div class="concept">
+                <h4>Concept Clé : Modèle Réel d'une Résistance</h4>
+                <p>Une résistance réelle n'est pas parfaite. Elle comporte des éléments parasites : une inductance en série et une capacité en parallèle qui modifient son comportement en haute fréquence.</p>
+            </div>
+        </div>
+        
+        <!-- Section Code des Couleurs -->
+        <div id="code-couleur" class="content-section">
+            <h2 class="section-title">Code des Couleurs des Résistances</h2>
+            
+            <p>Le marquage par le code des couleurs est le plus utilisé pour les résistances à axiale. Il se compose en général de quatre ou cinq anneaux de couleurs peints autour du corps du composant. Chaque couleur correspond à un chiffre et chaque anneau représente une information spécifique.</p>
+            
+            <div class="concept">
+                <h4>Concept Clé : Lecture du Code Couleur</h4>
+                <p>Pour lire correctement une résistance, il faut :
+                <ol style="margin-left: 20px;">
+                    <li>Identifier le premier anneau (généralement plus près du bord)</li>
+                    <li>Compter le nombre d'anneaux (4 ou 5)</li>
+                    <li>Lire les chiffres significatifs</li>
+                    <li>Appliquer le multiplicateur</li>
+                    <li>Vérifier la tolérance</li>
+                </ol>
+                </p>
+            </div>
+            
+            <div class="resistor-tool">
+                <h3 class="tool-title">Outil interactif : Détermination de la valeur d'une résistance</h3>
+                
+                <div class="tool-controls">
+                    <div class="resistor-type-selector">
+                        <button class="resistor-type-btn active" data-type="4">4 Anneaux</button>
+                        <button class="resistor-type-btn" data-type="5">5 Anneaux</button>
+                    </div>
+                </div>
+                
+                <div class="color-band-selector">
+                    <!-- Band 1 -->
+                    <div class="band-selector-group">
+                        <div class="band-label">1er chiffre</div>
+                        <div id="color-options-1" class="color-options"></div>
+                    </div>
+                    
+                    <!-- Band 2 -->
+                    <div class="band-selector-group">
+                        <div class="band-label">2ème chiffre</div>
+                        <div id="color-options-2" class="color-options"></div>
+                    </div>
+                    
+                    <!-- Band 3 (visible seulement pour 5 anneaux) -->
+                    <div class="band-selector-group" id="band-3-group">
+                        <div class="band-label">3ème chiffre</div>
+                        <div id="color-options-3" class="color-options"></div>
+                    </div>
+                    
+                    <!-- Multiplier -->
+                    <div class="band-selector-group">
+                        <div class="band-label">Multiplicateur</div>
+                        <div id="color-options-mult" class="color-options"></div>
+                    </div>
+                    
+                    <!-- Tolerance -->
+                    <div class="band-selector-group">
+                        <div class="band-label">Tolérance</div>
+                        <div id="color-options-tol" class="color-options"></div>
+                    </div>
+                </div>
+                
+                <div class="resistor-visual-container">
+                    <div class="resistor-visual">
+                        <div class="resistor-ends resistor-end-left"></div>
+                        <div id="band1" class="band color-black"></div>
+                        <div id="band2" class="band color-black"></div>
+                        <div id="band3" class="band color-black"></div>
+                        <div id="multiplier" class="band color-black"></div>
+                        <div id="tolerance" class="band color-gold"></div>
+                        <div class="resistor-ends resistor-end-right"></div>
+                    </div>
+                    <div class="band-label-visual band-1-label">1er</div>
+                    <div class="band-label-visual band-2-label">2ème</div>
+                    <div class="band-label-visual band-3-label">3ème</div>
+                    <div class="band-label-visual band-4-label">Mult.</div>
+                    <div class="band-label-visual band-5-label">Tol.</div>
+                </div>
+                
+                <div class="result-box">
+                    <div id="resistance-value" class="result-value">Valeur : 0 Ω</div>
+                    <div id="resistance-tolerance" class="result-details">Tolérance : ±5%</div>
+                    <div id="resistance-min-max" class="result-details">Plage : 0 Ω à 0 Ω</div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn" onclick="calculateResistance()">Calculer la valeur</button>
+                    <button class="btn btn-secondary" onclick="resetResistance()">Réinitialiser</button>
+                </div>
+            </div>
+            
+            <div class="subsection-title">Tableau du code des couleurs</div>
+            
+            <table>
+                <caption>Correspondance couleur - valeur</caption>
+                <thead>
+                    <tr>
+                        <th>Couleur</th>
+                        <th>Chiffre</th>
+                        <th>Multiplicateur</th>
+                        <th>Tolérance</th>
+                        <th>Coefficient de température</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="color-option color-black" style="display: inline-block;"></div> Noir</td>
+                        <td>0</td>
+                        <td>1 Ω</td>
+                        <td>-</td>
+                        <td>250 ppm/°C</td>
+                    </tr>
+                    <tr>
+                        <td><div class="color-option color-brown" style="display: inline-block;"></div> Marron</td>
+                        <td>1</td>
+                        <td>10 Ω</td>
+                        <td>±1%</td>
+                        <td>100 ppm/°C</td>
+                    </tr>
+                    <tr>
+                        <td><div class="color-option color-red" style="display: inline-block;"></div> Rouge</td>
+                        <td>2</td>
+                        <td>100 Ω</td>
+                        <td>±2%</td>
+                        <td>50 ppm/°C</td>
+                    </tr>
+                    <tr>
+                        <td><div class="color-option color-orange" style="display: inline-block;"></div> Orange</td>
+                        <td>3</td>
+                        <td>1 kΩ</td>
+                        <td>-</td>
+                        <td>15 ppm/°C</td>
+                    </tr>
+                    <tr>
+                        <td><div class="color-option color-yellow" style="display: inline-block;"></div> Jaune</td>
+                        <td>4</td>
+                        <td>10 kΩ</td>
+                        <td>-</td>
+                        <td>25 ppm/°C</td>
+                    </tr>
+                    <tr>
+                        <td><div class="color-option color-green" style="display: inline-block;"></div> Vert</td>
+                        <td>5</td>
+                        <td>100 kΩ</td>
+                        <td>±0.5%</td>
+                        <td>20 ppm/°C</td>
+                    </tr>
+                    <tr>
+                        <td><div class="color-option color-blue" style="display: inline-block;"></div> Bleu</td>
+                        <td>6</td>
+                        <td>1 MΩ</td>
+                        <td>±0.25%</td>
+                        <td>10 ppm/°C</td>
+                    </tr>
+                    <tr>
+                        <td><div class="color-option color-violet" style="display: inline-block;"></div> Violet</td>
+                        <td>7</td>
+                        <td>10 MΩ</td>
+                        <td>±0.1%</td>
+                        <td>5 ppm/°C</td>
+                    </tr>
+                    <tr>
+                        <td><div class="color-option color-gray" style="display: inline-block;"></div> Gris</td>
+                        <td>8</td>
+                        <td>-</td>
+                        <td>±0.05%</td>
+                        <td>1 ppm/°C</td>
+                    </tr>
+                    <tr>
+                        <td><div class="color-option color-white" style="display: inline-block;"></div> Blanc</td>
+                        <td>9</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td><div class="color-option color-gold" style="display: inline-block;"></div> Or</td>
+                        <td>-</td>
+                        <td>0.1 Ω</td>
+                        <td>±5%</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td><div class="color-option color-silver" style="display: inline-block;"></div> Argent</td>
+                        <td>-</td>
+                        <td>0.01 Ω</td>
+                        <td>±10%</td>
+                        <td>-</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="mnemonic">
+                <strong>Moyen mnémotechnique :</strong> "Ne Mangez Rien Ou Je Vous Battrai Violemment Grand BOA"
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>N</strong> : Noir (0)</li>
+                    <li><strong>M</strong> : Marron (1)</li>
+                    <li><strong>R</strong> : Rouge (2)</li>
+                    <li><strong>O</strong> : Orange (3)</li>
+                    <li><strong>J</strong> : Jaune (4)</li>
+                    <li><strong>V</strong> : Vert (5)</li>
+                    <li><strong>B</strong> : Bleu (6)</li>
+                    <li><strong>V</strong> : Violet (7)</li>
+                    <li><strong>G</strong> : Gris (8)</li>
+                    <li><strong>B</strong> : Blanc (9)</li>
+                    <li><strong>O</strong> : Or</li>
+                    <li><strong>A</strong> : Argent</li>
+                </ul>
+            </div>
+            
+            <div class="subsection-title">Exemples de lecture</div>
+            
+            <div class="code-example">
+                <strong>Exemple 1 : Résistance à 4 anneaux</strong><br>
+                Anneaux : Marron (1) - Vert (5) - Rouge (×100) - Or (±5%)<br>
+                <strong>Calcul :</strong> 15 × 100 = 1500 Ω = 1.5 kΩ<br>
+                <strong>Résultat :</strong> 1.5 kΩ ±5% (soit entre 1.425 kΩ et 1.575 kΩ)
+            </div>
+            
+            <div class="code-example">
+                <strong>Exemple 2 : Résistance à 5 anneaux</strong><br>
+                Anneaux : Vert (5) - Bleu (6) - Rouge (2) - Marron (×10) - Rouge (±2%)<br>
+                <strong>Calcul :</strong> 562 × 10 = 5620 Ω = 5.62 kΩ<br>
+                <strong>Résultat :</strong> 5.62 kΩ ±2% (soit entre 5.5076 kΩ et 5.7324 kΩ)
+            </div>
+            
+            <div class="code-example">
+                <strong>Exemple 3 : Résistance à 6 anneaux</strong><br>
+                Anneaux : Jaune (4) - Violet (7) - Vert (5) - Marron (×10) - Marron (±1%) - Rouge (±50 ppm/°C)<br>
+                <strong>Calcul :</strong> 475 × 10 = 4750 Ω = 4.75 kΩ<br>
+                <strong>Résultat :</strong> 4.75 kΩ ±1% avec coefficient de température de ±50 ppm/°C
+            </div>
+            
+            <div class="important">
+                <h4>À retenir</h4>
+                <p>Pour les résistances à 4 anneaux : les deux premiers sont les chiffres significatifs, le troisième est le multiplicateur, le quatrième est la tolérance.</p>
+                <p>Pour les résistances à 5 anneaux : les trois premiers sont les chiffres significatifs, le quatrième est le multiplicateur, le cinquième est la tolérance.</p>
+            </div>
+        </div>
+        
+        <!-- Section Résistances CMS -->
+        <div id="smd" class="content-section">
+            <h2 class="section-title">Résistances Montées en Surface (CMS/SMD)</h2>
+            
+            <p>Les résistances CMS (Composants Montés en Surface) ou SMD (Surface Mount Device) sont des composants électroniques de très petites dimensions qui se soudent directement sur la surface d'un circuit imprimé, sans nécessité de perçage.</p>
+            
+            <div class="concept">
+                <h4>Concept Clé : Avantages des CMS</h4>
+                <p>Les résistances CMS offrent plusieurs avantages :
+                <ul>
+                    <li>Miniaturisation des circuits</li>
+                    <li>Meilleure performance en haute fréquence</li>
+                    <li>Automatisation du processus de soudure</li>
+                    <li>Réduction des coûts de production</li>
+                </ul>
+                </p>
+            </div>
+            
+            <div class="figure">
+                <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+                    <div>
+                        <div style="width: 100px; height: 50px; background: #333; border-radius: 5px; position: relative; margin: 0 auto;">
+                            <div style="position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; background: #f0d9b5; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #333;">102</div>
+                        </div>
+                        <div class="figure-caption">Résistance CMS avec marquage numérique</div>
+                    </div>
+                    <div>
+                        <div style="width: 60px; height: 30px; background: #333; border-radius: 3px; position: relative; margin: 0 auto;">
+                            <div style="position: absolute; top: 3px; left: 3px; right: 3px; bottom: 3px; background: #f0d9b5; border-radius: 2px;"></div>
+                        </div>
+                        <div class="figure-caption">Résistance CMS typique</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tool-container">
+                <h3 class="tool-title">Outil interactif : Détermination de la valeur d'une résistance CMS</h3>
+                
+                <div style="margin-bottom: 20px;">
+                    <label for="smd-code">Code de la résistance CMS :</label>
+                    <input type="text" id="smd-code" placeholder="Ex: 102, 4R7, 0R5" style="width: 200px; margin-left: 10px;">
+                    <button class="btn" onclick="calculateSMD()" style="display: inline-block; width: auto; padding: 10px 20px; margin-left: 10px;">Calculer</button>
+                    <button class="btn btn-secondary" onclick="resetSMD()" style="display: inline-block; width: auto; padding: 10px 20px; margin-left: 10px;">Réinitialiser</button>
+                </div>
+                
+                <div class="result-box">
+                    <div id="smd-value" class="result-value">Valeur : -</div>
+                    <div id="smd-explanation" class="result-details">Explication : -</div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <p><strong>Exemples de codes courants :</strong></p>
+                    <ul style="margin-left: 30px;">
+                        <li><strong>102</strong> = 10 × 10² = 1000 Ω = 1 kΩ</li>
+                        <li><strong>4R7</strong> = 4.7 Ω</li>
+                        <li><strong>0R5</strong> = 0.5 Ω</li>
+                        <li><strong>223</strong> = 22 × 10³ = 22000 Ω = 22 kΩ</li>
+                        <li><strong>R10</strong> = 0.1 Ω</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="subsection-title">Systèmes de codage des résistances CMS</div>
+            
+            <table>
+                <caption>Tableau des systèmes de codage CMS</caption>
+                <thead>
+                    <tr>
+                        <th>Système</th>
+                        <th>Format</th>
+                        <th>Exemple</th>
+                        <th>Valeur</th>
+                        <th>Explication</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Code à 3 chiffres</td>
+                        <td>ABC</td>
+                        <td>102</td>
+                        <td>1 kΩ</td>
+                        <td>AB × 10<sup>C</sup> = 10 × 10² = 1000 Ω</td>
+                    </tr>
+                    <tr>
+                        <td>Code à 4 chiffres</td>
+                        <td>ABCD</td>
+                        <td>1002</td>
+                        <td>10 kΩ</td>
+                        <td>ABC × 10<sup>D</sup> = 100 × 10² = 10000 Ω</td>
+                    </tr>
+                    <tr>
+                        <td>Code avec R</td>
+                        <td>R comme virgule</td>
+                        <td>4R7</td>
+                        <td>4.7 Ω</td>
+                        <td>R indique la position de la virgule</td>
+                    </tr>
+                    <tr>
+                        <td>Code EIA-96</td>
+                        <td>2 chiffres + lettre</td>
+                        <td>01A</td>
+                        <td>100 Ω</td>
+                        <td>Code pour résistances à 1% de tolérance</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="subsection-title">Tailles standard des résistances CMS</div>
+            
+            <table>
+                <caption>Dimensions des résistances CMS</caption>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Dimensions (mm)</th>
+                        <th>Longueur × Largeur</th>
+                        <th>Puissance typique</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0201</td>
+                        <td>0.6 × 0.3</td>
+                        <td>0.024" × 0.012"</td>
+                        <td>1/20 W</td>
+                    </tr>
+                    <tr>
+                        <td>0402</td>
+                        <td>1.0 × 0.5</td>
+                        <td>0.04" × 0.02"</td>
+                        <td>1/16 W</td>
+                    </tr>
+                    <tr>
+                        <td>0603</td>
+                        <td>1.6 × 0.8</td>
+                        <td>0.06" × 0.03"</td>
+                        <td>1/10 W</td>
+                    </tr>
+                    <tr>
+                        <td>0805</td>
+                        <td>2.0 × 1.25</td>
+                        <td>0.08" × 0.05"</td>
+                        <td>1/8 W</td>
+                    </tr>
+                    <tr>
+                        <td>1206</td>
+                        <td>3.2 × 1.6</td>
+                        <td>0.12" × 0.06"</td>
+                        <td>1/4 W</td>
+                    </tr>
+                    <tr>
+                        <td>1210</td>
+                        <td>3.2 × 2.5</td>
+                        <td>0.12" × 0.10"</td>
+                        <td>1/2 W</td>
+                    </tr>
+                    <tr>
+                        <td>1812</td>
+                        <td>4.5 × 3.2</td>
+                        <td>0.18" × 0.12"</td>
+                        <td>1 W</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="note">
+                <strong>Note :</strong> Les résistances CMS offrent l'avantage d'une miniaturisation importante et d'une meilleure performance en haute fréquence grâce à leur faible inductance parasite.
+            </div>
+            
+            <div class="important">
+                <h4>À retenir</h4>
+                <p>Plus la taille de la résistance CMS est petite, plus sa puissance dissipable est faible. Il est important de choisir la bonne taille en fonction de la puissance requise dans le circuit.</p>
+            </div>
+        </div>
+        
+        <!-- Section Valeurs Normalisées -->
+        <div id="valeurs-normalisees" class="content-section">
+            <h2 class="section-title">Valeurs Normalisées des Résistances</h2>
+            
+            <p>La fabrication des valeurs normalisées des résistances est organisée en série à l'intérieure d'une décade. Une <span class="highlight">décade</span> regroupe les valeurs comprises entre : 1 et 10, 10 et 100, 100 et 1000, etc.</p>
+            
+            <div class="concept">
+                <h4>Concept Clé : Séries Normalisées</h4>
+                <p>Les séries normalisées (E3, E6, E12, E24, etc.) sont des ensembles de valeurs de résistance standardisées qui permettent de couvrir toutes les valeurs nécessaires avec un nombre limité de composants. Chaque série correspond à une tolérance spécifique.</p>
+            </div>
+            
+            <div class="subsection-title">1. Progression des valeurs des résistances</div>
+            <p>Pour aller d'une décade à une autre, on applique un coefficient multiplicateur puissance de 10 aux valeurs nominales de la série de résistances. Une <span class="highlight">série</span> représente le nombre de valeurs différentes que l'on dispose à l'intérieur d'une décade.</p>
+            
+            <p>Il existe plusieurs séries de valeurs normalisées : E3, E6, E12, E24, E48, E96 et E192. Le chiffre suivant la lettre indique le nombre de valeurs disponibles par décade. Par exemple, pour la série E12, il existe 12 valeurs par décade.</p>
+            
+            <p>Les valeurs dans chaque série sont calculées selon la formule :</p>
+            
+            <div class="formula">
+                <h4>Formule de calcul des valeurs normalisées</h4>
+                <p>Valeur = 10<sup>(n/N)</sup></p>
+                <p>où :<br>
+                n = rang de la valeur (de 0 à N-1)<br>
+                N = nombre de valeurs dans la série (3, 6, 12, 24, 48, 96, 192)</p>
+            </div>
+            
+            <div class="code-example">
+                <strong>Exemple pour E12 :</strong> N = 12<br>
+                Valeur au rang 0 : 10<sup>(0/12)</sup> = 10<sup>0</sup> = 1.0<br>
+                Valeur au rang 1 : 10<sup>(1/12)</sup> = 10<sup>0.0833</sup> ≈ 1.2<br>
+                Valeur au rang 2 : 10<sup>(2/12)</sup> = 10<sup>0.1667</sup> ≈ 1.5<br>
+                ... et ainsi de suite.
+            </div>
+            
+            <table>
+                <caption>Tableau des séries normalisées</caption>
+                <thead>
+                    <tr>
+                        <th>Série</th>
+                        <th>Nombre de valeurs</th>
+                        <th>Tolérance typique</th>
+                        <th>Valeurs (1ère décade)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>E3</td>
+                        <td>3</td>
+                        <td>±40% (obsolète)</td>
+                        <td>1.0, 2.2, 4.7</td>
+                    </tr>
+                    <tr>
+                        <td>E6</td>
+                        <td>6</td>
+                        <td>±20%</td>
+                        <td>1.0, 1.5, 2.2, 3.3, 4.7, 6.8</td>
+                    </tr>
+                    <tr>
+                        <td>E12</td>
+                        <td>12</td>
+                        <td>±10%</td>
+                        <td>1.0, 1.2, 1.5, 1.8, 2.2, 2.7, 3.3, 3.9, 4.7, 5.6, 6.8, 8.2</td>
+                    </tr>
+                    <tr>
+                        <td>E24</td>
+                        <td>24</td>
+                        <td>±5%</td>
+                        <td>1.0, 1.1, 1.2, 1.3, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9, 4.3, 4.7, 5.1, 5.6, 6.2, 6.8, 7.5, 8.2, 9.1</td>
+                    </tr>
+                    <tr>
+                        <td>E48</td>
+                        <td>48</td>
+                        <td>±2%</td>
+                        <td>1.00, 1.05, 1.10, 1.15, 1.21, 1.27, 1.33, 1.40, 1.47, 1.54, 1.62, 1.69, 1.78, 1.87, 1.96, 2.05, 2.15, 2.26, 2.37, 2.49, 2.61, 2.74, 2.87, 3.01, 3.16, 3.32, 3.48, 3.65, 3.83, 4.02, 4.22, 4.42, 4.64, 4.87, 5.11, 5.36, 5.62, 5.90, 6.19, 6.49, 6.81, 7.15, 7.50, 7.87, 8.25, 8.66, 9.09, 9.53</td>
+                    </tr>
+                    <tr>
+                        <td>E96</td>
+                        <td>96</td>
+                        <td>±1%</td>
+                        <td>Valeurs très précises, utilisées pour les applications exigeantes</td>
+                    </tr>
+                    <tr>
+                        <td>E192</td>
+                        <td>192</td>
+                        <td>±0.5%, ±0.25%, ±0.1%</td>
+                        <td>Valeurs ultra-précises, pour étalonnage et applications critiques</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="subsection-title">2. Retrouver une valeur proche dans une série normalisée</div>
+            <p>Lors de la conception de circuits, il est fréquent de calculer une valeur théorique de résistance qui n'existe pas dans les séries normalisées. Il faut alors choisir la valeur normalisée la plus proche.</p>
+            
+            <div class="concept">
+                <h4>Concept Clé : Méthode de recherche</h4>
+                <p>La méthode pour trouver la valeur normalisée la plus proche consiste à :
+                <ol>
+                    <li>Déterminer dans quelle décade se trouve la valeur calculée</li>
+                    <li>Calculer le rang correspondant dans la série choisie</li>
+                    <li>Arrondir au rang entier le plus proche</li>
+                    <li>Calculer la valeur correspondant à ce rang</li>
+                </ol>
+                </p>
+            </div>
+            
+            <div class="tool-container">
+                <h3 class="tool-title">Outil : Trouver la valeur normalisée la plus proche</h3>
+                
+                <div style="margin-bottom: 20px;">
+                    <label for="calculated-value">Valeur calculée (Ω) :</label>
+                    <input type="number" id="calculated-value" step="0.01" min="0.01" max="10000000" value="6.73" style="width: 150px; margin-left: 10px;">
+                    
+                    <label for="series-select" style="margin-left: 30px;">Série :</label>
+                    <select id="series-select" style="width: 100px; margin-left: 10px;">
+                        <option value="3">E3</option>
+                        <option value="6">E6</option>
+                        <option value="12">E12</option>
+                        <option value="24" selected>E24</option>
+                        <option value="48">E48</option>
+                        <option value="96">E96</option>
+                    </select>
+                    
+                    <button class="btn" onclick="findNormalizedValue()" style="display: inline-block; width: auto; padding: 10px 20px; margin-left: 30px;">Trouver la valeur</button>
+                </div>
+                
+                <div class="result-box">
+                    <div id="normalized-result" class="result-value">Résultat : -</div>
+                    <div id="normalized-explanation" class="result-details">Explication : -</div>
+                </div>
+                
+                <div class="code-example" style="margin-top: 20px;">
+                    <strong>Exemple :</strong> Le résultat d'un calcul donne 6,73 Ω comme valeur de résistance. Quelle est la valeur la plus proche dans la série E24 ?<br><br>
+                    
+                    <strong>Résolution :</strong><br>
+                    1. Calcul du rang : m = log(6,73) × 24 ≈ 19,87<br>
+                    2. Arrondi : m ≈ 20<br>
+                    3. Calcul de la valeur : 10<sup>(20/24)</sup> ≈ 6,81 Ω<br>
+                    4. <strong>Résultat : 6,8 Ω</strong>
+                </div>
+            </div>
+            
+            <div class="note">
+                <strong>Note :</strong> Les valeurs normalisées des résistances les plus utilisées se situent entre 10 ohms et 1 mégohm. On utilise néanmoins des valeurs inférieures à l'ohm (résistances de mesure de courant) et des valeurs supérieures au mégohm (résistances dans les montages haute tension ou à haute impédance).
+            </div>
+            
+            <div class="subsection-title">Relation entre série et tolérance</div>
+            <p>En augmentant le nombre de valeurs possibles dans une décade (3, 6, 12, 24, 48, 96), les valeurs de résistance se rapprochent de plus en plus. Pour obtenir de plus en plus de valeurs proches les unes des autres, les constructeurs ont amélioré leurs procédés de fabrication et employé des matériaux fiables et stables dans le temps.</p>
+            
+            <p>C'est de cette manière que nous obtenons des précisions différentes en fonction de la série utilisée. La série E12 offre des valeurs de résistances précises à ±10 % et la série E96 à ±1 %. On parle alors de tolérance à 10 %, 5 %, 1 %, etc.</p>
+            
+            <table>
+                <caption>Correspondance série - tolérance</caption>
+                <thead>
+                    <tr>
+                        <th>Série</th>
+                        <th>Tolérance standard</th>
+                        <th>Tolérance disponible</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>E3</td>
+                        <td>±40% (obsolète)</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>E6</td>
+                        <td>±20%</td>
+                        <td>±20%</td>
+                    </tr>
+                    <tr>
+                        <td>E12</td>
+                        <td>±10%</td>
+                        <td>±10%</td>
+                    </tr>
+                    <tr>
+                        <td>E24</td>
+                        <td>±5%</td>
+                        <td>±5%, ±2%</td>
+                    </tr>
+                    <tr>
+                        <td>E48</td>
+                        <td>±2%</td>
+                        <td>±2%, ±1%</td>
+                    </tr>
+                    <tr>
+                        <td>E96</td>
+                        <td>±1%</td>
+                        <td>±1%, ±0.5%</td>
+                    </tr>
+                    <tr>
+                        <td>E192</td>
+                        <td>±0.5%</td>
+                        <td>±0.5%, ±0.25%, ±0.1%</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="important">
+                <h4>À retenir</h4>
+                <p>Plus la série est précise (E96, E192), plus la tolérance est faible (±1% ou moins). Ces résistances sont plus coûteuses et sont utilisées pour des applications nécessitant une grande précision.</p>
+            </div>
+        </div>
+        
+        <!-- Section Évaluation -->
+        <div id="evaluation" class="content-section">
+            <h2 class="section-title">Évaluation - Les Résistances</h2>
+            
+            <div class="evaluation-form">
+                <div id="studentInfo">
+                    <h3>Informations de l'Étudiant(e)</h3>
+                    
+                    <!-- Ajout de l'info sur les tentatives -->
+                    <div id="attemptsInfo" class="attempts-info">
+                        <h4>Historique des tentatives</h4>
+                        <p id="attemptsDetails">Aucune tentative précédente</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eval-nom">Nom complet *</label>
+                        <input type="text" id="eval-nom" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eval-matricule">Matricule et Option *</label>
+                        <input type="text" id="eval-matricule" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eval-email">Email</label>
+                        <input type="email" id="eval-email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Style vestimentaire *</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="eval-habillement" value="20" required>
+                                <span><strong>20 points :</strong> Tenue responsable - bien coiffée, bien chaussée, corps bien couvert</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-habillement" value="10">
+                                <span><strong>10 points :</strong> Tenue jeune</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-habillement" value="2">
+                                <span><strong>2 points :</strong> Tenue non conforme</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Participation en classe *</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="eval-participation" value="20" required>
+                                <span><strong>20 points :</strong> Participation active et pertinente</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-participation" value="18">
+                                <span><strong>18 points :</strong> Participation occasionnelle</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-participation" value="2">
+                                <span><strong>2 points :</strong> Peu participatif</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Comportement en classe *</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="eval-comportement" value="20" required>
+                                <span><strong>20 points :</strong> Comportement exemplaire et respectueux</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-comportement" value="18">
+                                <span><strong>18 points :</strong> Comportement correct avec quelques écarts</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="eval-comportement" value="2">
+                                <span><strong>2 points :</strong> Comportement perturbateur</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" onclick="startEvalQuiz()">Commencer l'Évaluation</button>
+                </div>
+                
+                <div id="quizSection" class="quiz-section">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    
+                    <div id="questionsContainer"></div>
+                    
+                    <button class="btn" id="submitBtn" onclick="submitEvalQuiz()">Soumettre l'Évaluation</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="timer" class="timer">15:00</div>
+    
+    <div class="success-message" id="successMessage"></div>
+    <div class="error-message" id="errorMessage"></div>
+
+    <script>
+        // Données pour les couleurs des résistances
+        const colorData = [
+            {name: "noir", value: 0, multiplier: 1, tolerance: null, colorClass: "color-black"},
+            {name: "marron", value: 1, multiplier: 10, tolerance: 1, colorClass: "color-brown"},
+            {name: "rouge", value: 2, multiplier: 100, tolerance: 2, colorClass: "color-red"},
+            {name: "orange", value: 3, multiplier: 1000, tolerance: null, colorClass: "color-orange"},
+            {name: "jaune", value: 4, multiplier: 10000, tolerance: null, colorClass: "color-yellow"},
+            {name: "vert", value: 5, multiplier: 100000, tolerance: 0.5, colorClass: "color-green"},
+            {name: "bleu", value: 6, multiplier: 1000000, tolerance: 0.25, colorClass: "color-blue"},
+            {name: "violet", value: 7, multiplier: 10000000, tolerance: 0.1, colorClass: "color-violet"},
+            {name: "gris", value: 8, multiplier: null, tolerance: 0.05, colorClass: "color-gray"},
+            {name: "blanc", value: 9, multiplier: null, tolerance: null, colorClass: "color-white"},
+            {name: "or", value: null, multiplier: 0.1, tolerance: 5, colorClass: "color-gold"},
+            {name: "argent", value: null, multiplier: 0.01, tolerance: 10, colorClass: "color-silver"}
+        ];
+        
+        // Données pour les séries normalisées
+        const seriesData = {
+            "3": [1.0, 2.2, 4.7],
+            "6": [1.0, 1.5, 2.2, 3.3, 4.7, 6.8],
+            "12": [1.0, 1.2, 1.5, 1.8, 2.2, 2.7, 3.3, 3.9, 4.7, 5.6, 6.8, 8.2],
+            "24": [1.0, 1.1, 1.2, 1.3, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9, 4.3, 4.7, 5.1, 5.6, 6.2, 6.8, 7.5, 8.2, 9.1],
+            "48": [1.00, 1.05, 1.10, 1.15, 1.21, 1.27, 1.33, 1.40, 1.47, 1.54, 1.62, 1.69, 1.78, 1.87, 1.96, 2.05, 2.15, 2.26, 2.37, 2.49, 2.61, 2.74, 2.87, 3.01, 3.16, 3.32, 3.48, 3.65, 3.83, 4.02, 4.22, 4.42, 4.64, 4.87, 5.11, 5.36, 5.62, 5.90, 6.19, 6.49, 6.81, 7.15, 7.50, 7.87, 8.25, 8.66, 9.09, 9.53]
+        };
+        
+        // Variables pour l'outil de résistance
+        let resistorType = 4; // 4 ou 5 anneaux
+        let selectedColors = {
+            band1: "color-brown",
+            band2: "color-green", 
+            band3: "color-black",
+            multiplier: "color-red",
+            tolerance: "color-gold"
+        };
+        
+        // Questions pour l'évaluation (20 questions couvrant tous les points importants)
+        const evalQuestions = [
+            {
+                question: "Quelle est l'unité de mesure de la résistance ?",
+                options: [
+                    "Le volt (V)",
+                    "L'ampère (A)",
+                    "L'ohm (Ω)",
+                    "Le watt (W)"
+                ],
+                correct: 2
+            },
+            {
+                question: "Combien d'anneaux de couleur une résistance à 5% de tolérance possède-t-elle généralement ?",
+                options: [
+                    "3 anneaux",
+                    "4 anneaux",
+                    "5 anneaux",
+                    "6 anneaux"
+                ],
+                correct: 1
+            },
+            {
+                question: "Que représente le troisième anneau sur une résistance à 4 anneaux ?",
+                options: [
+                    "Le premier chiffre significatif",
+                    "Le deuxième chiffre significatif",
+                    "Le multiplicateur",
+                    "La tolérance"
+                ],
+                correct: 2
+            },
+            {
+                question: "Quelle est la valeur d'une résistance avec les anneaux : Rouge, Violet, Orange, Or ?",
+                options: [
+                    "27 Ω ±5%",
+                    "270 Ω ±5%",
+                    "2700 Ω ±5%",
+                    "27 kΩ ±5%"
+                ],
+                correct: 2
+            },
+            {
+                question: "Quelle est la tolérance d'une résistance avec un anneau de tolérance argent ?",
+                options: [
+                    "±1%",
+                    "±5%",
+                    "±10%",
+                    "±20%"
+                ],
+                correct: 2
+            },
+            {
+                question: "Que signifie le code '103' sur une résistance CMS ?",
+                options: [
+                    "10 Ω",
+                    "100 Ω",
+                    "1 kΩ",
+                    "10 kΩ"
+                ],
+                correct: 2
+            },
+            {
+                question: "Quelle série de résistances offre une tolérance de ±10% ?",
+                options: [
+                    "E3",
+                    "E6",
+                    "E12",
+                    "E24"
+                ],
+                correct: 2
+            },
+            {
+                question: "Quelle est la valeur normalisée la plus proche de 150 Ω dans la série E12 ?",
+                options: [
+                    "120 Ω",
+                    "150 Ω",
+                    "180 Ω",
+                    "220 Ω"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quel type de résistance est le plus adapté pour les applications haute fréquence ?",
+                options: [
+                    "Résistance bobinée",
+                    "Résistance à couche de carbone",
+                    "Résistance à feuille métallique",
+                    "Résistance agglomérée"
+                ],
+                correct: 2
+            },
+            {
+                question: "Que se passe-t-il si une résistance dissipe une puissance supérieure à sa puissance nominale ?",
+                options: [
+                    "Elle devient plus précise",
+                    "Sa valeur diminue",
+                    "Elle peut brûler ou changer de valeur",
+                    "Sa tolérance s'améliore"
+                ],
+                correct: 2
+            },
+            {
+                question: "Quelle est la formule de la résistance en fonction de la résistivité (ρ), de la longueur (L) et de la section (S) ?",
+                options: [
+                    "R = ρ × L × S",
+                    "R = ρ × (L / S)",
+                    "R = ρ / (L × S)",
+                    "R = (ρ × S) / L"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quel est l'effet de l'augmentation de la longueur d'un conducteur sur sa résistance ?",
+                options: [
+                    "La résistance diminue",
+                    "La résistance augmente",
+                    "La résistance ne change pas",
+                    "La résistance devient nulle"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quel type de résistance est caractérisé par une inductance parasite importante ?",
+                options: [
+                    "Résistance à couche de carbone",
+                    "Résistance à feuille métallique",
+                    "Résistance bobinée",
+                    "Résistance CMS"
+                ],
+                correct: 2
+            },
+            {
+                question: "Quelle est la puissance nominale typique d'une résistance CMS de taille 0805 ?",
+                options: [
+                    "1/20 W",
+                    "1/8 W",
+                    "1/4 W",
+                    "1 W"
+                ],
+                correct: 1
+            },
+            {
+                question: "Quelle couleur correspond au chiffre 5 dans le code des couleurs ?",
+                options: [
+                    "Rouge",
+                    "Vert",
+                    "Bleu",
+                    "Violet"
+                ],
+                correct: 1
+            },
+            {
+                question: "Combien de valeurs par décade contient la série E24 ?",
+                options: [
+                    "6",
+                    "12",
+                    "24",
+                    "48"
+                ],
+                correct: 2
+            },
+            {
+                question: "Quelle est la valeur d'une résistance avec les anneaux : Marron, Noir, Rouge, Or ?",
+                options: [
+                    "10 Ω ±5%",
+                    "100 Ω ±5%",
+                    "1000 Ω ±5%",
+                    "10000 Ω ±5%"
+                ],
+                correct: 2
+            },
+            {
+                question: "Quel est le principal avantage des résistances CMS par rapport aux résistances axiales ?",
+                options: [
+                    "Meilleure précision",
+                    "Plus grande puissance dissipée",
+                    "Miniaturisation",
+                    "Moins coûteuses"
+                ],
+                correct: 2
+            },
+            {
+                question: "Quelle est la valeur d'une résistance CMS marquée '4R7' ?",
+                options: [
+                    "4.7 Ω",
+                    "47 Ω",
+                    "470 Ω",
+                    "4700 Ω"
+                ],
+                correct: 0
+            },
+            {
+                question: "Quel est le coefficient de température typique d'une résistance avec un 6ème anneau rouge ?",
+                options: [
+                    "50 ppm/°C",
+                    "100 ppm/°C",
+                    "15 ppm/°C",
+                    "25 ppm/°C"
+                ],
+                correct: 0
+            }
+        ];
+        
+        // Variables globales pour l'évaluation
+        let currentQuestions = [];
+        let timerInterval;
+        let timeLeft = 900; // 15 minutes
+        let evalStudentData = {};
+        
+        // Variables pour le suivi des tentatives
+        const STORAGE_KEY = "resistances_evaluations";
+        
+        // Initialisation de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialiser les sélecteurs de couleurs
+            initColorSelectors();
+            
+            // Initialiser la navigation par onglets
+            initTabs();
+            
+            // Initialiser le bouton de type de résistance
+            initResistorTypeButtons();
+            
+            // Afficher les séries normalisées par défaut
+            findNormalizedValue();
+            
+            // Calculer une résistance par défaut
+            calculateResistance();
+            
+            // Mettre à jour l'affichage de la résistance
+            updateResistorVisual();
+            
+            // Ajouter un écouteur d'événement pour le champ matricule
+            document.getElementById('eval-matricule').addEventListener('input', updateAttemptsInfo);
+        });
+        
+        // Initialisation des sélecteurs de couleur
+        function initColorSelectors() {
+            // Créer les options de couleur pour chaque bande
+            createColorOptions('color-options-1', colorData.slice(0, 10), 'band1');
+            createColorOptions('color-options-2', colorData.slice(0, 10), 'band2');
+            createColorOptions('color-options-3', colorData.slice(0, 10), 'band3');
+            
+            // Créer les options pour le multiplicateur (toutes sauf blanc)
+            const multiplierColors = colorData.filter(color => color.multiplier !== null);
+            createColorOptions('color-options-mult', multiplierColors, 'multiplier');
+            
+            // Créer les options pour la tolérance (marron à argent avec tolérance)
+            const toleranceColors = colorData.filter(color => color.tolerance !== null);
+            createColorOptions('color-options-tol', toleranceColors, 'tolerance');
+            
+            // Sélectionner les couleurs par défaut
+            selectDefaultColors();
+        }
+        
+        // Créer les options de couleur
+        function createColorOptions(containerId, colors, bandName) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            colors.forEach(color => {
+                const div = document.createElement('div');
+                div.className = `color-option ${color.colorClass}`;
+                div.title = color.name;
+                div.dataset.colorClass = color.colorClass;
+                div.dataset.band = bandName;
+                div.onclick = function() { selectColor(this, bandName); };
+                container.appendChild(div);
+            });
+        }
+        
+        // Initialiser les boutons de type de résistance
+        function initResistorTypeButtons() {
+            const buttons = document.querySelectorAll('.resistor-type-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Retirer la classe active de tous les boutons
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Ajouter la classe active au bouton cliqué
+                    this.classList.add('active');
+                    
+                    // Mettre à jour le type de résistance
+                    resistorType = parseInt(this.dataset.type);
+                    
+                    // Afficher/masquer la 3ème bande
+                    const band3Group = document.getElementById('band-3-group');
+                    const band3Visual = document.getElementById('band3');
+                    const band3Label = document.querySelector('.band-3-label');
+                    
+                    if (resistorType === 5) {
+                        band3Group.style.display = 'flex';
+                        band3Visual.style.display = 'block';
+                        band3Label.style.display = 'block';
+                    } else {
+                        band3Group.style.display = 'none';
+                        band3Visual.style.display = 'none';
+                        band3Label.style.display = 'none';
+                    }
+                    
+                    // Recalculer la valeur
+                    calculateResistance();
+                });
+            });
+        }
+        
+        // Sélectionner les couleurs par défaut
+        function selectDefaultColors() {
+            // Sélectionner les couleurs par défaut dans chaque groupe
+            selectColorByClass('color-options-1', 'color-brown', 'band1');
+            selectColorByClass('color-options-2', 'color-green', 'band2');
+            selectColorByClass('color-options-3', 'color-black', 'band3');
+            selectColorByClass('color-options-mult', 'color-red', 'multiplier');
+            selectColorByClass('color-options-tol', 'color-gold', 'tolerance');
+        }
+        
+        // Sélectionner une couleur par classe
+        function selectColorByClass(containerId, colorClass, bandName) {
+            const container = document.getElementById(containerId);
+            const colorElement = container.querySelector(`.${colorClass}`);
+            if (colorElement) {
+                // Retirer la sélection des autres options
+                const options = container.querySelectorAll('.color-option');
+                options.forEach(opt => opt.classList.remove('selected'));
+                
+                // Ajouter la sélection à l'élément
+                colorElement.classList.add('selected');
+                
+                // Mettre à jour la couleur sélectionnée
+                selectedColors[bandName] = colorClass;
+            }
+        }
+        
+        // Sélectionner une couleur
+        function selectColor(element, bandName) {
+            const container = element.parentElement;
+            const colorClass = element.dataset.colorClass;
+            
+            // Retirer la sélection des autres options dans le même groupe
+            const options = container.querySelectorAll('.color-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Ajouter la sélection à l'élément cliqué
+            element.classList.add('selected');
+            
+            // Mettre à jour la couleur sélectionnée
+            selectedColors[bandName] = colorClass;
+            
+            // Mettre à jour la visualisation de la résistance
+            updateResistorVisual();
+            
+            // Recalculer automatiquement la valeur
+            calculateResistance();
+        }
+        
+        // Mettre à jour la visualisation de la résistance
+        function updateResistorVisual() {
+            // Mettre à jour chaque bande
+            for (const band in selectedColors) {
+                const bandElement = document.getElementById(band);
+                if (bandElement) {
+                    // Retirer toutes les classes de couleur
+                    bandElement.className = 'band';
+                    
+                    // Ajouter la classe de couleur sélectionnée
+                    const colorClass = selectedColors[band];
+                    if (colorClass) {
+                        bandElement.classList.add(colorClass);
+                    }
+                }
+            }
+        }
+        
+        // Obtenir la valeur d'une couleur
+        function getColorValue(colorClass, type) {
+            const color = colorData.find(c => c.colorClass === colorClass);
+            if (!color) return 0;
+            
+            switch(type) {
+                case 'digit': return color.value !== null ? color.value : 0;
+                case 'multiplier': return color.multiplier !== null ? color.multiplier : 1;
+                case 'tolerance': return color.tolerance !== null ? color.tolerance : 5;
+                default: return 0;
+            }
+        }
+        
+        // Obtenir le nom d'une couleur
+        function getColorName(colorClass) {
+            const color = colorData.find(c => c.colorClass === colorClass);
+            return color ? color.name : 'inconnu';
+        }
+        
+        // Calculer la valeur de la résistance
+        function calculateResistance() {
+            // Obtenir les valeurs des bandes
+            const band1Value = getColorValue(selectedColors.band1, 'digit');
+            const band2Value = getColorValue(selectedColors.band2, 'digit');
+            const band3Value = resistorType === 5 ? getColorValue(selectedColors.band3, 'digit') : 0;
+            const multiplierValue = getColorValue(selectedColors.multiplier, 'multiplier');
+            const toleranceValue = getColorValue(selectedColors.tolerance, 'tolerance');
+            
+            // Calculer la valeur de la résistance
+            let resistanceValue;
+            if (resistorType === 5) {
+                resistanceValue = parseInt(`${band1Value}${band2Value}${band3Value}`) * multiplierValue;
+            } else {
+                resistanceValue = parseInt(`${band1Value}${band2Value}`) * multiplierValue;
+            }
+            
+            // Calculer les valeurs min et max selon la tolérance
+            const tolerance = toleranceValue / 100;
+            const minValue = resistanceValue * (1 - tolerance);
+            const maxValue = resistanceValue * (1 + tolerance);
+            
+            // Formater l'affichage
+            let displayValue = formatResistance(resistanceValue);
+            let minDisplay = formatResistance(minValue);
+            let maxDisplay = formatResistance(maxValue);
+            
+            // Obtenir les noms des couleurs
+            const band1Name = getColorName(selectedColors.band1);
+            const band2Name = getColorName(selectedColors.band2);
+            const band3Name = resistorType === 5 ? getColorName(selectedColors.band3) : '';
+            const multiplierName = getColorName(selectedColors.multiplier);
+            const toleranceName = getColorName(selectedColors.tolerance);
+            
+            // Afficher les résultats
+            document.getElementById('resistance-value').textContent = `Valeur : ${displayValue}`;
+            document.getElementById('resistance-tolerance').textContent = `Tolérance : ±${toleranceValue}% (${toleranceName})`;
+            document.getElementById('resistance-min-max').textContent = `Plage : ${minDisplay} à ${maxDisplay}`;
+            
+            // Afficher un message de succès
+            showSuccessMessage(`Résistance calculée : ${displayValue} ±${toleranceValue}%`);
+            
+            // Mettre à jour la visualisation
+            updateResistorVisual();
+        }
+        
+        // Réinitialiser les sélecteurs de couleur
+        function resetResistance() {
+            // Réinitialiser à 4 anneaux
+            document.querySelector('.resistor-type-btn[data-type="4"]').click();
+            
+            // Réinitialiser les sélections
+            selectedColors = {
+                band1: "color-brown",
+                band2: "color-green", 
+                band3: "color-black",
+                multiplier: "color-red",
+                tolerance: "color-gold"
+            };
+            
+            // Réappliquer les valeurs par défaut
+            selectDefaultColors();
+            
+            // Recalculer
+            calculateResistance();
+        }
+        
+        // Formater une valeur de résistance
+        function formatResistance(value) {
+            if (value >= 1000000) {
+                return (value / 1000000).toFixed(2) + ' MΩ';
+            } else if (value >= 1000) {
+                return (value / 1000).toFixed(2) + ' kΩ';
+            } else if (value < 1) {
+                return value.toFixed(3) + ' Ω';
+            } else {
+                return value.toFixed(2) + ' Ω';
+            }
+        }
+        
+        // Calculer la valeur d'une résistance CMS
+        function calculateSMD() {
+            const code = document.getElementById('smd-code').value.trim().toUpperCase();
+            let value = 0;
+            let explanation = '';
+            
+            if (!code) {
+                showErrorMessage('Veuillez entrer un code CMS');
+                return;
+            }
+            
+            // Détecter le type de code et calculer la valeur
+            if (code.includes('R')) {
+                // Code avec R (ex: 4R7 = 4.7 Ω)
+                const parts = code.split('R');
+                if (parts.length === 2) {
+                    value = parseFloat(parts[0] + '.' + parts[1]);
+                    explanation = `${parts[0]}R${parts[1]} = ${parts[0]}.${parts[1]} Ω`;
+                } else if (code.startsWith('R')) {
+                    // Code commençant par R (ex: R10 = 0.10 Ω)
+                    value = parseFloat('0.' + code.substring(1));
+                    explanation = `${code} = 0.${code.substring(1)} Ω`;
+                }
+            } else if (code.length === 3) {
+                // Code à 3 chiffres (ex: 102 = 10 × 10² = 1000 Ω)
+                const firstTwo = parseInt(code.substring(0, 2));
+                const multiplier = Math.pow(10, parseInt(code.substring(2, 3)));
+                value = firstTwo * multiplier;
+                explanation = `${code} = ${firstTwo} × 10^${code.substring(2, 3)} = ${value} Ω`;
+            } else if (code.length === 4) {
+                // Code à 4 chiffres (ex: 1002 = 100 × 10² = 10000 Ω)
+                const firstThree = parseInt(code.substring(0, 3));
+                const multiplier = Math.pow(10, parseInt(code.substring(3, 4)));
+                value = firstThree * multiplier;
+                explanation = `${code} = ${firstThree} × 10^${code.substring(3, 4)} = ${value} Ω`;
+            } else {
+                showErrorMessage('Code CMS non reconnu. Formats acceptés: 3 chiffres (102), 4 chiffres (1002), ou avec R (4R7)');
+                return;
+            }
+            
+            // Afficher le résultat
+            const displayValue = formatResistance(value);
+            document.getElementById('smd-value').textContent = `Valeur : ${displayValue}`;
+            document.getElementById('smd-explanation').textContent = `Explication : ${explanation}`;
+            
+            showSuccessMessage(`Résistance CMS calculée : ${displayValue}`);
+        }
+        
+        // Réinitialiser le calculateur CMS
+        function resetSMD() {
+            document.getElementById('smd-code').value = '';
+            document.getElementById('smd-value').textContent = 'Valeur : -';
+            document.getElementById('smd-explanation').textContent = 'Explication : -';
+        }
+        
+        // Trouver la valeur normalisée la plus proche
+        function findNormalizedValue() {
+            const calculatedValue = parseFloat(document.getElementById('calculated-value').value);
+            const series = document.getElementById('series-select').value;
+            
+            if (!calculatedValue || calculatedValue <= 0) {
+                showErrorMessage('Veuillez entrer une valeur valide');
+                return;
+            }
+            
+            // Déterminer la décade
+            const decade = Math.floor(Math.log10(calculatedValue));
+            const normalizedValueInDecade = calculatedValue / Math.pow(10, decade);
+            
+            // Trouver la valeur la plus proche dans la série
+            const seriesValues = seriesData[series];
+            let closestValue = seriesValues[0];
+            let minDiff = Math.abs(normalizedValueInDecade - seriesValues[0]);
+            
+            for (let i = 1; i < seriesValues.length; i++) {
+                const diff = Math.abs(normalizedValueInDecade - seriesValues[i]);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestValue = seriesValues[i];
+                }
+            }
+            
+            // Calculer la valeur finale
+            const finalValue = closestValue * Math.pow(10, decade);
+            
+            // Formater l'affichage
+            const displayValue = formatResistance(finalValue);
+            const calcDisplay = formatResistance(calculatedValue);
+            
+            // Afficher le résultat
+            document.getElementById('normalized-result').textContent = `Valeur normalisée : ${displayValue}`;
+            document.getElementById('normalized-explanation').textContent = `La valeur calculée ${calcDisplay} est la plus proche de ${displayValue} dans la série E${series}`;
+            
+            showSuccessMessage(`Valeur normalisée trouvée : ${displayValue}`);
+        }
+        
+        // Initialisation de la navigation par onglets
+        function initTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            const sections = document.querySelectorAll('.content-section');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const target = this.dataset.target;
+                    
+                    // Mettre à jour les onglets actifs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Afficher la section cible
+                    sections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === target) {
+                            section.classList.add('active');
+                        }
+                    });
+                });
+            });
+        }
+        
+        // Afficher un message de succès
+        function showSuccessMessage(message) {
+            const successMsg = document.getElementById('successMessage');
+            successMsg.textContent = message;
+            successMsg.style.display = 'block';
+            
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Afficher un message d'erreur
+        function showErrorMessage(message) {
+            const errorMsg = document.getElementById('errorMessage');
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            
+            setTimeout(() => {
+                errorMsg.style.display = 'none';
+            }, 3000);
+        }
+        
+        // FONCTIONS POUR LE SUIVI DES TENTATIVES
+        
+        // Obtenir les évaluations depuis le localStorage
+        function getEvaluations() {
+            try {
+                const evaluations = localStorage.getItem(STORAGE_KEY);
+                return evaluations ? JSON.parse(evaluations) : {};
+            } catch (e) {
+                console.error('Erreur lors de la lecture du localStorage:', e);
+                return {};
+            }
+        }
+        
+        // Enregistrer une évaluation dans le localStorage
+        function saveEvaluation(matricule, evaluationData) {
+            try {
+                const evaluations = getEvaluations();
+                
+                if (!evaluations[matricule]) {
+                    evaluations[matricule] = [];
+                }
+                
+                evaluations[matricule].push({
+                    ...evaluationData,
+                    date: new Date().toISOString(),
+                    timestamp: Date.now()
+                });
+                
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(evaluations));
+            } catch (e) {
+                console.error('Erreur lors de l\'enregistrement dans le localStorage:', e);
+            }
+        }
+        
+        // Mettre à jour l'affichage des tentatives
+        function updateAttemptsInfo() {
+            const matricule = document.getElementById('eval-matricule').value.trim();
+            const attemptsInfo = document.getElementById('attemptsInfo');
+            const attemptsDetails = document.getElementById('attemptsDetails');
+            
+            if (!matricule) {
+                attemptsInfo.style.display = 'none';
+                return;
+            }
+            
+            const evaluations = getEvaluations();
+            const studentEvaluations = evaluations[matricule] || [];
+            
+            if (studentEvaluations.length === 0) {
+                attemptsInfo.style.display = 'none';
+            } else {
+                const lastAttempt = studentEvaluations[studentEvaluations.length - 1];
+                const lastDate = new Date(lastAttempt.date).toLocaleDateString('fr-FR');
+                const lastNote = lastAttempt.noteTotale;
+                
+                // Calculer la moyenne
+                const total = studentEvaluations.reduce((sum, eval) => sum + parseFloat(eval.noteTotale), 0);
+                const average = total / studentEvaluations.length;
+                
+                attemptsDetails.innerHTML = `
+                    <p><strong>Nombre de tentatives :</strong> ${studentEvaluations.length}</p>
+                    <p><strong>Dernière tentative :</strong> ${lastDate} (Note: ${lastNote}/20)</p>
+                    <p><strong>Moyenne des notes :</strong> ${average.toFixed(2)}/20</p>
+                    <p><strong>Meilleure note :</strong> ${Math.max(...studentEvaluations.map(e => parseFloat(e.noteTotale))).toFixed(2)}/20</p>
+                `;
+                attemptsInfo.style.display = 'block';
+            }
+        }
+        
+        // ÉVALUATION FUNCTIONS
+        
+        // Démarrer l'évaluation
+        function startEvalQuiz() {
+            const nom = document.getElementById('eval-nom').value.trim();
+            const matricule = document.getElementById('eval-matricule').value.trim();
+            const habillement = document.querySelector('input[name="eval-habillement"]:checked');
+            const participation = document.querySelector('input[name="eval-participation"]:checked');
+            const comportement = document.querySelector('input[name="eval-comportement"]:checked');
+            
+            if (!nom || !matricule || !habillement || !participation || !comportement) {
+                showErrorMessage('Veuillez remplir tous les champs obligatoires !');
+                return;
+            }
+            
+            evalStudentData = {
+                nom: nom,
+                matricule: matricule,
+                email: document.getElementById('eval-email').value.trim(),
+                habillement: parseInt(habillement.value),
+                participation: parseInt(participation.value),
+                comportement: parseInt(comportement.value)
+            };
+            
+            // Préparer les questions (mélangées)
+            currentQuestions = [...evalQuestions];
+            shuffleArray(currentQuestions);
+            
+            // Afficher la section quiz
+            document.getElementById('studentInfo').style.display = 'none';
+            document.getElementById('quizSection').style.display = 'block';
+            document.getElementById('timer').style.display = 'block';
+            
+            // Générer les questions
+            generateEvalQuestions();
+            
+            // Démarrer le timer
+            timeLeft = 900; // 15 minutes
+            startEvalTimer();
+        }
+        
+        // Mélanger un tableau
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // Générer les questions d'évaluation
+        function generateEvalQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            currentQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                
+                const optionsHTML = q.options.map((opt, i) => `
+                    <label class="option-label">
+                        <input type="radio" name="q${index}" value="${i}">
+                        <span>${opt}</span>
+                    </label>
+                `).join('');
+                
+                questionDiv.innerHTML = `
+                    <h3>Question ${index + 1} : ${q.question}</h3>
+                    <div class="options">
+                        ${optionsHTML}
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+            
+            // Mettre à jour la barre de progression
+            updateProgressBar(0);
+        }
+        
+        // Mettre à jour la barre de progression
+        function updateProgressBar(progress) {
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+        
+        // Démarrer le timer d'évaluation
+        function startEvalTimer() {
+            clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                const timerElement = document.getElementById('timer');
+                
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 120) {
+                    timerElement.classList.add('warning');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitEvalQuiz(true);
+                }
+            }, 1000);
+        }
+        
+        // Soumettre l'évaluation
+        function submitEvalQuiz(autoSubmit = false) {
+            clearInterval(timerInterval);
+            
+            if (!autoSubmit) {
+                if (!confirm('Êtes-vous sûr(e) de vouloir soumettre votre évaluation ?')) {
+                    startEvalTimer();
+                    return;
+                }
+            }
+            
+            // Calculer le score
+            let score = 0;
+            currentQuestions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected && parseInt(selected.value) === q.correct) {
+                    score++;
+                }
+            });
+            
+            // Calculer les notes
+            const quizNote = (score / currentQuestions.length) * 20;
+            // Coefficients : Quiz (3), Participation (4), Habillement (2), Comportement (2)
+            const noteTotale = ((quizNote * 3) + (evalStudentData.participation * 4) + (evalStudentData.habillement * 2) + (evalStudentData.comportement * 2)) / 11;
+            
+            // Récupérer le nombre de tentatives précédentes
+            const evaluations = getEvaluations();
+            const studentEvaluations = evaluations[evalStudentData.matricule] || [];
+            const attemptNumber = studentEvaluations.length + 1;
+            
+            // Préparer les données pour le PDF
+            const evaluationData = {
+                ...evalStudentData,
+                questionsRepondues: currentQuestions.length,
+                bonnesReponses: score,
+                quizNote: quizNote.toFixed(2),
+                noteHabillement: evalStudentData.habillement,
+                noteParticipation: evalStudentData.participation,
+                noteComportement: evalStudentData.comportement,
+                noteTotale: noteTotale.toFixed(2),
+                tempsUtilise: `${Math.floor((900 - timeLeft) / 60)} min ${(900 - timeLeft) % 60} sec`,
+                numeroTentative: attemptNumber,
+                nombreTentativesTotal: attemptNumber
+            };
+            
+            // Enregistrer l'évaluation
+            saveEvaluation(evalStudentData.matricule, evaluationData);
+            
+            // Générer le PDF
+            generateEvalPDF(evaluationData, studentEvaluations.length + 1);
+        }
+        
+        // Générer le PDF d'évaluation
+        function generateEvalPDF(data, attemptNumber) {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // En-tête
+                doc.setFillColor(26, 42, 108);
+                doc.rect(0, 0, 210, 40, 'F');
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(16);
+                doc.text('ÉVALUATION - LES RÉSISTANCES', 105, 15, { align: 'center' });
+                
+                doc.setFontSize(11);
+                doc.text('Rapport d\'évaluation', 105, 25, { align: 'center' });
+                doc.text('ENSET de Douala - 2025/2026', 105, 32, { align: 'center' });
+                
+                // Informations étudiant
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text('INFORMATIONS ÉTUDIANT', 20, 50);
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(10);
+                
+                doc.text(`Nom : ${data.nom}`, 20, 60);
+                doc.text(`Matricule : ${data.matricule}`, 20, 66);
+                if (data.email) {
+                    doc.text(`Email : ${data.email}`, 20, 72);
+                }
+                doc.text(`Tentative n° : ${attemptNumber}`, 20, 78);
+                
+                // Détails évaluation
+                doc.setFont(undefined, 'bold');
+                doc.text('DÉTAILS DE L\'ÉVALUATION', 20, 90);
+                doc.setFont(undefined, 'normal');
+                
+                doc.text(`Date : ${new Date().toLocaleDateString('fr-FR')}`, 20, 100);
+                doc.text(`Heure : ${new Date().toLocaleTimeString('fr-FR')}`, 20, 106);
+                doc.text(`Temps utilisé : ${data.tempsUtilise}`, 20, 112);
+                doc.text(`Questions : ${data.questionsRepondues} / 20`, 20, 118);
+                doc.text(`Bonnes réponses : ${data.bonnesReponses} / 20`, 20, 124);
+                
+                // Notes détaillées
+                doc.setFont(undefined, 'bold');
+                doc.text('NOTES DÉTAILLÉES', 20, 140);
+                doc.setFont(undefined, 'normal');
+                
+                doc.text(`Quiz : ${data.quizNote} / 20`, 20, 150);
+                doc.text(`Style vestimentaire : ${data.noteHabillement} / 20`, 20, 156);
+                doc.text(`Participation : ${data.noteParticipation} / 20`, 20, 162);
+                doc.text(`Comportement : ${data.noteComportement} / 20`, 20, 168);
+                
+                // Note finale
+                doc.setFillColor(26, 42, 108);
+                doc.rect(15, 175, 180, 15, 'F');
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(14);
+                doc.setFont(undefined, 'bold');
+                doc.text(`NOTE FINALE : ${data.noteTotale} / 20`, 105, 185, { align: 'center' });
+                
+                // Appréciation
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text('APPRÉCIATION', 20, 205);
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(10);
+                
+                let appreciation = '';
+                const note = parseFloat(data.noteTotale);
+                if (note >= 16) appreciation = 'Excellent - Très bonne maîtrise du sujet';
+                else if (note >= 14) appreciation = 'Très bien - Bonne compréhension des résistances';
+                else if (note >= 12) appreciation = 'Bien - Connaissances satisfaisantes';
+                else if (note >= 10) appreciation = 'Satisfaisant - Connaissances de base acquises';
+                else appreciation = 'À renforcer - Révision nécessaire sur les résistances';
+                
+                doc.text(appreciation, 20, 215, { maxWidth: 170 });
+                
+                // Pied de page
+                doc.setDrawColor(26, 42, 108);
+                doc.line(20, 280, 190, 280);
+                
+                doc.setTextColor(100, 100, 100);
+                doc.setFontSize(8);
+                doc.setFont(undefined, 'italic');
+                doc.text('Enseignant : Dr OBONO BIYOBO Arnaud', 105, 285, { align: 'center' });
+                doc.text('Chargé de Cours - Informatique Industrielle et Automatique', 105, 290, { align: 'center' });
+                
+                // Sauvegarder le PDF
+                const fileName = `Evaluation_Resistances_${data.matricule}_Tentative${attemptNumber}_${Date.now()}.pdf`;
+                doc.save(fileName);
+                
+                // Afficher l'alerte de réussite
+                alert(`✅ Évaluation terminée avec succès !\n\nNote finale : ${data.noteTotale} / 20\n${appreciation}\n\nTentative n° ${attemptNumber}\n\nVotre rapport PDF a été téléchargé.`);
+                
+                // Réinitialiser le formulaire
+                document.getElementById('studentInfo').style.display = 'block';
+                document.getElementById('quizSection').style.display = 'none';
+                document.getElementById('timer').style.display = 'none';
+                document.getElementById('eval-nom').value = '';
+                document.getElementById('eval-matricule').value = '';
+                document.getElementById('eval-email').value = '';
+                document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+                
+            } catch (error) {
+                console.error('Erreur lors de la génération du PDF:', error);
+                showErrorMessage('Erreur lors de la génération du PDF: ' + error.message);
+                
+                // Fallback: afficher les résultats dans une alerte
+                const note = parseFloat(data.noteTotale);
+                let appreciation = '';
+                if (note >= 16) appreciation = 'Excellent - Très bonne maîtrise du sujet';
+                else if (note >= 14) appreciation = 'Très bien - Bonne compréhension des résistances';
+                else if (note >= 12) appreciation = 'Bien - Connaissances satisfaisantes';
+                else if (note >= 10) appreciation = 'Satisfaisant - Connaissances de base acquises';
+                else appreciation = 'À renforcer - Révision nécessaire sur les résistances';
+                
+                alert(`Évaluation terminée !\n\nNote finale : ${data.noteTotale} / 20\n${appreciation}\n\nTentative n° ${attemptNumber}\n\nErreur PDF: Le rapport n'a pas pu être généré.`);
+                
+                // Réinitialiser le formulaire
+                document.getElementById('studentInfo').style.display = 'block';
+                document.getElementById('quizSection').style.display = 'none';
+                document.getElementById('timer').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
