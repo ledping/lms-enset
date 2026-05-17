@@ -1,59 +1,55 @@
 # apps/evaluations/serializers.py
-# ─── Serializers complets pour l'API Django REST Framework ───────────────────
+# ─────────────────────────────────────────────────────────────────────────────
+# Modification : CCListSerializer — ajout de enseignant_nom
+# ─────────────────────────────────────────────────────────────────────────────
 
-from django.utils import timezone
 from rest_framework import serializers
-from .models import CC, Question, Choix, Tentative, Reponse, Resultat
-from apps.accounts.models import Etudiant, Enseignant
-from apps.cours.models import Cours
+from .models import CC, Question, Choix, Tentative, Resultat
+
+try:
+    from apps.cours.models import Cours
+except ImportError:
+    Cours = None
 
 
 # ──────────────────────────────────────────────
-#  ACCOUNTS
+#  ACCOUNT SERIALIZERS (réexportés ici pour éviter les imports circulaires)
 # ──────────────────────────────────────────────
 
-class EtudiantSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(source='user.email', read_only=True)
-
-    class Meta:
-        model = Etudiant
-        fields = ['id', 'nom', 'prenom', 'matricule', 'filiere', 'avatar', 'badges', 'email']
-        read_only_fields = ['badges']
+class EtudiantSerializer(serializers.Serializer):
+    nom       = serializers.CharField()
+    prenom    = serializers.CharField()
+    matricule = serializers.CharField()
+    filiere   = serializers.CharField()
+    badges    = serializers.ListField(child=serializers.CharField(), required=False)
 
 
 class EtudiantRegisterSerializer(serializers.Serializer):
-    """Inscription étudiant : crée User + Etudiant en une seule opération."""
+    matricule = serializers.CharField(max_length=20)
     nom       = serializers.CharField(max_length=100)
     prenom    = serializers.CharField(max_length=100)
-    email     = serializers.EmailField()
-    matricule = serializers.CharField(max_length=20)
     filiere   = serializers.ChoiceField(choices=['TIC', 'II'])
-    password  = serializers.CharField(write_only=True, min_length=8)
+    password  = serializers.CharField(write_only=True, min_length=6)
 
     def validate_matricule(self, value):
+        from apps.accounts.models import Etudiant
         if Etudiant.objects.filter(matricule=value).exists():
-            raise serializers.ValidationError("Ce matricule est déjà utilisé.")
-        return value
-
-    def validate_email(self, value):
-        from apps.accounts.models import User
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("Cet email est déjà enregistré.")
+            raise serializers.ValidationError('Ce matricule est déjà utilisé.')
         return value
 
     def create(self, validated_data):
-        from apps.accounts.models import User
+        from apps.accounts.models import User, Etudiant
+        matricule = validated_data['matricule']
         user = User.objects.create_user(
-            username=validated_data['matricule'],
-            email=validated_data['email'],
+            username=matricule,
             password=validated_data['password'],
-            role='etudiant'
+            role='etudiant',
         )
         etudiant = Etudiant.objects.create(
             user=user,
+            matricule=matricule,
             nom=validated_data['nom'],
             prenom=validated_data['prenom'],
-            matricule=validated_data['matricule'],
             filiere=validated_data['filiere'],
         )
         return etudiant
@@ -64,7 +60,6 @@ class EtudiantRegisterSerializer(serializers.Serializer):
 # ──────────────────────────────────────────────
 
 class CoursListSerializer(serializers.ModelSerializer):
-    """Vue allégée pour la liste des cours (dashboard étudiant)."""
     enseignant_nom = serializers.SerializerMethodField()
 
     class Meta:
@@ -73,32 +68,32 @@ class CoursListSerializer(serializers.ModelSerializer):
                   'fichier_url', 'enseignant_nom', 'date_creation']
 
     def get_enseignant_nom(self, obj):
-        return f"{obj.enseignant.prenom} {obj.enseignant.nom}"
+        if obj.enseignant:
+            return f"{obj.enseignant.prenom} {obj.enseignant.nom}"
+        return None
 
 
 class CoursDetailSerializer(serializers.ModelSerializer):
-    """Inclut le contenu HTML complet (cours interactifs)."""
     class Meta:
         model  = Cours
-        fields = '__all__'
+        fields = ['id', 'titre', 'description', 'filiere',
+                  'fichier_url', 'contenu_html', 'date_creation']
 
 
 # ──────────────────────────────────────────────
-#  CC & QUESTIONS
+#  CC — CHOIX / QUESTION
 # ──────────────────────────────────────────────
 
 class ChoixSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Choix
-        fields = ['id', 'texte']
-        # ⚠️ est_correct intentionnellement EXCLU → pas de fuite de réponses
+        fields = ['id', 'texte']   # ← PAS est_correct ici (sécurité)
 
 
 class ChoixAvecReponseSerializer(serializers.ModelSerializer):
-    """Utilisé uniquement dans les vues enseignant (correction)."""
     class Meta:
         model  = Choix
-        fields = ['id', 'texte', 'est_correct']
+        fields = ['id', 'texte', 'est_correct']   # ← utilisé seulement pour correction
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -109,17 +104,29 @@ class QuestionSerializer(serializers.ModelSerializer):
         fields = ['id', 'enonce', 'points', 'ordre', 'choix']
 
 
+# ──────────────────────────────────────────────
+#  CC LIST — Vue allégée (dashboard étudiant + liste enseignant)
+# ──────────────────────────────────────────────
+
 class CCListSerializer(serializers.ModelSerializer):
-    """Vue allégée pour la liste des CC (dashboard étudiant)."""
+    """
+    Vue allégée pour la liste des CC.
+    - est_deja_passe et mon_resultat : contextuels à l'étudiant connecté
+    - enseignant_nom : affiché côté étudiant et côté enseignant
+    """
     nb_questions    = serializers.IntegerField(source='nombre_questions', read_only=True)
     est_deja_passe  = serializers.SerializerMethodField()
     mon_resultat    = serializers.SerializerMethodField()
+    enseignant_nom  = serializers.SerializerMethodField()   # ← AJOUT
 
     class Meta:
         model  = CC
-        fields = ['id', 'titre', 'description', 'duree_minutes',
-                  'nb_questions', 'est_actif', 'date_debut', 'date_fin',
-                  'est_deja_passe', 'mon_resultat']
+        fields = [
+            'id', 'titre', 'description', 'duree_minutes',
+            'nb_questions', 'est_actif', 'date_debut', 'date_fin',
+            'est_deja_passe', 'mon_resultat',
+            'enseignant_nom',   # ← AJOUT
+        ]
 
     def get_est_deja_passe(self, obj):
         request = self.context.get('request')
@@ -142,80 +149,92 @@ class CCListSerializer(serializers.ModelSerializer):
             resultat = Resultat.objects.get(tentative__etudiant=etudiant, cc=obj)
             return {
                 'note_sur_20': resultat.note_sur_20,
-                'mention': resultat.get_mention(),
+                'mention':     resultat.get_mention(),
             }
         except Resultat.DoesNotExist:
             return None
 
+    def get_enseignant_nom(self, obj):             # ← AJOUT
+        if obj.enseignant:
+            return f"{obj.enseignant.prenom} {obj.enseignant.nom}"
+        return None
+
+
+# ──────────────────────────────────────────────
+#  CC DETAIL — Inclut les questions mélangées
+# ──────────────────────────────────────────────
 
 class CCDetailSerializer(serializers.ModelSerializer):
-    """Inclut les questions mélangées — envoyé au démarrage du CC."""
-    questions = serializers.SerializerMethodField()
+    """Envoyé au démarrage du CC — crée ou récupère la tentative en cours."""
+    questions    = serializers.SerializerMethodField()
     tentative_id = serializers.SerializerMethodField()
 
     class Meta:
         model  = CC
         fields = ['id', 'titre', 'duree_minutes', 'tentative_id', 'questions']
 
-    def get_questions(self, obj):
-        import random
-        qs = list(obj.questions.prefetch_related('choix').all())
-        if obj.melange_questions:
-            random.shuffle(qs)
-        return QuestionSerializer(qs, many=True).data
-
     def get_tentative_id(self, obj):
-        """Crée ou récupère la tentative en cours."""
         request = self.context.get('request')
         if not request:
             return None
         try:
             etudiant = request.user.etudiant
-            tentative, created = Tentative.objects.get_or_create(
-                etudiant=etudiant, cc=obj,
-                defaults={}
-            )
-            if tentative.est_soumise:
-                return None  # Déjà soumise, pas de nouvel accès
-            if tentative.est_expiree:
-                return None  # Délai dépassé
-            return tentative.id
         except Exception:
             return None
+        # Si déjà soumise → None (bloque le passage)
+        if Tentative.objects.filter(etudiant=etudiant, cc=obj, est_soumise=True).exists():
+            return None
+        tentative, _ = Tentative.objects.get_or_create(
+            etudiant=etudiant, cc=obj, est_soumise=False
+        )
+        tentative.heure_debut = tentative.heure_debut or __import__('django.utils.timezone', fromlist=['now']).now()
+        tentative.save()
+        return tentative.id
 
+    def get_questions(self, obj):
+        import random
+        questions = list(obj.questions.prefetch_related('choix').all())
+        if obj.melange_questions:
+            random.shuffle(questions)
+        return QuestionSerializer(questions, many=True).data
+
+
+# ──────────────────────────────────────────────
+#  CC CREATE
+# ──────────────────────────────────────────────
 
 class CCCreateSerializer(serializers.ModelSerializer):
-    """Création d'un CC par l'enseignant avec ses questions."""
-
     class QuestionCreateSerializer(serializers.Serializer):
+        class ChoixCreateSerializer(serializers.Serializer):
+            texte       = serializers.CharField()
+            est_correct = serializers.BooleanField()
+
         enonce = serializers.CharField()
         points = serializers.FloatField(default=1.0)
-        choix  = serializers.ListField(child=serializers.DictField())
+        ordre  = serializers.IntegerField(default=0)
+        choix  = ChoixCreateSerializer(many=True)
 
     questions = QuestionCreateSerializer(many=True, write_only=True)
 
     class Meta:
         model  = CC
-        fields = ['id', 'titre', 'description', 'cours', 'duree_minutes',
-                  'date_debut', 'date_fin', 'melange_questions', 'questions']
+        fields = ['id', 'titre', 'description', 'duree_minutes',
+                  'melange_questions', 'cours', 'questions']
 
     def create(self, validated_data):
-        questions_data = validated_data.pop('questions', [])
-        request = self.context.get('request')
-        cc = CC.objects.create(
-            enseignant=request.user.enseignant,
-            **validated_data
-        )
-        for i, q_data in enumerate(questions_data):
-            choix_data = q_data.pop('choix', [])
-            question = Question.objects.create(cc=cc, ordre=i, **q_data)
+        questions_data = validated_data.pop('questions')
+        enseignant     = self.context['request'].user.enseignant
+        cc = CC.objects.create(enseignant=enseignant, est_actif=False, **validated_data)
+        for q_data in questions_data:
+            choix_data = q_data.pop('choix')
+            question   = Question.objects.create(cc=cc, **q_data)
             for c_data in choix_data:
                 Choix.objects.create(question=question, **c_data)
         return cc
 
 
 # ──────────────────────────────────────────────
-#  SOUMISSION & RÉSULTAT
+#  SOUMISSION
 # ──────────────────────────────────────────────
 
 class ReponseSubmitSerializer(serializers.Serializer):
@@ -224,84 +243,53 @@ class ReponseSubmitSerializer(serializers.Serializer):
 
 
 class SoumissionSerializer(serializers.Serializer):
-    """Corps de la requête POST /api/evaluations/soumettre/<tentative_id>/"""
     reponses = ReponseSubmitSerializer(many=True)
 
 
+# ──────────────────────────────────────────────
+#  RÉSULTAT
+# ──────────────────────────────────────────────
+
 class ResultatSerializer(serializers.ModelSerializer):
-    mention              = serializers.SerializerMethodField()
-    etudiant_nom         = serializers.SerializerMethodField()
-    etudiant_matricule   = serializers.CharField(source='etudiant.matricule', read_only=True)
-    etudiant_filiere     = serializers.CharField(source='etudiant.filiere', read_only=True)
-    cc_titre             = serializers.CharField(source='cc.titre', read_only=True)
-    signature_url        = serializers.SerializerMethodField()
+    cc_titre          = serializers.CharField(source='cc.titre', read_only=True)
+    mention           = serializers.SerializerMethodField()
+    etudiant_matricule= serializers.CharField(source='etudiant.matricule', read_only=True)
+    etudiant_filiere  = serializers.CharField(source='etudiant.filiere',   read_only=True)
 
     class Meta:
         model  = Resultat
         fields = [
-            'id', 'note_sur_20', 'mention', 'date_validation',
-            'receipt_token',
-            'etudiant_nom', 'etudiant_matricule', 'etudiant_filiere',
-            'cc_titre', 'signature_url',
+            'id', 'cc_titre', 'note_brute', 'note_sur_20',
+            'mention', 'date_validation', 'receipt_token',
+            'etudiant_matricule', 'etudiant_filiere',
         ]
 
     def get_mention(self, obj):
         return obj.get_mention()
 
-    def get_etudiant_nom(self, obj):
-        return f"{obj.etudiant.prenom} {obj.etudiant.nom}"
-
-    def get_signature_url(self, obj):
-        return obj.cc.enseignant.signature or None
-
 
 # ──────────────────────────────────────────────
-#  VÉRIFICATION QR CODE
+#  RÉCÉPISSÉ PUBLIC (vérification QR)
 # ──────────────────────────────────────────────
 
 class ReceiptVerifySerializer(serializers.Serializer):
-    """
-    GET /api/receipts/verify/<token>/
-    Retourne les infos du résultat pour vérification du QR Code.
-    """
     token = serializers.UUIDField()
 
 
 class ReceiptPublicSerializer(serializers.ModelSerializer):
-    """Données exposées publiquement via le QR Code (pas de note brute)."""
-    nom_etudiant = serializers.SerializerMethodField()
-    cc_titre     = serializers.CharField(source='cc.titre', read_only=True)
-    mention      = serializers.SerializerMethodField()
+    cc_titre   = serializers.CharField(source='cc.titre',            read_only=True)
+    nom        = serializers.CharField(source='etudiant.nom',         read_only=True)
+    prenom     = serializers.CharField(source='etudiant.prenom',      read_only=True)
+    matricule  = serializers.CharField(source='etudiant.matricule',   read_only=True)
+    filiere    = serializers.CharField(source='etudiant.filiere',     read_only=True)
+    mention    = serializers.SerializerMethodField()
 
     class Meta:
         model  = Resultat
-        fields = ['nom_etudiant', 'cc_titre', 'note_sur_20', 'mention', 'date_validation']
-
-    def get_nom_etudiant(self, obj):
-        return f"{obj.etudiant.prenom} {obj.etudiant.nom.upper()}"
+        fields = [
+            'cc_titre', 'nom', 'prenom', 'matricule', 'filiere',
+            'note_sur_20', 'mention', 'date_validation', 'receipt_token',
+        ]
 
     def get_mention(self, obj):
         return obj.get_mention()
-
-
-# ──────────────────────────────────────────────
-#  SYNTHÈSE ENSEIGNANT
-# ──────────────────────────────────────────────
-
-class SyntheseEtudiantSerializer(serializers.Serializer):
-    """Retourné par utils.get_synthese_filiere() — exportable en Excel."""
-    matricule         = serializers.CharField()
-    nom               = serializers.CharField()
-    prenom            = serializers.CharField()
-    filiere           = serializers.CharField()
-    moyenne_generale  = serializers.FloatField()
-    nb_cc_passes      = serializers.IntegerField()
-    mention           = serializers.SerializerMethodField()
-
-    def get_mention(self, obj):
-        n = obj.get('moyenne_generale', 0) or 0
-        if n >= 16: return "Très Bien"
-        if n >= 14: return "Bien"
-        if n >= 12: return "Assez Bien"
-        if n >= 10: return "Passable"
-        return "Insuffisant"

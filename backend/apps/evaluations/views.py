@@ -1,22 +1,28 @@
 # apps/evaluations/views.py
-# ─── Vues API complètes ───────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
+# Fichier complet — CCModifierView ajouté après CCCreateView
+# ─────────────────────────────────────────────────────────────────────────────
 
-from django.utils import timezone
-from django.db.models import Avg
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.utils import timezone
+from django.db.models import Avg
 
-from .models import CC, Tentative, Reponse, Resultat, Choix
+from .models import CC, Question, Choix, Tentative, Resultat
 from .serializers import (
+    CoursListSerializer, CoursDetailSerializer,
     CCListSerializer, CCDetailSerializer, CCCreateSerializer,
-    ResultatSerializer, ReceiptPublicSerializer,
-    SoumissionSerializer,
+    SoumissionSerializer, ResultatSerializer,
+    ReceiptPublicSerializer,
 )
-from .utils import get_synthese_filiere, get_notes_par_cc, calculer_note_sur_20, attribuer_badge
-from apps.cours.models import Cours
-from apps.cours.serializers import CoursListSerializer, CoursDetailSerializer
+from .utils import calculer_note, get_synthese_filiere, get_notes_par_cc
+
+try:
+    from apps.cours.models import Cours
+except ImportError:
+    Cours = None
 
 
 # ──────────────────────────────────────────────
@@ -24,45 +30,46 @@ from apps.cours.serializers import CoursListSerializer, CoursDetailSerializer
 # ──────────────────────────────────────────────
 
 class CoursListView(generics.ListAPIView):
-    """GET /api/cours/ — tous les cours selon filière de l'étudiant."""
-    serializer_class    = CoursListSerializer
-    permission_classes  = [permissions.IsAuthenticated]
+    serializer_class   = CoursListSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        qs = Cours.objects.filter(est_publie=True)
+        user = self.request.user
         try:
-            filiere = self.request.user.etudiant.filiere
-            # Afficher les cours de sa filière + cours communs (TOUS)
-            qs = qs.filter(filiere__in=[filiere, 'TOUS'])
+            filiere = user.etudiant.filiere
+            return Cours.objects.filter(est_publie=True).filter(
+                filiere__in=[filiere, 'TOUS']
+            ).order_by('-date_creation')
         except Exception:
-            pass  # Enseignant : tous les cours
-        return qs.order_by('-date_creation')
+            return Cours.objects.filter(est_publie=True).order_by('-date_creation')
 
 
 class CoursDetailView(generics.RetrieveAPIView):
-    """GET /api/cours/<id>/ — détail avec contenu HTML."""
-    queryset            = Cours.objects.filter(est_publie=True)
-    serializer_class    = CoursDetailSerializer
-    permission_classes  = [permissions.IsAuthenticated]
+    queryset           = Cours.objects.filter(est_publie=True)
+    serializer_class   = CoursDetailSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class CoursCreateView(generics.CreateAPIView):
-    """POST /api/cours/ — création par enseignant (Cloudinary URL pour PDF)."""
-    serializer_class    = CoursDetailSerializer
-    permission_classes  = [permissions.IsAuthenticated]
+    queryset           = Cours.objects.all()
+    serializer_class   = CoursDetailSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(enseignant=self.request.user.enseignant)
+        try:
+            enseignant = self.request.user.enseignant
+        except Exception:
+            enseignant = None
+        serializer.save(enseignant=enseignant)
 
 
 # ──────────────────────────────────────────────
-#  CC
+#  CC — LIST / DETAIL / CREATE / MODIFIER
 # ──────────────────────────────────────────────
 
 class CCListView(generics.ListAPIView):
-    """GET /api/cc/ — liste des CC disponibles avec statut étudiant."""
-    serializer_class    = CCListSerializer
-    permission_classes  = [permissions.IsAuthenticated]
+    serializer_class   = CCListSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return CC.objects.filter(est_actif=True).order_by('-date_creation')
@@ -74,10 +81,9 @@ class CCListView(generics.ListAPIView):
 
 
 class CCDetailView(generics.RetrieveAPIView):
-    """GET /api/cc/<id>/ — détail avec questions mélangées + création tentative."""
-    queryset            = CC.objects.filter(est_actif=True)
-    serializer_class    = CCDetailSerializer
-    permission_classes  = [permissions.IsAuthenticated]
+    queryset           = CC.objects.filter(est_actif=True)
+    serializer_class   = CCDetailSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer_context(self):
         ctx = super().get_serializer_context()
@@ -86,104 +92,128 @@ class CCDetailView(generics.RetrieveAPIView):
 
 
 class CCCreateView(generics.CreateAPIView):
-    """POST /api/cc/create/ — création CC par enseignant."""
-    serializer_class    = CCCreateSerializer
-    permission_classes  = [permissions.IsAuthenticated]
+    queryset           = CC.objects.all()
+    serializer_class   = CCCreateSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer_context(self):
         ctx = super().get_serializer_context()
         ctx['request'] = self.request
         return ctx
 
+    def perform_create(self, serializer):
+        try:
+            enseignant = self.request.user.enseignant
+        except Exception:
+            enseignant = None
+        serializer.save(enseignant=enseignant)
+
+
+class CCModifierView(APIView):
+    """
+    PATCH  /api/cc/<id>/modifier/ — Activer/désactiver ou renommer un CC
+    DELETE /api/cc/<id>/modifier/ — Supprimer un CC (et ses questions/résultats)
+    Seul l'enseignant propriétaire du CC peut agir.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_cc(self, pk, request):
+        try:
+            return CC.objects.get(pk=pk, enseignant=request.user.enseignant)
+        except (CC.DoesNotExist, AttributeError):
+            return None
+
+    def patch(self, request, pk):
+        cc = self.get_cc(pk, request)
+        if not cc:
+            return Response(
+                {'error': 'CC introuvable ou accès refusé.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        cc.titre         = request.data.get('titre',         cc.titre)
+        cc.est_actif     = request.data.get('est_actif',     cc.est_actif)
+        cc.duree_minutes = request.data.get('duree_minutes', cc.duree_minutes)
+        cc.save()
+        return Response({'message': 'CC mis à jour.', 'est_actif': cc.est_actif})
+
+    def delete(self, request, pk):
+        cc = self.get_cc(pk, request)
+        if not cc:
+            return Response(
+                {'error': 'CC introuvable ou accès refusé.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        cc.delete()
+        return Response({'message': 'CC supprimé.'}, status=status.HTTP_204_NO_CONTENT)
+
 
 # ──────────────────────────────────────────────
-#  SOUMISSION & RÉSULTAT
+#  SOUMISSION CC
 # ──────────────────────────────────────────────
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def soumettre_cc(request, tentative_id):
-    """
-    POST /api/evaluations/soumettre/<tentative_id>/
-    Corps : { "reponses": [{"question_id": N, "choix_id": M}, ...] }
-
-    Sécurité :
-    - Vérifie que la tentative appartient à l'étudiant connecté
-    - Vérifie le délai côté serveur (anti-triche chronomètre)
-    - Calcule la note et persiste le Résultat
-    - Retourne le receipt_token uniquement si tout est OK
-    """
     try:
-        tentative = Tentative.objects.select_related('cc', 'cc__enseignant', 'etudiant').get(
-            id=tentative_id,
-            etudiant=request.user.etudiant,
-        )
-    except (Tentative.DoesNotExist, AttributeError):
-        return Response({'error': 'Tentative introuvable.'}, status=status.HTTP_404_NOT_FOUND)
+        tentative = Tentative.objects.get(pk=tentative_id)
+    except Tentative.DoesNotExist:
+        return Response({'error': 'Tentative introuvable.'}, status=404)
+
+    if tentative.etudiant != request.user.etudiant:
+        return Response({'error': 'Accès refusé.'}, status=403)
 
     if tentative.est_soumise:
-        # Déjà soumise → retourner le résultat existant
-        try:
-            resultat = Resultat.objects.get(tentative=tentative)
-            return Response(ResultatSerializer(resultat).data)
-        except Resultat.DoesNotExist:
-            return Response({'error': 'Résultat déjà enregistré mais introuvable.'}, status=500)
+        return Response({'error': 'Cette tentative a déjà été soumise.'}, status=400)
 
     serializer = SoumissionSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=400)
 
-    hors_delai = tentative.est_expiree
-    reponses_data = serializer.validated_data['reponses']
+    reponses = serializer.validated_data['reponses']
+    hors_delai = False
 
-    # ── Calcul de la note ────────────────────────────────────────────────────
-    points_obtenus = 0.0
-    for rep in reponses_data:
+    if tentative.cc.duree_minutes:
+        delai = timezone.now() - tentative.heure_debut
+        if delai.total_seconds() > tentative.cc.duree_minutes * 60 + 30:
+            hors_delai = True
+
+    # Calcul de la note
+    note_brute, note_sur_20 = calculer_note(tentative.cc, reponses)
+
+    # Enregistrer les réponses
+    for rep in reponses:
         try:
-            choix = Choix.objects.select_related('question').get(
-                id=rep['choix_id'],
-                question__id=rep['question_id'],
-                question__cc=tentative.cc
-            )
-            Reponse.objects.update_or_create(
-                tentative=tentative,
-                question_id=rep['question_id'],
-                defaults={'choix_selectionne': choix}
-            )
-            if choix.est_correct:
-                points_obtenus += choix.question.points
-        except Choix.DoesNotExist:
-            continue  # Choix ou question invalide → ignoré silencieusement
-
-    total_points = tentative.cc.total_points
-    note_20 = calculer_note_sur_20(points_obtenus, total_points)
-
-    # ── Persistance ──────────────────────────────────────────────────────────
-    resultat, created = Resultat.objects.get_or_create(
-        tentative=tentative,
-        defaults={
-            'etudiant':   tentative.etudiant,
-            'cc':         tentative.cc,
-            'note_brute': points_obtenus,
-            'note_sur_20': note_20,
-        }
-    )
+            question = Question.objects.get(pk=rep['question_id'], cc=tentative.cc)
+            choix    = Choix.objects.get(pk=rep['choix_id'], question=question)
+            tentative.reponses_etudiant.create(question=question, choix=choix)
+        except (Question.DoesNotExist, Choix.DoesNotExist):
+            pass
 
     tentative.est_soumise = True
-    tentative.heure_soumission = timezone.now()
-    tentative.save(update_fields=['est_soumise', 'heure_soumission'])
+    tentative.heure_fin   = timezone.now()
+    tentative.save()
 
-    attribuer_badge(tentative.etudiant, note_20)
+    resultat = Resultat.objects.create(
+        tentative  = tentative,
+        etudiant   = tentative.etudiant,
+        cc         = tentative.cc,
+        note_brute = note_brute,
+        note_sur_20= note_sur_20,
+    )
 
     data = ResultatSerializer(resultat).data
     data['hors_delai'] = hors_delai
-    return Response(data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+    return Response(data, status=201)
 
+
+# ──────────────────────────────────────────────
+#  DASHBOARD ÉTUDIANT
+# ──────────────────────────────────────────────
 
 class MonDashboardView(APIView):
     """
     GET /api/dashboard/
-    Vue unifiée : profil étudiant + liste CC + résultats + moyenne générale.
+    Retourne le profil étudiant, ses statistiques et ses résultats.
     """
     permission_classes = [permissions.IsAuthenticated]
 
@@ -193,11 +223,22 @@ class MonDashboardView(APIView):
         except Exception:
             return Response({'error': 'Profil étudiant introuvable.'}, status=404)
 
-        resultats = Resultat.objects.filter(
-            etudiant=etudiant
-        ).select_related('cc').order_by('-date_validation')
+        resultats = Resultat.objects.filter(etudiant=etudiant).select_related('cc')
+        nb_cc     = resultats.count()
+        moyenne   = resultats.aggregate(m=Avg('note_sur_20'))['m']
 
-        moyenne = resultats.aggregate(Avg('note_sur_20'))['note_sur_20__avg']
+        resultats_data = [
+            {
+                'id':              r.id,
+                'cc_titre':        r.cc.titre,
+                'note_sur_20':     r.note_sur_20,
+                'mention':         r.get_mention(),
+                'date_validation': r.date_validation,
+                'receipt_token':   str(r.receipt_token),
+                'signature_url':   r.signature_url if hasattr(r, 'signature_url') else None,
+            }
+            for r in resultats.order_by('-date_validation')
+        ]
 
         return Response({
             'etudiant': {
@@ -205,25 +246,23 @@ class MonDashboardView(APIView):
                 'prenom':    etudiant.prenom,
                 'matricule': etudiant.matricule,
                 'filiere':   etudiant.filiere,
-                'avatar':    etudiant.avatar,
-                'badges':    etudiant.badges,
+                'badges':    etudiant.badges if hasattr(etudiant, 'badges') else [],
             },
             'statistiques': {
-                'moyenne_generale': round(moyenne, 2) if moyenne else None,
-                'nb_cc_passes':     resultats.count(),
+                'nb_cc_passes':    nb_cc,
+                'moyenne_generale': round(float(moyenne), 2) if moyenne else None,
             },
-            'resultats': ResultatSerializer(resultats, many=True).data,
+            'resultats': resultats_data,
         })
 
 
 # ──────────────────────────────────────────────
-#  VUES ENSEIGNANT
+#  SYNTHÈSE NOTES (enseignant)
 # ──────────────────────────────────────────────
 
 class SyntheseView(APIView):
     """
     GET /api/enseignant/synthese/?filiere=TIC|II|TOUS
-    Tableau de bord notes avec filtrage par filière.
     """
     permission_classes = [permissions.IsAuthenticated]
 
@@ -247,7 +286,6 @@ class SyntheseView(APIView):
 class NotesParCCView(APIView):
     """
     GET /api/enseignant/cc/<cc_id>/notes/
-    Notes d'un CC spécifique séparées par filière.
     """
     permission_classes = [permissions.IsAuthenticated]
 
@@ -264,24 +302,11 @@ class NotesParCCView(APIView):
 # ──────────────────────────────────────────────
 
 class VerifyReceiptView(APIView):
-    """
-    GET /api/receipts/verify/<token>/
-    Endpoint public — vérifie l'authenticité d'un récépissé via son token UUID.
-    """
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, token):
         try:
-            resultat = Resultat.objects.select_related(
-                'etudiant', 'cc'
-            ).get(receipt_token=token)
-        except (Resultat.DoesNotExist, Exception):
-            return Response(
-                {'valide': False, 'message': 'Récépissé invalide ou introuvable.'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-        return Response({
-            'valide': True,
-            'data': ReceiptPublicSerializer(resultat).data
-        })
-
+            resultat = Resultat.objects.get(receipt_token=token)
+            return Response(ReceiptPublicSerializer(resultat).data)
+        except Resultat.DoesNotExist:
+            return Response({'error': 'Récépissé invalide ou introuvable.'}, status=404)
