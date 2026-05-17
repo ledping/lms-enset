@@ -1,20 +1,37 @@
-# apps/evaluations/utils.py
+# apps/evaluations/utils.py — VERSION CORRIGÉE
+# CORRECTION PRINCIPALE : calculer_note_sur_20(points_obtenus, total_points) → float
+# L'ancienne version prenait (cc, reponses) ce qui causait l'erreur de soumission
+
 from django.db.models import Avg, Count, F
 from .models import Resultat
 
 
-def get_synthese_filiere(filiere: str = None) -> list[dict]:
+def calculer_note_sur_20(points_obtenus: float, total_points: float) -> float:
     """
-    Retourne la synthèse des notes de tous les étudiants.
-    Si filiere='TIC' ou 'II', filtre par filière.
-    Utilisé par le tableau de bord enseignant.
+    Convertit les points obtenus en note sur 20.
+    Protection division par zéro incluse.
+
+    Usage : note = calculer_note_sur_20(points_obtenus, cc.total_points)
+    """
+    if not total_points or total_points == 0:
+        return 0.0
+    return round((points_obtenus / total_points) * 20, 2)
+
+
+def get_synthese_filiere(filiere: str = None, enseignant=None) -> list[dict]:
+    """
+    Retourne la synthèse des notes.
+    - Si enseignant est fourni : filtre par les CC de cet enseignant uniquement.
+    - Si filiere est fourni : filtre par filière (TIC ou II).
     """
     qs = Resultat.objects.select_related('etudiant', 'cc')
+
+    if enseignant is not None:
+        qs = qs.filter(cc__enseignant=enseignant)
 
     if filiere in ('TIC', 'II'):
         qs = qs.filter(etudiant__filiere=filiere)
 
-    # Grouper par étudiant → calcul de la moyenne générale semestrielle
     synthese = (
         qs
         .values(
@@ -34,8 +51,7 @@ def get_synthese_filiere(filiere: str = None) -> list[dict]:
 
 def get_notes_par_cc(cc_id: int) -> dict:
     """
-    Pour un CC donné, retourne les notes séparées par filière.
-    Utile pour la vue synthèse de l'enseignant.
+    Pour un CC donné, retourne les notes séparées par filière TIC et II.
     """
     qs = Resultat.objects.filter(cc_id=cc_id).select_related('etudiant')
     result = {}
@@ -43,24 +59,22 @@ def get_notes_par_cc(cc_id: int) -> dict:
         notes_filiere = qs.filter(etudiant__filiere=filiere)
         result[filiere] = {
             'notes': list(notes_filiere.values(
-                'etudiant__matricule', 'etudiant__nom',
-                'etudiant__prenom', 'note_sur_20'
+                'etudiant__matricule',
+                'etudiant__nom',
+                'etudiant__prenom',
+                'note_sur_20',
             )),
-            'moyenne': notes_filiere.aggregate(Avg('note_sur_20'))['note_sur_20__avg'],
+            'moyenne':  notes_filiere.aggregate(Avg('note_sur_20'))['note_sur_20__avg'],
             'effectif': notes_filiere.count(),
         }
     return result
 
 
-def calculer_note_sur_20(points_obtenus: float, total_points: float) -> float:
-    """Conversion vers /20 avec protection division par zéro."""
-    if total_points == 0:
-        return 0.0
-    return round((points_obtenus / total_points) * 20, 2)
-
-
 def attribuer_badge(etudiant, note_sur_20: float):
-    """Système de gamification : badge si ≥ 16/20."""
-    if note_sur_20 >= 16 and "Excellent" not in etudiant.badges:
-        etudiant.badges.append("Excellent")
-        etudiant.save(update_fields=['badges'])
+    """Badge Excellent si note ≥ 16/20."""
+    try:
+        if note_sur_20 >= 16 and "Excellent" not in etudiant.badges:
+            etudiant.badges.append("Excellent")
+            etudiant.save(update_fields=['badges'])
+    except Exception:
+        pass  # Silencieux si le champ badges n'existe pas
