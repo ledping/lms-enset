@@ -134,8 +134,10 @@ class CCListSerializer(serializers.ModelSerializer):
             return False
         try:
             etudiant = request.user.etudiant
+            if etudiant is None:
+                return False
         except Exception:
-            return False
+            return False   # enseignant → pas d'étudiant, on retourne False
         return Tentative.objects.filter(
             etudiant=etudiant, cc=obj, est_soumise=True
         ).exists()
@@ -146,12 +148,18 @@ class CCListSerializer(serializers.ModelSerializer):
             return None
         try:
             etudiant = request.user.etudiant
+            if etudiant is None:
+                return None
+        except Exception:
+            return None   # enseignant → aucun résultat étudiant
+        try:
             resultat = Resultat.objects.get(tentative__etudiant=etudiant, cc=obj)
             return {
                 'note_sur_20': resultat.note_sur_20,
                 'mention':     resultat.get_mention(),
             }
         except Resultat.DoesNotExist:
+            return None
             return None
 
     def get_enseignant_nom(self, obj):             # ← AJOUT
