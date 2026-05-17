@@ -17,7 +17,7 @@ from .serializers import (
     SoumissionSerializer, ResultatSerializer,
     ReceiptPublicSerializer,
 )
-from .utils import calculer_note, get_synthese_filiere, get_notes_par_cc
+from .utils import calculer_note_sur_20, get_synthese_filiere, get_notes_par_cc
 
 try:
     from apps.cours.models import Cours
@@ -178,7 +178,7 @@ def soumettre_cc(request, tentative_id):
             hors_delai = True
 
     # Calcul de la note
-    note_brute, note_sur_20 = calculer_note(tentative.cc, reponses)
+    note_brute, note_sur_20 = calculer_note_sur_20(tentative.cc, reponses)
 
     # Enregistrer les réponses
     for rep in reponses:
