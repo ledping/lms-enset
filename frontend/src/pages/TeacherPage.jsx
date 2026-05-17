@@ -51,6 +51,12 @@ export default function TeacherPage() {
     chargerCC();
     chargerCours();
   }, []);
+// Recharger les CC quand on arrive sur l'onglet mes-cc
+useEffect(() => {
+  if (onglet === 'mes-cc') {
+    chargerCC();
+  }
+}, [onglet]);
 
   const chargerProfil = async () => {
     try { const r = await api.get('/auth/me/'); setProfil(r.data); } catch {}
@@ -69,8 +75,12 @@ export default function TeacherPage() {
   const chargerCC = async () => {
   try {
     const r = await api.get('/enseignant/mes-cc/');
-    setCCList(r.data.results ?? r.data);
-  } catch {}
+    const data = r.data.results ?? r.data;
+    setCCList(Array.isArray(data) ? data : []);
+  } catch (err) {
+    console.error('Erreur chargerCC:', err.response?.status, err.response?.data);
+    setCCList([]);
+  }
 };
 
   // Cours de l'enseignant uniquement (filtré côté serveur)
