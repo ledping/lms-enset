@@ -67,11 +67,11 @@ export default function TeacherPage() {
 
   // CORRECTION : /enseignant/mes-cc/ au lieu de /cc/
   const chargerCC = async () => {
-    try {
-      const r = await api.get('/enseignant/mes-cc/');
-      setCCList(r.data.results ?? r.data);
-    } catch {}
-  };
+  try {
+    const r = await api.get('/enseignant/mes-cc/');
+    setCCList(r.data.results ?? r.data);
+  } catch {}
+};
 
   // Cours de l'enseignant uniquement (filtré côté serveur)
   const chargerCours = async () => {
@@ -484,13 +484,20 @@ function CCBuilder({ onSuccess }) {
       });
       onSuccess();
     } catch (err) {
-      const data = err.response?.data;
-      setError(
-        typeof data === 'object'
-          ? JSON.stringify(data)
-          : 'Erreur lors de la création.'
-      );
-    } finally { setLoading(false); }
+  const data = err.response?.data;
+  if (typeof data === 'object' && data !== null) {
+    // Extraire le premier message d'erreur Django
+    const premierMessage = Object.entries(data)
+      .map(([champ, msgs]) => {
+        const msg = Array.isArray(msgs) ? msgs[0] : msgs;
+        return `${champ} : ${msg}`;
+      })
+      .join(' | ');
+    setError(premierMessage || 'Erreur inconnue.');
+  } else {
+    setError('Erreur lors de la création. Vérifiez votre connexion.');
+  }
+} finally { setLoading(false); }
   };
 
   return (

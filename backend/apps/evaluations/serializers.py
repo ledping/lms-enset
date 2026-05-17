@@ -204,30 +204,41 @@ class CCDetailSerializer(serializers.ModelSerializer):
 # ──────────────────────────────────────────────
 
 class CCCreateSerializer(serializers.ModelSerializer):
+
     class QuestionCreateSerializer(serializers.Serializer):
         class ChoixCreateSerializer(serializers.Serializer):
             texte       = serializers.CharField()
-            est_correct = serializers.BooleanField()
+            est_correct = serializers.BooleanField(default=False)
 
         enonce = serializers.CharField()
         points = serializers.FloatField(default=1.0)
-        ordre  = serializers.IntegerField(default=0)
         choix  = ChoixCreateSerializer(many=True)
 
     questions = QuestionCreateSerializer(many=True, write_only=True)
 
     class Meta:
         model  = CC
-        fields = ['id', 'titre', 'description', 'duree_minutes',
-                  'melange_questions', 'cours', 'questions']
+        fields = [
+            'id', 'titre', 'description',
+            'duree_minutes', 'melange_questions',
+            'questions',
+            # ← 'cours' retiré : champ optionnel non requis
+        ]
+        extra_kwargs = {
+            'description': {'required': False, 'allow_blank': True},
+        }
 
     def create(self, validated_data):
         questions_data = validated_data.pop('questions')
         enseignant     = self.context['request'].user.enseignant
-        cc = CC.objects.create(enseignant=enseignant, est_actif=False, **validated_data)
-        for q_data in questions_data:
+        cc = CC.objects.create(
+            enseignant=enseignant,
+            est_actif=False,          # Toujours inactif à la création
+            **validated_data
+        )
+        for i, q_data in enumerate(questions_data):
             choix_data = q_data.pop('choix')
-            question   = Question.objects.create(cc=cc, **q_data)
+            question   = Question.objects.create(cc=cc, ordre=i, **q_data)
             for c_data in choix_data:
                 Choix.objects.create(question=question, **c_data)
         return cc

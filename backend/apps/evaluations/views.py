@@ -98,12 +98,14 @@ class CoursUploadView(APIView):
 
         try:
             result = cloudinary.uploader.upload(
-                fichier,
-                resource_type='raw',
-                folder=f'lms-enset/cours/{filiere}',
-                use_filename=True,
-                overwrite=True,
-            )
+    fichier,
+    resource_type='raw',
+    type='upload',          # ← accès public explicite
+    access_mode='public',   # ← force l'accès public
+    folder=f'lms-enset/cours/{filiere}',
+    use_filename=True,
+    overwrite=True,
+)
             fichier_url = result.get('secure_url')
         except Exception as e:
             return Response({'error': f'Erreur Cloudinary : {str(e)}'}, status=500)
