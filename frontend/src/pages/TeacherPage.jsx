@@ -484,18 +484,28 @@ function CCBuilder({ onSuccess }) {
       });
       onSuccess();
     } catch (err) {
-  const data = err.response?.data;
+  if (!err.response) {
+    setError('Erreur réseau — serveur inaccessible.');
+    return;
+  }
+  const status = err.response.status;
+  const data   = err.response.data;
+
+  if (status === 403) {
+    setError('Accès refusé — votre compte n\'a pas de profil Enseignant.');
+    return;
+  }
+  if (status === 500) {
+    setError('Erreur serveur 500 — profil Enseignant manquant. Créez-le via l\'admin Django.');
+    return;
+  }
   if (typeof data === 'object' && data !== null) {
-    // Extraire le premier message d'erreur Django
-    const premierMessage = Object.entries(data)
-      .map(([champ, msgs]) => {
-        const msg = Array.isArray(msgs) ? msgs[0] : msgs;
-        return `${champ} : ${msg}`;
-      })
+    const msgs = Object.entries(data)
+      .map(([k, v]) => `${k}: ${Array.isArray(v) ? v[0] : v}`)
       .join(' | ');
-    setError(premierMessage || 'Erreur inconnue.');
+    setError(msgs || 'Erreur inconnue.');
   } else {
-    setError('Erreur lors de la création. Vérifiez votre connexion.');
+    setError(`Erreur ${status} — ${data}`);
   }
 } finally { setLoading(false); }
   };
